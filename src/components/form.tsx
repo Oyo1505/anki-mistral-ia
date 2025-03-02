@@ -81,7 +81,7 @@ export default function Form() {
   const handleChangeCheckboxKanji = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue('kanji', e.target.checked);
   }
-  console.log(errors, "ERRORS");  
+  
   return (
     <div className='w-full flex flex-col items-start justify-start gap-4'>
       <form className="w-full flex flex-col items-start justify-start gap-4" onSubmit={handleSubmit(onSubmit)}>
@@ -93,7 +93,6 @@ export default function Form() {
         <ButtonUpload 
           errors={errors}
           files={files}
-          setValue={setValue}
           {...register('files', { 
           required: false,
           onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
