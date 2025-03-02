@@ -1,8 +1,11 @@
 'use client'
 
 import clsx from "clsx";
-
-export default function SelectLevel({className, handleChangeSelectLevel}: {className: string, handleChangeSelectLevel: (e: React.ChangeEvent<HTMLSelectElement>) => void} ) {
+interface SelectLevelProps {
+  className?: string;
+  handleChangeSelectLevel: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+}
+export default function SelectLevel({className, handleChangeSelectLevel}: SelectLevelProps) {
   const levels = [
     { value: "N1-Avancé", label: "N1 - Avancé (Maîtrise complète)" },
     { value: "N2-Pré-avancé", label: "N2 - Pré-avancé (Niveau courant)" },
