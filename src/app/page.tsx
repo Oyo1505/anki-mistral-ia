@@ -1,4 +1,10 @@
-export default function Home() {
+import Form from "@/components/form";
 
-  return <div>Hello World</div>;
+export default function Home() {
+  return (
+    <main className="my-auto mx-auto w-full md:w-1/3 border-2 border-white box-shadow-lg rounded-md p-4 flex flex-col items-center justify-center bg-white gap-4">
+      <h1 className="text-xl font-bold">Générateur de cartes Anki</h1>
+      <Form />
+    </main>
+  );
 }
