@@ -1,16 +1,16 @@
 'use server'
 import { FormDataSchemaType } from "@/schema/form-schema";
-//import extractTextWithOCR from "@/utils/extract-text-with-ocr";
 import { CardSchema } from "@/schema/card.schema";
 import { mistral } from "@/lib/mistral";
 
-const generateCardsAnki = async ({file, text, level, romanji, kanji, numberOfCards = 5}: {file?: string, text: string, level: string, romanji: boolean, kanji: boolean, numberOfCards: number}) => {
+
+const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 5, textFromPdf}: {text: string, level: string, romanji: boolean, kanji: boolean, numberOfCards: number, textFromPdf?: string }) => {
   try {
-    const textFromPdf = file ? null : null;
+
     const prompt = `
-    ${textFromPdf ? `Voici le texte des fichier pdf à partir duquel tu dois générer les cartes anki : ${textFromPdf}.` : ''}.
-      Ceci est le texte que tu dois utiliser pour générer les cartes anki : ${text}.
-      ${romanji ? 'avec les romanji' : 'ne pas utiliser les romanji si il y en a supprimer les romanji'} ${kanji ? 'et les kanji si il y en a' : 'ne pas utiliser les kanji si il y en a les mettre en hiragana'}
+    ${textFromPdf && textFromPdf.length > 0 && `Voici le texte des fichier pdf à partir duquel tu dois générer les cartes anki : ${textFromPdf}.`}.
+    ${text && text.length > 0 && `Voici le texte des fichier pdf à partir duquel tu dois générer les cartes anki : ${text}.`}.
+    ${romanji ? 'avec les romanji' : 'ne pas utiliser les romanji si il y en a supprimer les romanji'} ${kanji ? 'et les kanji si il y en a' : 'ne pas utiliser les kanji si il y en a les mettre en hiragana'}
     `
     const answer = await mistral.chat.parse({
       model: "mistral-large-latest",
@@ -40,15 +40,10 @@ const generateCardsAnki = async ({file, text, level, romanji, kanji, numberOfCar
 const generateAnswer = async (data: FormDataSchemaType) => {
 
   try { 
-    const {text, level, numberOfCards, romanji, kanji} = data;
-
-    const res = await generateCardsAnki({ text, level, numberOfCards, romanji, kanji}); 
-    // const answer = await mistral.chat.completions.create({
-    //   model: "mistral-large-latest",
-    //   messages: [{ role: "user", content: text }],
-    // });
-     return res;
-  } catch (error) {
+    const {text, level, numberOfCards, romanji, kanji, textFromPdf} = data;
+    const res = await generateCardsAnki({text, level, numberOfCards, romanji, kanji, textFromPdf}); 
+   return res;
+  } catch (error) { 
     console.error(error);
     return null;
   }
