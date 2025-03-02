@@ -9,10 +9,12 @@ import { generateAnswer } from '@/actions/mistral.action';
 import { CSVLink } from "react-csv";
 import { useState, useTransition } from 'react';
 import Input from './input';
+
 export default function Form() {
   const [csvData, setCsvData] = useState<string[][]>([]);
   const [isPending, startTransition] = useTransition();
-  const {register, handleSubmit, setValue, watch, formState: { errors }, reset } = useForm({
+
+  const {register, handleSubmit, setValue, formState: { errors }, reset } = useForm({
     defaultValues: {
       level: 'N1',
       romanji: false,
@@ -55,7 +57,7 @@ export default function Form() {
     setValue('kanji', e.target.checked);
   }
 
-  const level = watch('level');
+  // const level = watch('level');
  
   return (
     <div className='w-full flex flex-col items-start justify-start gap-4'>
@@ -69,7 +71,7 @@ export default function Form() {
         <div className="w-full flex flex-col items-start justify-start">
           <Checkbox label="Générer un CSV ?" handleChangeCheckbox={handleChangeCheckboxCsv}/>
           <Checkbox label="Voulez vous inclure les romanji ?" handleChangeCheckbox={handleChangeCheckboxRomanji}/>
-          <Checkbox label="Voulez vous inclure les kanji ?" handleChangeCheckbox={handleChangeCheckboxKanji} value={level === 'N3-Intermédiaire' || level === 'N2-Pré-avancé' || level === 'N1-Avancé'} />
+          <Checkbox label="Voulez vous inclure les kanji ?" handleChangeCheckbox={handleChangeCheckboxKanji} />
         </div>
         <button type='submit' className={`w-full p-2 rounded-md text-white font-bold ${isPending ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 cursor-pointer'} `} disabled={isPending}>Générer</button>
       </form>
