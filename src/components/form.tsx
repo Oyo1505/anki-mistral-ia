@@ -1,13 +1,12 @@
 'use client'
 import { zodResolver } from '@hookform/resolvers/zod';
-import ButtonUpload from './button-upload';
 import TextArea from './text-area';
 import SelectLevel from './select-level';
 import { useForm } from 'react-hook-form';
 import { FormDataSchema, FormDataSchemaType } from '@/schema/form-schema';
 import Checkbox from './checkbox';
 import { generateAnswer } from '@/actions/mistral.action';
-import { CSVLink, CSVDownload } from "react-csv";
+import { CSVLink } from "react-csv";
 import { useState, useTransition } from 'react';
 import Input from './input';
 export default function Form() {
