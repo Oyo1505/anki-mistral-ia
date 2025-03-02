@@ -4,7 +4,7 @@ export default function Checkbox({label, handleChangeCheckbox}: {label: string, 
   return (
     <div className="flex w-full gap-2 justify-between">
      <label htmlFor={label}>{label}</label>
-     <input className="ml-2" type="checkbox" onChange={(e) => handleChangeCheckbox(e)}  />
+     <input className="ml-2" type="checkbox" onChange={handleChangeCheckbox}>
     </div>
   )
 }
