@@ -8,15 +8,17 @@ import { FormDataSchema, FormDataSchemaType } from '@/schema/form-schema';
 import Checkbox from './checkbox';
 import { generateAnswer } from '@/actions/mistral.action';
 import { CSVLink, CSVDownload } from "react-csv";
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
+import Input from './input';
 export default function Form() {
   const [csvData, setCsvData] = useState<string[][]>([]);
-  const {register, handleSubmit, setValue, formState: { errors } } = useForm({
+  const [isPending, startTransition] = useTransition();
+  const {register, handleSubmit, setValue, watch, formState: { errors }, reset } = useForm({
     defaultValues: {
       level: 'N1',
       romanji: false,
       kanji: false,
-      numberOfCards: 0,
+      numberOfCards: 5,
       file: undefined,
       text: '',
       csv: false
@@ -26,8 +28,13 @@ export default function Form() {
   const onSubmit = async (data: FormDataSchemaType) => {
     try{ 
       const answer = await generateAnswer(data);
-      setCsvData(answer);
-      console.log(answer);
+      if (answer) {
+        startTransition(() => {
+          setCsvData(answer);
+          console.log(answer);
+          reset();
+        });
+      }
     } catch (error) {
       console.error(error);
     }
@@ -49,19 +56,25 @@ export default function Form() {
     setValue('kanji', e.target.checked);
   }
 
+  const level = watch('level');
+ 
   return (
-    <div>
-      {csvData  && csvData.length > 0 && <CSVLink data={csvData}>Download me</CSVLink>}
-    
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <TextArea register={register} errors={errors} id="text" />
-      <SelectLevel handleChangeSelectLevel={handleChangeSelectLevel} />
-      {/* <ButtonUpload {...register('file')} /> */}
-      <Checkbox label="Générer un CSV ?" handleChangeCheckbox={handleChangeCheckboxCsv}/>
-      <Checkbox label="Romanji" handleChangeCheckbox={handleChangeCheckboxRomanji}/>
-      <Checkbox label="Kanji" handleChangeCheckbox={handleChangeCheckboxKanji}/>
-      <button type='submit'>Générer</button>
-    </form>
+    <div className='w-full flex flex-col items-start justify-start gap-4'>
+      <form className="w-full flex flex-col items-start justify-start gap-4" onSubmit={handleSubmit(onSubmit)}>
+        <TextArea register={register} errors={errors} id="text" />
+        <div className='w-full grid grid-cols-1 md:grid-cols-2 gap-2'>
+          <SelectLevel className='w-full' handleChangeSelectLevel={handleChangeSelectLevel} />
+          <Input className='w-full' type="number" label="Nombre de cartes" max={30} min={1} defaultValue={5} {...register('numberOfCards', { valueAsNumber: true })} />
+        </div>
+        {/* <ButtonUpload {...register('file')} /> */}
+        <div className="w-full flex flex-col items-start justify-start">
+          <Checkbox label="Générer un CSV ?" handleChangeCheckbox={handleChangeCheckboxCsv}/>
+          <Checkbox label="Voulez vous inclure les romanji ?" handleChangeCheckbox={handleChangeCheckboxRomanji}/>
+          <Checkbox label="Voulez vous inclure les kanji ?" handleChangeCheckbox={handleChangeCheckboxKanji} value={level === 'N3-Intermédiaire' || level === 'N2-Pré-avancé' || level === 'N1-Avancé'} />
+        </div>
+        <button type='submit' className={`w-full p-2 rounded-md text-white font-bold ${isPending ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 cursor-pointer'} `} disabled={isPending}>Générer</button>
+      </form>
+      {csvData  && csvData.length > 0 && <CSVLink className='w-full p-2 rounded-md border-2 border-gray-300 text-center cursor-pointer font-bold' data={csvData}>Télécharger le fichier CSV</CSVLink>}
     </div>
   )
 }
