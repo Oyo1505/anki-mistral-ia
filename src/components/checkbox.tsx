@@ -1,6 +1,7 @@
 'use client'
 interface CheckboxProps {
   label: string;
+  //eslint-disable-next-line no-unused-vars
   handleChangeCheckbox: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 export default function Checkbox({label, handleChangeCheckbox}: CheckboxProps) {

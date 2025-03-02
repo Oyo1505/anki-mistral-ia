@@ -3,6 +3,7 @@
 import clsx from "clsx";
 interface SelectLevelProps {
   className?: string;
+  //eslint-disable-next-line no-unused-vars
   handleChangeSelectLevel: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 export default function SelectLevel({className, handleChangeSelectLevel}: SelectLevelProps) {
