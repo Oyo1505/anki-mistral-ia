@@ -9,7 +9,7 @@ const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 
 
     const prompt = `
     ${textFromPdf && textFromPdf.length > 0 && `Voici le texte des fichier pdf à partir duquel tu dois générer les cartes anki : ${textFromPdf}.`}.
-    ${text && text.length > 0 && `Voici le texte des fichier pdf à partir duquel tu dois générer les cartes anki : ${text}.`}.
+    ${text && text.length > 0 && `Voici le texte venant du textearea du formulaire à partir duquel tu dois générer les cartes anki ou des instructions : ${text}.`}.
     ${romanji ? 'avec les romanji' : 'ne pas utiliser les romanji si il y en a supprimer les romanji'} ${kanji ? 'et les kanji si il y en a' : 'ne pas utiliser les kanji si il y en a les mettre en hiragana'}
     `
     const answer = await mistral.chat.parse({

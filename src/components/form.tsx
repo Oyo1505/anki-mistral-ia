@@ -30,18 +30,28 @@ export default function Form() {
     },
     resolver: zodResolver(FormDataSchema)
   });
-  
-  const textFromPdf = watch('textFromPdf');
   const files = watch('files');
+
   const onSubmit = async (data: FormDataSchemaType) => {
     try {   
       startTransition(async () => {
         try {
-          if (textFromPdf && textFromPdf.length > 0 && textFromPdf !== undefined) {
-            const answer = await generateAnswer(data);
-            if (answer) {
-              setCsvData(answer);
-              reset();
+          if (files?.[0]) {
+            const url = URL.createObjectURL(files[0]);
+            const res = await convert(url);
+  
+            if (res && res.length > 0) {
+              setValue('textFromPdf', res, { shouldValidate: true });
+              
+              const answer = await generateAnswer({
+                ...data,
+                textFromPdf: res 
+              });
+              
+              if (answer) {
+                setCsvData(answer);
+                reset();
+              }
             }
           }
         } catch (error) {
@@ -55,17 +65,14 @@ export default function Form() {
 
   const convert = async (url: string) => {
     if (url.length) {
-      console.log(url, "URL");
+      const copyTexts: Array<string> =  [];
       await extractTextFromImage(url).then((txt: string) => {
-        let copyTexts: Array<string> =  [];
         copyTexts.push(txt);
-        setValue('textFromPdf', copyTexts.join('\n'));
-        return textFromPdf && textFromPdf.length > 0 && textFromPdf !== undefined ? true : false;
-      });
-      return false;
+      })
+      return copyTexts.join('\n');
     }
   };
-
+ 
   const handleChangeSelectLevel = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setValue('level', e.target.value);
   }
@@ -91,19 +98,11 @@ export default function Form() {
           <Input className='w-full' type="number" label="Nombre de cartes" max={30} min={1} defaultValue={5} {...register('numberOfCards', { valueAsNumber: true })} />
         </div>
         <ButtonUpload 
+          setValue={setValue} 
           errors={errors}
           files={files}
           {...register('files', { 
           required: false,
-          onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-            e.preventDefault();
-            if (e.target.files?.[0]) {
-              console.log(e.target.files[0], "FILE");
-              let url: string = URL.createObjectURL(e.target.files[0]);
-              convert(url);
-              setValue('files', Array.from(e.target.files));
-            }
-          },
           validate: (fileList: File[] | undefined) => {
             if (!fileList) return true;
             if (fileList.length > 3) {

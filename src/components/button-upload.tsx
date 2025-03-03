@@ -1,5 +1,5 @@
 'use client'
-import {  FieldErrors } from 'react-hook-form';
+import {  FieldErrors, UseFormSetValue } from 'react-hook-form';
 import { FormDataSchemaType } from '@/schema/form-schema';
 
 interface ButtonUploadProps {
@@ -9,9 +9,14 @@ interface ButtonUploadProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   files: File[] | undefined;
   errors: FieldErrors<FormDataSchemaType>;
+  setValue: UseFormSetValue<FormDataSchemaType>;
 }
-export default function ButtonUpload({accept = ".pdf, .jpg, .jpeg, .png", multiple = true, files, errors, ...props }: ButtonUploadProps) {
-
+export default function ButtonUpload({accept = ".pdf, .jpg, .jpeg, .png", multiple = true, files, errors, setValue, ...props }: ButtonUploadProps) {
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) {
+      setValue('files', Array.from(e.target.files));
+    }
+  }
   return (
     <div className="w-full flex flex-col gap-2">
       <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
@@ -30,6 +35,7 @@ export default function ButtonUpload({accept = ".pdf, .jpg, .jpeg, .png", multip
           accept={accept}
           multiple={multiple}
           {...props}
+          onChange={handleChange}
         />
       </label>
       {errors && errors.files && (
