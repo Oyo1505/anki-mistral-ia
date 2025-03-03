@@ -5,7 +5,7 @@ import SelectLevel from './select-level';
 import { useForm } from 'react-hook-form';
 import { FormDataSchema, FormDataSchemaType } from '@/schema/form-schema';
 import Checkbox from './checkbox';
-import { generateAnswer, extractTextWithOCR } from '@/actions/mistral.action';
+import {  generateAnswer } from '@/actions/mistral.action';
 import { CSVLink } from "react-csv";
 import { useState, useTransition } from 'react';
 import Input from './input';
@@ -43,12 +43,12 @@ export default function Form() {
             if (convertResult) {
               res = convertResult;
               setValue('textFromPdf', res, { shouldValidate: true });
-            }
+            } 
           }
           if (files?.[0] && (files[0].type === 'application/pdf')) {
             const convertResult = await convertPdf(files[0]);
             if (convertResult) {
-              res = convertResult;
+              res = convertResult; 
               setValue('textFromPdf', res, { shouldValidate: true });
             }
           }
@@ -83,8 +83,18 @@ export default function Form() {
 
   const convertPdf = async (file: File) => {
     try {
-      const text = await extractTextWithOCR(file);
-      return text;
+      const formData = new FormData();
+      formData.append('file', file);
+  
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+      if (!response.ok) {
+        throw new Error('Erreur lors de l\'upload');
+      }
+      const data = await response.json();
+      return data.text;
     } catch (error) {
       console.error("Erreur lors de l'extraction du PDF:", error);
       return '';
@@ -111,7 +121,7 @@ export default function Form() {
 
   return (
     <div className='w-full flex flex-col items-start justify-start gap-4'>
-      {/* <OcrReader /> */}
+
       <form className="w-full flex flex-col items-start justify-start gap-4" onSubmit={handleSubmit(onSubmit)}>
         <TextArea register={register} errors={errors} id="text" />
         <div className='w-full grid grid-cols-1 md:grid-cols-2 gap-2'>

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "start": "next start",
+    "start": "cross-env NODE_OPTIONS='--openssl-legacy-provider --inspect' next start",
     "lint": "next lint"
   },
   "dependencies": {
@@ -19,6 +19,7 @@
     "react-csv": "^2.2.2",
     "react-hook-form": "^7.54.2",
     "tesseract.js": "^6.0.0",
+    "uuid": "^11.1.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {

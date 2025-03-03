@@ -27,7 +27,7 @@ export default function ButtonUpload({accept = ".pdf, .jpg, .jpeg, .png", multip
           <p className="mb-2 text-sm text-gray-500">
             <span className="font-semibold">Cliquez pour uploader</span> ou glissez-déposez
           </p>
-          <p className="text-xs text-gray-500">PNG, JPG ou JPEG (MAX. 1 fichiers)</p>
+          <p className="text-xs text-gray-500">PNG, JPG ou JPEG PDF (MAX. 1 fichiers)</p>
         </div>
         <input 
           type="file" 
