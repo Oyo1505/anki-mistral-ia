@@ -23,7 +23,7 @@ export default function Form() {
       romanji: false,
       kanji: false,
       numberOfCards: 5,
-      files: undefined,
+      files: [],
       textFromPdf: undefined,
       text: '',
       csv: false
@@ -31,7 +31,7 @@ export default function Form() {
     resolver: zodResolver(FormDataSchema)
   });
   const files = watch('files');
-
+  console.log(errors);
   const onSubmit = async (data: FormDataSchemaType) => {
     try {   
       startTransition(async () => {
@@ -104,8 +104,7 @@ export default function Form() {
           setValue={setValue} 
           errors={errors}
           files={files}
-          {...register('files', { 
-          required: false,
+          {...register('files', {
           validate: (fileList: File[] | undefined) => {
             if (!fileList) return true;
             if (fileList.length > 3) {
