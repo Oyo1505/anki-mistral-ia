@@ -2,7 +2,7 @@ import { pdfToPng } from 'pdf-to-png-converter';
 import Tesseract from 'tesseract.js';
 import fs from 'fs';
 
-const extractTextWithOCR = async (filePath:string) => {
+const extractTextWithOCR = async (filePath: string) => {
   try {
     const pngPages = await pdfToPng(filePath, {
       viewportScale: 2.0, 
