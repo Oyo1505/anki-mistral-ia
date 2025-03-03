@@ -37,13 +37,16 @@ export default function Form() {
       startTransition(async () => {
         try {
           let res = '';
-          if (files?.[0] && files?.[0]?.type === 'image/jpeg' || files?.[0]?.type === 'image/png' || files?.[0]?.type === 'image/jpg') {
+          if (files?.[0] && (files[0].type === 'image/jpeg' || files[0].type === 'image/png' || files[0].type === 'image/jpg')) {
             const url = URL.createObjectURL(files[0]);
-            res = await convert(url);
-            setValue('textFromPdf', res, { shouldValidate: true }); 
+            const convertResult = await convert(url);
+            if (convertResult) {
+              res = convertResult;
+              setValue('textFromPdf', res, { shouldValidate: true });
+            }
           }
-            const answer = await generateAnswer({
-              ...data,
+          const answer = await generateAnswer({
+            ...data,
               textFromPdf: res 
             });
             
@@ -61,8 +64,8 @@ export default function Form() {
     }
   };
 
-  const convert = async (url: string) => {
-    if (url.length) {
+  const convert = async (url: string | undefined) => {
+    if (url?.length) {
       const copyTexts: Array<string> =  [];
       await extractTextFromImage(url).then((txt: string) => {
         copyTexts.push(txt);
@@ -94,8 +97,8 @@ export default function Form() {
       <form className="w-full flex flex-col items-start justify-start gap-4" onSubmit={handleSubmit(onSubmit)}>
         <TextArea register={register} errors={errors} id="text" />
         <div className='w-full grid grid-cols-1 md:grid-cols-2 gap-2'>
-          <SelectLevel className='w-full' handleChangeSelectLevel={handleChangeSelectLevel} />
-          <Input className='w-full' type="number" label="Nombre de cartes" max={30} min={1} defaultValue={5} {...register('numberOfCards', { valueAsNumber: true })} />
+          <SelectLevel className='w-full' handleChangeSelectLevelAction={handleChangeSelectLevel} />
+          <Input className='w-full' type="number" label="cards" title="Nombre de cartes" max={30} min={1} defaultValue={5} {...register('numberOfCards', { valueAsNumber: true })} />
         </div>
         <ButtonUpload 
           setValue={setValue} 
@@ -114,8 +117,8 @@ export default function Form() {
         />
         <div className="w-full flex flex-col items-start justify-start">
           {/* <Checkbox label="Générer un CSV ?" handleChangeCheckboxAction={handleChangeCheckboxCsv}/> */}
-          <Checkbox label="Voulez vous inclure les romanji ?" handleChangeCheckboxAction={handleChangeCheckboxRomanji}/>
-          <Checkbox label="Voulez vous inclure les kanji ?" handleChangeCheckboxAction={handleChangeCheckboxKanji} />
+          <Checkbox label="romanji" title="Voulez vous inclure les romanji ?" handleChangeCheckboxAction={handleChangeCheckboxRomanji}/>
+          <Checkbox label="kanji" title="Voulez vous inclure les kanji ?" handleChangeCheckboxAction={handleChangeCheckboxKanji} />
         </div>
         <button 
           type='submit' 

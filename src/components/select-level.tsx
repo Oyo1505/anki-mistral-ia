@@ -4,9 +4,9 @@ import clsx from "clsx";
 interface SelectLevelProps {
   className?: string;
   //eslint-disable-next-line no-unused-vars
-  handleChangeSelectLevel: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  handleChangeSelectLevelAction: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
-export default function SelectLevel({className, handleChangeSelectLevel}: SelectLevelProps) {
+export default function SelectLevel({className, handleChangeSelectLevelAction}: SelectLevelProps) {
   const levels = [
     { value: "N1-Avancé", label: "N1 - Avancé (Maîtrise complète)" },
     { value: "N2-Pré-avancé", label: "N2 - Pré-avancé (Niveau courant)" },
@@ -17,7 +17,7 @@ export default function SelectLevel({className, handleChangeSelectLevel}: Select
   return (
   <div className={clsx("flex flex-col items-start justify-start", className)}>
     <label htmlFor="level">Niveau</label>
-    <select className="w-full h-full p-2 rounded-md border-2 border-gray-300" onChange={handleChangeSelectLevel}>
+    <select id="level" className="w-full h-full p-2 rounded-md border-2 border-gray-300" onChange={handleChangeSelectLevelAction}>
       {levels.reverse().map((level) => (
         <option key={level.value} value={level.value}>
           {level.label}
