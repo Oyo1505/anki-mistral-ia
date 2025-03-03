@@ -5,7 +5,7 @@ import SelectLevel from './select-level';
 import { useForm } from 'react-hook-form';
 import { FormDataSchema, FormDataSchemaType } from '@/schema/form-schema';
 import Checkbox from './checkbox';
-import { generateAnswer } from '@/actions/mistral.action';
+import {  generateAnswer } from '@/actions/mistral.action';
 import { CSVLink } from "react-csv";
 import { useState, useTransition } from 'react';
 import Input from './input';
@@ -31,7 +31,7 @@ export default function Form() {
     resolver: zodResolver(FormDataSchema)
   });
   const files = watch('files');
-  console.log(errors);
+
   const onSubmit = async (data: FormDataSchemaType) => {
     try {   
       startTransition(async () => {
@@ -42,6 +42,13 @@ export default function Form() {
             const convertResult = await convert(url);
             if (convertResult) {
               res = convertResult;
+              setValue('textFromPdf', res, { shouldValidate: true });
+            } 
+          }
+          if (files?.[0] && (files[0].type === 'application/pdf')) {
+            const convertResult = await convertPdf(files[0]);
+            if (convertResult) {
+              res = convertResult; 
               setValue('textFromPdf', res, { shouldValidate: true });
             }
           }
@@ -73,7 +80,27 @@ export default function Form() {
       return copyTexts.join('\n');
     }
   };
- 
+
+  const convertPdf = async (file: File) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+  
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+      if (!response.ok) {
+        throw new Error('Erreur lors de l\'upload');
+      }
+      const data = await response.json();
+      return data.text;
+    } catch (error) {
+      console.error("Erreur lors de l'extraction du PDF:", error);
+      return '';
+    }
+  };
+
   const handleChangeSelectLevel = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setValue('level', e.target.value);
   }
@@ -94,6 +121,7 @@ export default function Form() {
 
   return (
     <div className='w-full flex flex-col items-start justify-start gap-4'>
+
       <form className="w-full flex flex-col items-start justify-start gap-4" onSubmit={handleSubmit(onSubmit)}>
         <TextArea register={register} errors={errors} id="text" />
         <div className='w-full grid grid-cols-1 md:grid-cols-2 gap-2'>
@@ -116,8 +144,8 @@ export default function Form() {
         />
         <div className="w-full flex flex-col items-start justify-start">
           {/* <Checkbox label="Générer un CSV ?" handleChangeCheckboxAction={handleChangeCheckboxCsv}/> */}
-          <Checkbox label="romanji" title="Voulez vous inclure les romanji ?" handleChangeCheckboxAction={handleChangeCheckboxRomanji}/>
-          <Checkbox label="kanji" title="Voulez vous inclure les kanji ?" handleChangeCheckboxAction={handleChangeCheckboxKanji} />
+          <Checkbox label="romanji" title="Voulez-vous inclure les romanji ?" handleChangeCheckboxAction={handleChangeCheckboxRomanji}/>
+          <Checkbox label="kanji" title="Voulez-vous inclure les kanji ?" handleChangeCheckboxAction={handleChangeCheckboxKanji} />
         </div>
         <button 
           type='submit' 

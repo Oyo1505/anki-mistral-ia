@@ -3,12 +3,11 @@ import { FormDataSchemaType } from "@/schema/form-schema";
 import { CardSchema } from "@/schema/card.schema";
 import { mistral } from "@/lib/mistral";
 
-
 const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 5, textFromPdf}: {text?: string, level: string, romanji: boolean, kanji: boolean, numberOfCards: number, textFromPdf?: string }) => {
   try {
-
+ 
     const prompt = `
-    ${textFromPdf && textFromPdf.length > 0 && `Voici le texte des fichier pdf à partir duquel tu dois générer les cartes anki : ${textFromPdf}.`}.
+    ${textFromPdf && textFromPdf.length > 0 && `Voici le texte des fichier pdf ou d'une image à partir duquel tu dois générer les cartes anki : ${textFromPdf}.`}.
     ${text && text.length > 0 && `Voici le texte venant du textearea du formulaire à partir duquel tu dois générer les cartes anki ou des instructions : ${text}.`}.
     ${romanji ? 'avec les romanji' : 'ne pas utiliser les romanji si il y en a supprimer les romanji'} ${kanji ? 'et les kanji si il y en a' : 'ne pas utiliser les kanji si il y en a les mettre en hiragana'}
     `
@@ -41,6 +40,7 @@ const generateAnswer = async (data: FormDataSchemaType) => {
 
   try { 
     const {text, level, numberOfCards, romanji, kanji, textFromPdf} = data;
+    console.log('textFromPdf', textFromPdf);
     const res = await generateCardsAnki({text, level, numberOfCards, romanji, kanji, textFromPdf}); 
    return res;
   } catch (error) { 

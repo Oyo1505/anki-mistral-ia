@@ -1,6 +1,7 @@
+
 import { pdfToPng } from 'pdf-to-png-converter';
 import Tesseract from 'tesseract.js';
-import fs from 'fs';
+import fs from 'fs-extra';
 
 const extractTextWithOCR = async (filePath: string) => {
   try {
@@ -16,7 +17,7 @@ const extractTextWithOCR = async (filePath: string) => {
       pngPages.map(async (page) => {
         console.log(`📝 OCR en cours sur ${page.path}...`);
         const { data: { text } } = await Tesseract.recognize(page.path, "eng+fra");
-        fs.unlinkSync(page.path);
+        await fs.unlink(page.path);
         return text.trim();
       })
     );
