@@ -10,19 +10,12 @@ export const FormDataSchema = z.object({
   .refine(
     files => !files || files.every(file => file.size >= 90000),
     "Les fichiers doivent faire au moins 90 KB pour une bonne qualité d'OCR"
-  ),
+  ).optional(),
   textFromPdf: z.string().optional(),
-  text: z.string().nonempty('Le texte ne peut pas être vide'),
+  text: z.string().optional(),
   csv: z.boolean().optional(),
   romanji: z.boolean().optional().default(false),
   kanji: z.boolean().optional().default(false)
-}).refine(
-  data => (data.text && data.text.trim() !== '') || (data.files && data.files.length > 0), 
-  {
-    message: "Vous devez fournir soit du texte, soit au moins un fichier",
-    path: ["text"]
-  }
-);
-
+})
 
 export type FormDataSchemaType = z.infer<typeof FormDataSchema>;

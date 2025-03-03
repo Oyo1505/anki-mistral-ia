@@ -36,24 +36,22 @@ export default function Form() {
     try {   
       startTransition(async () => {
         try {
-          if (files?.[0]) {
+          let res = '';
+          if (files?.[0] && files?.[0]?.type === 'image/jpeg' || files?.[0]?.type === 'image/png' || files?.[0]?.type === 'image/jpg') {
             const url = URL.createObjectURL(files[0]);
-            const res = await convert(url);
-  
-            if (res && res.length > 0) {
-              setValue('textFromPdf', res, { shouldValidate: true });
-              
-              const answer = await generateAnswer({
-                ...data,
-                textFromPdf: res 
-              });
-              
-              if (answer) {
-                setCsvData(answer);
-                reset();
-              }
-            }
+            res = await convert(url);
+            setValue('textFromPdf', res, { shouldValidate: true }); 
           }
+            const answer = await generateAnswer({
+              ...data,
+              textFromPdf: res 
+            });
+            
+            if (answer) {
+              setCsvData(answer);
+              reset();
+            }
+          
         } catch (error) {
           console.error("Erreur pendant la génération:", error);
         }
@@ -77,9 +75,9 @@ export default function Form() {
     setValue('level', e.target.value);
   }
 
-  const handleChangeCheckboxCsv = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue('csv', e.target.checked);
-  }
+  // const handleChangeCheckboxCsv = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setValue('csv', e.target.checked);
+  // }
 
   const handleChangeCheckboxRomanji = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue('romanji', e.target.checked);
@@ -88,7 +86,9 @@ export default function Form() {
   const handleChangeCheckboxKanji = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue('kanji', e.target.checked);
   }
-  
+  const text = watch('text');
+  const isSubmitDisabled = (!text || text.trim() === '') && (!files || files.length === 0);
+
   return (
     <div className='w-full flex flex-col items-start justify-start gap-4'>
       <form className="w-full flex flex-col items-start justify-start gap-4" onSubmit={handleSubmit(onSubmit)}>
@@ -113,21 +113,23 @@ export default function Form() {
         })}
         />
         <div className="w-full flex flex-col items-start justify-start">
-          <Checkbox label="Générer un CSV ?" handleChangeCheckbox={handleChangeCheckboxCsv}/>
-          <Checkbox label="Voulez vous inclure les romanji ?" handleChangeCheckbox={handleChangeCheckboxRomanji}/>
-          <Checkbox label="Voulez vous inclure les kanji ?" handleChangeCheckbox={handleChangeCheckboxKanji} />
+          {/* <Checkbox label="Générer un CSV ?" handleChangeCheckboxAction={handleChangeCheckboxCsv}/> */}
+          <Checkbox label="Voulez vous inclure les romanji ?" handleChangeCheckboxAction={handleChangeCheckboxRomanji}/>
+          <Checkbox label="Voulez vous inclure les kanji ?" handleChangeCheckboxAction={handleChangeCheckboxKanji} />
         </div>
         <button 
           type='submit' 
           className={`w-full p-2 rounded-md text-white font-bold ${
-            isPending ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 cursor-pointer'
+            isPending ? 'bg-gray-400 cursor-not-allowed' : 
+            isSubmitDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 cursor-pointer'
           }`} 
-          disabled={isPending}
+          disabled={isPending || isSubmitDisabled}
         >
-        {isPending ? 'Génération en cours...' : 'Générer'}
+        {isPending ? 'Génération en cours...' : 
+         isSubmitDisabled ? 'Veuillez entrer du texte ou ajouter une image' : 'Générer'}
       </button>
       </form>
-      {csvData  && csvData.length > 0 && <CSVLink className='w-full p-2 rounded-md border-2 border-gray-300 text-center cursor-pointer font-bold' data={csvData}>Télécharger le fichier CSV</CSVLink>}
+      {csvData  && csvData.length > 0 &&  !isPending && <CSVLink className='w-full p-2 rounded-md border-2 border-gray-300 text-center cursor-pointer font-bold' data={csvData}>Télécharger le fichier CSV</CSVLink>}
     </div>
   )
 }
