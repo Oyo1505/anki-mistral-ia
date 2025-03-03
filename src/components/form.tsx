@@ -23,7 +23,7 @@ export default function Form() {
       romanji: false,
       kanji: false,
       numberOfCards: 5,
-      files: undefined,
+      files: [],
       textFromPdf: undefined,
       text: '',
       csv: false
@@ -31,7 +31,7 @@ export default function Form() {
     resolver: zodResolver(FormDataSchema)
   });
   const files = watch('files');
-
+  console.log(errors);
   const onSubmit = async (data: FormDataSchemaType) => {
     try {   
       startTransition(async () => {
@@ -104,8 +104,7 @@ export default function Form() {
           setValue={setValue} 
           errors={errors}
           files={files}
-          {...register('files', { 
-          required: false,
+          {...register('files', {
           validate: (fileList: File[] | undefined) => {
             if (!fileList) return true;
             if (fileList.length > 3) {
@@ -133,6 +132,10 @@ export default function Form() {
       </button>
       </form>
       {csvData  && csvData.length > 0 &&  !isPending && <CSVLink className='w-full p-2 rounded-md border-2 border-gray-300 text-center cursor-pointer font-bold' data={csvData}>Télécharger le fichier CSV</CSVLink>}
+      <div className='w-full flex items-start justify-between gap-2'>
+        <a className='text-sm border-2 bg-blue-500 text-white  rounded-md p-2' href="https://relieved-circle-d57.notion.site/Tuto-cr-ation-carte-basique-Anki-avec-ChatGPT-19a6823eb75b80e7b564dbc8cf73762d" target="_blank" rel="noopener noreferrer">Tutoriel pour importer dans Anki</a>
+        <a className='text-sm border-2 bg-blue-500 text-white rounded-md p-2' href="https://apps.ankiweb.net/" target="_blank" rel="noopener noreferrer">Telecharger Anki</a>
+      </div>
     </div>
   )
 }
