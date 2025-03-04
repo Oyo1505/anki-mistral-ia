@@ -16,6 +16,13 @@ export default function Form() {
 
   const [csvData, setCsvData] = useState<string[][]>([]);
   const [isPending, startTransition] = useTransition();
+  const levels = [
+    { value: "N1 Avancé", label: "N1 - Avancé (Maîtrise complète)" },
+    { value: "N2 Pré-avancé", label: "N2 - Pré-avancé (Niveau courant)" },
+    { value: "N3 Intermédiaire", label: "N3 - Intermédiaire" },
+    { value: "N4 Pré-intermédiaire", label: "N4 - Pré-intermédiaire (Basique)" },
+    { value: "N5 Débutant", label: "N5 - Débutant (Élémentaire)" }
+  ]
 
   const {register, handleSubmit, setValue, watch, formState: { errors }, reset } = useForm({
     defaultValues: {
@@ -116,6 +123,7 @@ export default function Form() {
   const handleChangeCheckboxKanji = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue('kanji', e.target.checked);
   }
+
   const text = watch('text');
   const isSubmitDisabled = (!text || text.trim() === '') && (!files || files.length === 0);
 
@@ -125,7 +133,7 @@ export default function Form() {
       <form className="w-full flex flex-col items-start justify-start gap-4" onSubmit={handleSubmit(onSubmit)}>
         <TextArea register={register} errors={errors} id="text" />
         <div className='w-full grid grid-cols-1 md:grid-cols-2 gap-2'>
-          <SelectLevel className='w-full' handleChangeSelectLevelAction={handleChangeSelectLevel} />
+          <SelectLevel className='w-full' handleChangeSelectLevelAction={handleChangeSelectLevel} levels={levels.reverse()} />
           <Input className='w-full' type="number" label="cards" title="Nombre de cartes" max={30} min={1} defaultValue={5} {...register('numberOfCards', { valueAsNumber: true })} />
         </div>
         <ButtonUpload 
@@ -159,7 +167,11 @@ export default function Form() {
          isSubmitDisabled ? 'Veuillez entrer du texte ou ajouter une image' : 'Générer'}
       </button>
       </form>
-      {csvData  && csvData.length > 0 &&  !isPending && <CSVLink className='w-full p-2 rounded-md border-2 border-gray-300 text-center cursor-pointer font-bold' data={csvData}>Télécharger le fichier CSV</CSVLink>}
+      {csvData  && csvData.length > 0 &&  !isPending && 
+      <>
+      <CSVLink className='w-full p-2 rounded-md border-2 border-gray-300 text-center cursor-pointer font-bold' data={csvData}>Télécharger le fichier CSV</CSVLink>
+      </>
+      }
       <div className='w-full flex items-start justify-between gap-2'>
         <a className='text-sm border-2 bg-blue-500 text-white  rounded-md p-2' href="https://relieved-circle-d57.notion.site/Tuto-cr-ation-carte-basique-Anki-avec-ChatGPT-19a6823eb75b80e7b564dbc8cf73762d" target="_blank" rel="noopener noreferrer">Tutoriel pour importer dans Anki</a>
         <a className='text-sm border-2 bg-blue-500 text-white rounded-md p-2' href="https://apps.ankiweb.net/" target="_blank" rel="noopener noreferrer">Telecharger Anki</a>
