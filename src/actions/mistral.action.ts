@@ -3,7 +3,7 @@ import { FormDataSchemaType } from "@/schema/form-schema";
 import { CardSchema } from "@/schema/card.schema";
 import { mistral } from "@/lib/mistral";
 
-const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 5, textFromPdf}: {text?: string, level: string, romanji: boolean, kanji: boolean, numberOfCards: number, textFromPdf?: string }) => {
+const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 5, textFromPdf}: {text?: string, level: string, romanji: boolean, kanji: boolean, numberOfCards: number, textFromPdf?: string}) => {
   try {
  
     const prompt = `
@@ -40,7 +40,6 @@ const generateAnswer = async (data: FormDataSchemaType) => {
 
   try { 
     const {text, level, numberOfCards, romanji, kanji, textFromPdf} = data;
-    console.log('textFromPdf', textFromPdf);
     const res = await generateCardsAnki({text, level, numberOfCards, romanji, kanji, textFromPdf}); 
    return res;
   } catch (error) { 
