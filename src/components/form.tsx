@@ -33,7 +33,8 @@ export default function Form() {
       files: [],
       textFromPdf: undefined,
       text: '',
-      csv: false
+      csv: false,
+      japanese: false
     },
     resolver: zodResolver(FormDataSchema)
   });
@@ -123,6 +124,9 @@ export default function Form() {
   const handleChangeCheckboxKanji = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue('kanji', e.target.checked);
   }
+  const handleChangeCheckboxJapanese = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue('japanese', e.target.checked);
+  }
 
   const text = watch('text');
   const isSubmitDisabled = (!text || text.trim() === '') && (!files || files.length === 0);
@@ -154,6 +158,7 @@ export default function Form() {
           {/* <Checkbox label="Générer un CSV ?" handleChangeCheckboxAction={handleChangeCheckboxCsv}/> */}
           <Checkbox label="romanji" title="Voulez-vous inclure les romanji ?" handleChangeCheckboxAction={handleChangeCheckboxRomanji}/>
           <Checkbox label="kanji" title="Voulez-vous inclure les kanji ?" handleChangeCheckboxAction={handleChangeCheckboxKanji} />
+          <Checkbox label="japonais" title="Voulez-vous les énoncés/questions/réponses en japonais ?" handleChangeCheckboxAction={handleChangeCheckboxJapanese} />
         </div>
         <button 
           type='submit' 
