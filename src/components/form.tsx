@@ -73,7 +73,7 @@ export default function Form() {
             
             if (answer) {
               setCsvData(answer);
-              toast.success("Génération terminée");
+              toast.success("Génération terminée", { autoClose: 3000 });
               reset();
             }
           
@@ -146,6 +146,7 @@ export default function Form() {
   const csvDataSuccess = csvData  && csvData.length > 0 &&  !isPending;
 
   return (
+    <>
     <div className='w-full flex flex-col md:flex-row  items-start justify-center gap-4 transition-all duration-300 ease-in-out'>
     <div className='w-full border-2 md:w-1/2  2xl:w-1/4 p-4 border-white shadow-zinc-600 shadow-2xl rounded-md flex flex-col items-start justify-start gap-4 bg-white'>
       <h1 className="text-xl w-full text-center font-bold">Générateur de cartes Anki (Basique)</h1>
@@ -153,7 +154,7 @@ export default function Form() {
         <TextArea register={register} errors={errors} id="text" />
         <div className='w-full grid grid-cols-1 md:grid-cols-2 gap-2'>
           <SelectLevel className='w-full' handleChangeSelectLevelAction={handleChangeSelectLevel} levels={levels.reverse()} />
-          <Input className='w-full' type="number" label="cards" title="Nombre de cartes" max={30} min={1} defaultValue={5} {...register('numberOfCards', { valueAsNumber: true })} />
+          <Input className='w-full' type="number" label="cards" title="Nombre de cartes (max 15)" max={15} min={1} defaultValue={5} {...register('numberOfCards', { valueAsNumber: true })} />
         </div>
         <ButtonUpload 
           setValueAction={setValue} 
@@ -188,7 +189,6 @@ export default function Form() {
       </form>
       {csvDataSuccess && 
       <>
-      <CSVLink className='w-full p-2 rounded-md border-2 border-gray-300 text-center cursor-pointer font-bold' data={csvData}>Télécharger le fichier CSV</CSVLink>
       <button className='w-full p-2 rounded-md border-2 border-gray-300 text-center cursor-pointer font-bold' onClick={() => setIsCsvVisible(!isCsvVisible)}>{isCsvVisible ? 'Masquer les cartes' : 'Voir les cartes'}</button>
       </>
       }
@@ -197,7 +197,14 @@ export default function Form() {
         <a className='text-sm text-center border-2 bg-blue-500 text-white rounded-md p-2' href="https://apps.ankiweb.net/" target="_blank" rel="noopener noreferrer">Télécharger Anki</a>
       </div>
     </div>
+   
      {isCsvVisible && csvDataSuccess && <CsvViewer csvFile={csvData} />}
     </div>
+    {csvDataSuccess && 
+          <>
+          <CSVLink className='fixed bottom-2 right-2 w-auto z-50  p-3 bg-green-500 text-white font-semibold rounded-md text-center cursor-pointer' data={csvData}>Télécharger le fichier CSV</CSVLink>
+          </>
+    }
+      </>
   )
 }
