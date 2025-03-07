@@ -12,12 +12,13 @@ import Input from './input';
 import ButtonUpload from './button-upload';
 import extractTextFromImage from '@/utils/extract-text-from-image';
 import { toast } from 'react-toastify';
+import CsvViewer from './csv-viewer';
 
 export default function Form() {
 
   const [csvData, setCsvData] = useState<string[][]>([]);
   const [isPending, startTransition] = useTransition();
-
+  const [isCsvVisible, setIsCsvVisible] = useState(false);
   const levels = [
     { value: "N1 Avancé", label: "N1 - Avancé (Maîtrise complète)" },
     { value: "N2 Pré-avancé", label: "N2 - Pré-avancé (Niveau courant)" },
@@ -129,10 +130,6 @@ export default function Form() {
     setValue('level', e.target.value);
   }
 
-  // const handleChangeCheckboxCsv = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setValue('csv', e.target.checked);
-  // }
-
   const handleChangeCheckboxRomanji = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue('romanji', e.target.checked);
   }
@@ -147,9 +144,10 @@ export default function Form() {
   const text = watch('text');
   const isSubmitDisabled = (!text || text.trim() === '') && (!files || files.length === 0);
   const csvDataSuccess = csvData  && csvData.length > 0 &&  !isPending;
-  
+
   return (
-    <div className='w-full border-2 md:w-1/2 lg:w-1/3 2xl:w-1/4 p-4 border-white shadow-zinc-600 shadow-2xl rounded-md flex flex-col items-start justify-start gap-4 bg-white'>
+    <div className='w-full flex flex-col md:flex-row  items-start justify-center gap-4 transition-all duration-300 ease-in-out'>
+    <div className='w-full border-2 md:w-1/2  2xl:w-1/4 p-4 border-white shadow-zinc-600 shadow-2xl rounded-md flex flex-col items-start justify-start gap-4 bg-white'>
       <h1 className="text-xl w-full text-center font-bold">Générateur de cartes Anki (Basique)</h1>
       <form className="w-full flex flex-col items-start justify-start gap-4" onSubmit={handleSubmit(onSubmit)}>
         <TextArea register={register} errors={errors} id="text" />
@@ -158,7 +156,7 @@ export default function Form() {
           <Input className='w-full' type="number" label="cards" title="Nombre de cartes" max={30} min={1} defaultValue={5} {...register('numberOfCards', { valueAsNumber: true })} />
         </div>
         <ButtonUpload 
-          setValue={setValue} 
+          setValueAction={setValue} 
           errors={errors}
           files={files}
           {...register('files', {
@@ -172,7 +170,6 @@ export default function Form() {
         })}
         />
         <div className="w-full flex flex-col items-start justify-start">
-          {/* <Checkbox label="Générer un CSV ?" handleChangeCheckboxAction={handleChangeCheckboxCsv}/> */}
           <Checkbox label="romanji" title="Voulez-vous inclure les romanji ?" handleChangeCheckboxAction={handleChangeCheckboxRomanji}/>
           <Checkbox label="kanji" title="Voulez-vous inclure les kanji ?" handleChangeCheckboxAction={handleChangeCheckboxKanji} />
           <Checkbox label="japonais" title="Tout en japonais (énoncés/questions/réponses) ?" handleChangeCheckboxAction={handleChangeCheckboxJapanese} />
@@ -192,12 +189,15 @@ export default function Form() {
       {csvDataSuccess && 
       <>
       <CSVLink className='w-full p-2 rounded-md border-2 border-gray-300 text-center cursor-pointer font-bold' data={csvData}>Télécharger le fichier CSV</CSVLink>
+      <button className='w-full p-2 rounded-md border-2 border-gray-300 text-center cursor-pointer font-bold' onClick={() => setIsCsvVisible(!isCsvVisible)}>{isCsvVisible ? 'Masquer les cartes' : 'Voir les cartes'}</button>
       </>
       }
       <div className='w-full flex items-start justify-between gap-2'>
         <a className='text-sm text-center border-2 bg-blue-500 text-white  rounded-md p-2' href="https://relieved-circle-d57.notion.site/Tuto-cr-ation-carte-basique-Anki-avec-ChatGPT-19a6823eb75b80e7b564dbc8cf73762d" target="_blank" rel="noopener noreferrer">Tutoriel pour importer dans Anki</a>
         <a className='text-sm text-center border-2 bg-blue-500 text-white rounded-md p-2' href="https://apps.ankiweb.net/" target="_blank" rel="noopener noreferrer">Télécharger Anki</a>
       </div>
+    </div>
+     {isCsvVisible && csvDataSuccess && <CsvViewer csvFile={csvData} />}
     </div>
   )
 }
