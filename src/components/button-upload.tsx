@@ -9,12 +9,12 @@ interface ButtonUploadProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   files: File[] | undefined;
   errors: FieldErrors<FormDataSchemaType>;
-  setValue: UseFormSetValue<FormDataSchemaType>;
+  setValueAction: UseFormSetValue<FormDataSchemaType>;
 }
-export default function ButtonUpload({accept = ".pdf, .jpg, .jpeg, .png", multiple = true, files, errors, setValue, ...props }: ButtonUploadProps) {
+export default function ButtonUpload({accept = ".pdf, .jpg, .jpeg, .png", multiple = true, files, errors, setValueAction, ...props }: ButtonUploadProps) {
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
-      setValue('files', Array.from(e.target.files));
+      setValueAction('files', Array.from(e.target.files));
     }
   }
   return (
