@@ -1,8 +1,7 @@
-
-import worker from "@/lib/tesseract";
-
+import { createWorker } from "tesseract.js";
 
 const extractTextFromImage = async (img: string) => {
+  const worker = await createWorker("jpn+fra");
 
   const ret = await worker.recognize(img);
   const text = ret.data.text;
