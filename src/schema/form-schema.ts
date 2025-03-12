@@ -12,7 +12,7 @@ export const FormDataSchema = z.object({
     "Les fichiers doivent faire au moins 90 KB pour une bonne qualité d'OCR"
   ).optional(),
   textFromPdf: z.string().optional(),
-  text: z.string().optional(),
+  text: z.string().max(5000, 'Le texte ne doit pas dépasser 5000 caractères').optional(),
   csv: z.boolean().optional(),
   romanji: z.boolean().optional().default(false),
   kanji: z.boolean().optional().default(false),
