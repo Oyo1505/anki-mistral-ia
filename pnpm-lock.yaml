@@ -17,18 +17,9 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
-      fs-extra:
-        specifier: ^11.3.0
-        version: 11.3.0
       next:
         specifier: 15.2.0
         version: 15.2.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      pdf-to-png-converter:
-        specifier: ^3.6.5
-        version: 3.6.5
-      pdf2json:
-        specifier: ^3.1.5
-        version: 3.1.5
       react-csv:
         specifier: ^2.2.2
         version: 2.2.2
@@ -38,12 +29,6 @@ importers:
       react-toastify:
         specifier: ^11.0.5
         version: 11.0.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      tesseract.js:
-        specifier: ^6.0.0
-        version: 6.0.0
-      uuid:
-        specifier: ^11.1.0
-        version: 11.1.0
       zod:
         specifier: ^3.24.2
         version: 3.24.2
@@ -263,70 +248,6 @@ packages:
     resolution: {integrity: sha512-Ie0EH4dAO11MEXR5N2kS2cgr+ycTWvqN/yP9bKrtmUEqjdcF4i7DLxtrFMUw5l2dOPhrkX93G4SziFiATPWu2w==}
     peerDependencies:
       zod: '>= 3'
-
-  '@napi-rs/canvas-android-arm64@0.1.65':
-    resolution: {integrity: sha512-ZYwqFYEKcT5Zr8lbiaJNJj/poLaeK2TncolY914r+gD2TJNeP7ZqvE7A2SX/1C9MB4E3DQEwm3YhL3WEf0x3MQ==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [android]
-
-  '@napi-rs/canvas-darwin-arm64@0.1.65':
-    resolution: {integrity: sha512-Pg1pfiJEyDIsX+V0QaJPRWvXbw5zmWAk3bivFCvt/5pwZb37/sT6E/RqPHT9NnqpDyKW6SriwY9ypjljysUA1Q==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [darwin]
-
-  '@napi-rs/canvas-darwin-x64@0.1.65':
-    resolution: {integrity: sha512-3Tr+/HjdJN7Z/VKIcsxV2DvDIibZCExgfYTgljCkUSFuoI7iNkOE6Dc1Q6j212EB9PeO8KmfrViBqHYT6IwWkA==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [darwin]
-
-  '@napi-rs/canvas-linux-arm-gnueabihf@0.1.65':
-    resolution: {integrity: sha512-3KP+dYObH7CVkZMZWwk1WX9jRjL+EKdQtD43H8MOI+illf+dwqLlecdQ4d9bQRIxELKJ8dyPWY4fOp/Ngufrdg==}
-    engines: {node: '>= 10'}
-    cpu: [arm]
-    os: [linux]
-
-  '@napi-rs/canvas-linux-arm64-gnu@0.1.65':
-    resolution: {integrity: sha512-Ka3StKz7Dq7kjTF3nNJCq43UN/VlANS7qGE3dWkn1d+tQNsCRy/wRmyt1TUFzIjRqcTFMQNRbgYq84+53UBA0A==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [linux]
-
-  '@napi-rs/canvas-linux-arm64-musl@0.1.65':
-    resolution: {integrity: sha512-O4xMASm2JrmqYoiDyxVWi+z5C14H+oVEag2rZ5iIA67dhWqYZB+iO7wCFpBYRj31JPBR29FOsu6X9zL+DwBFdw==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [linux]
-
-  '@napi-rs/canvas-linux-riscv64-gnu@0.1.65':
-    resolution: {integrity: sha512-dblWDaA59ZU8bPbkfM+riSke7sFbNZ70LEevUdI5rgiFEUzYUQlU34gSBzemTACj5rCWt1BYeu0GfkLSjNMBSw==}
-    engines: {node: '>= 10'}
-    cpu: [riscv64]
-    os: [linux]
-
-  '@napi-rs/canvas-linux-x64-gnu@0.1.65':
-    resolution: {integrity: sha512-wsp+atutw13OJXGU3DDkdngtBDoEg01IuK5xMe0L6VFPV8maGkh17CXze078OD5QJOc6kFyw3DDscMLOPF8+oA==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [linux]
-
-  '@napi-rs/canvas-linux-x64-musl@0.1.65':
-    resolution: {integrity: sha512-odX+nN+IozWzhdj31INcHz3Iy9+EckNw+VqsZcaUxZOTu7/3FmktRNI6aC1qe5minZNv1m05YOS1FVf7fvmjlA==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [linux]
-
-  '@napi-rs/canvas-win32-x64-msvc@0.1.65':
-    resolution: {integrity: sha512-RZQX3luWnlNWgdMnLMQ1hyfQraeAn9lnxWWVCHuUM4tAWEV8UDdeb7cMwmJW7eyt8kAosmjeHt3cylQMHOxGFg==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [win32]
-
-  '@napi-rs/canvas@0.1.65':
-    resolution: {integrity: sha512-YcFhXQcp+b2d38zFOJNbpyPHnIL7KAEkhJQ+UeeKI5IpE9B8Cpf/M6RiHPQXSsSqnYbrfFylnW49dyh2oeSblQ==}
-    engines: {node: '>= 10'}
 
   '@napi-rs/wasm-runtime@0.2.7':
     resolution: {integrity: sha512-5yximcFK5FNompXfJFoWanu5l8v1hNGqNHh9du1xETp9HWk/B/PzvchX55WYOPaIeNglG8++68AAiauBAtbnzw==}
@@ -1030,10 +951,6 @@ packages:
     resolution: {integrity: sha512-dKx12eRCVIzqCxFGplyFKJMPvLEWgmNtUrpTiJIR5u97zEhRG8ySrtboPHZXx7daLxQVrl643cTzbab2tkQjxg==}
     engines: {node: '>= 0.4'}
 
-  fs-extra@11.3.0:
-    resolution: {integrity: sha512-Z4XaCL6dUDHfP/jT25jJKMmtxvuwbkrD1vNSMFlo9lNLY2c5FHYSQgHPRZUjAB26TpDEoW9HCOgplrdbaPV/ew==}
-    engines: {node: '>=14.14'}
-
   function-bind@1.1.2:
     resolution: {integrity: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==}
 
@@ -1270,9 +1187,6 @@ packages:
     resolution: {integrity: sha512-g1MWMLBiz8FKi1e4w0UyVL3w+iJceWAFBAaBnnGKOpNa5f8TLktkbre1+s6oICydWAm+HRUGTmI+//xv2hvXYA==}
     hasBin: true
 
-  jsonfile@6.1.0:
-    resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
-
   jsx-ast-utils@3.3.5:
     resolution: {integrity: sha512-ZZow9HBI5O6EPgSJLUb8n2NKgmVWTwCvHGwFuJlMjvLFqlGG6pjirPhtdsseaLZjSibD8eegzmYpUZwoIlj2cQ==}
     engines: {node: '>=4.0'}
@@ -1495,21 +1409,6 @@ packages:
 
   path-parse@1.0.7:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
-
-  pdf-to-png-converter@3.6.5:
-    resolution: {integrity: sha512-fRsmx3qhCEXEQ+bzKWUe7Jtjbz4H/DeZMCuk+b02zOa9U6pMBnIirNW8hrU1A3SsqRsQ5QGuAjnucmgkYRNyvQ==}
-    engines: {node: '>=20'}
-
-  pdf2json@3.1.5:
-    resolution: {integrity: sha512-djZPInDLNuJU+o6GaJNvcoUh6MtUAx3IYTQCTxywHzeg1jC5YWgz/XzlgmduxxBblpMTqY2fjcWwvyRdGPTyrQ==}
-    engines: {node: '>=20.18.0', npm: '>=10.8.2'}
-    hasBin: true
-    bundledDependencies:
-      - '@xmldom/xmldom'
-
-  pdfjs-dist@4.10.38:
-    resolution: {integrity: sha512-/Y3fcFrXEAsMjJXeL9J8+ZG9U01LbuWaYypvDW2ycW1jL269L3js3DVBjDJ0Up9Np1uqDXsDrRihHANhZOlwdQ==}
-    engines: {node: '>=20'}
 
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
@@ -1810,16 +1709,8 @@ packages:
   undici-types@6.19.8:
     resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
 
-  universalify@2.0.1:
-    resolution: {integrity: sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw==}
-    engines: {node: '>= 10.0.0'}
-
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
-
-  uuid@11.1.0:
-    resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
-    hasBin: true
 
   wasm-feature-detect@1.8.0:
     resolution: {integrity: sha512-zksaLKM2fVlnB5jQQDqKXXwYHLQUVH9es+5TOOHwGOVJOCeRBCiPjwSg+3tN2AdTCzjgli4jijCH290kXb/zWQ==}
@@ -2031,49 +1922,6 @@ snapshots:
     dependencies:
       zod: 3.24.2
       zod-to-json-schema: 3.24.4(zod@3.24.2)
-
-  '@napi-rs/canvas-android-arm64@0.1.65':
-    optional: true
-
-  '@napi-rs/canvas-darwin-arm64@0.1.65':
-    optional: true
-
-  '@napi-rs/canvas-darwin-x64@0.1.65':
-    optional: true
-
-  '@napi-rs/canvas-linux-arm-gnueabihf@0.1.65':
-    optional: true
-
-  '@napi-rs/canvas-linux-arm64-gnu@0.1.65':
-    optional: true
-
-  '@napi-rs/canvas-linux-arm64-musl@0.1.65':
-    optional: true
-
-  '@napi-rs/canvas-linux-riscv64-gnu@0.1.65':
-    optional: true
-
-  '@napi-rs/canvas-linux-x64-gnu@0.1.65':
-    optional: true
-
-  '@napi-rs/canvas-linux-x64-musl@0.1.65':
-    optional: true
-
-  '@napi-rs/canvas-win32-x64-msvc@0.1.65':
-    optional: true
-
-  '@napi-rs/canvas@0.1.65':
-    optionalDependencies:
-      '@napi-rs/canvas-android-arm64': 0.1.65
-      '@napi-rs/canvas-darwin-arm64': 0.1.65
-      '@napi-rs/canvas-darwin-x64': 0.1.65
-      '@napi-rs/canvas-linux-arm-gnueabihf': 0.1.65
-      '@napi-rs/canvas-linux-arm64-gnu': 0.1.65
-      '@napi-rs/canvas-linux-arm64-musl': 0.1.65
-      '@napi-rs/canvas-linux-riscv64-gnu': 0.1.65
-      '@napi-rs/canvas-linux-x64-gnu': 0.1.65
-      '@napi-rs/canvas-linux-x64-musl': 0.1.65
-      '@napi-rs/canvas-win32-x64-msvc': 0.1.65
 
   '@napi-rs/wasm-runtime@0.2.7':
     dependencies:
@@ -2926,12 +2774,6 @@ snapshots:
     dependencies:
       is-callable: 1.2.7
 
-  fs-extra@11.3.0:
-    dependencies:
-      graceful-fs: 4.2.11
-      jsonfile: 6.1.0
-      universalify: 2.0.1
-
   function-bind@1.1.2: {}
 
   function.prototype.name@1.1.8:
@@ -3178,12 +3020,6 @@ snapshots:
     dependencies:
       minimist: 1.2.8
 
-  jsonfile@6.1.0:
-    dependencies:
-      universalify: 2.0.1
-    optionalDependencies:
-      graceful-fs: 4.2.11
-
   jsx-ast-utils@3.3.5:
     dependencies:
       array-includes: 3.1.8
@@ -3391,17 +3227,6 @@ snapshots:
   path-key@3.1.1: {}
 
   path-parse@1.0.7: {}
-
-  pdf-to-png-converter@3.6.5:
-    dependencies:
-      '@napi-rs/canvas': 0.1.65
-      pdfjs-dist: 4.10.38
-
-  pdf2json@3.1.5: {}
-
-  pdfjs-dist@4.10.38:
-    optionalDependencies:
-      '@napi-rs/canvas': 0.1.65
 
   picocolors@1.1.1: {}
 
@@ -3790,13 +3615,9 @@ snapshots:
 
   undici-types@6.19.8: {}
 
-  universalify@2.0.1: {}
-
   uri-js@4.4.1:
     dependencies:
       punycode: 2.3.1
-
-  uuid@11.1.0: {}
 
   wasm-feature-detect@1.8.0: {}
 
