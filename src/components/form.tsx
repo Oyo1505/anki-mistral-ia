@@ -64,17 +64,16 @@ export default function Form() {
               setValue('textFromPdf', res, { shouldValidate: true });
             }
           }
-          const answer = await generateAnswer({
-            ...data,
+          const { data: dataRes, status } = await generateAnswer({
+             ...data,
               textFromPdf: res 
             });
             
-            if (answer) {
-              setCsvData(answer);
+            if (dataRes && status === 200) {
+              setCsvData(dataRes);
               toast.success("Génération terminée", { autoClose: 3000 });
               reset();
             }
-          
         } catch (error) {
           toast.dismiss(id);
           toast.error("Erreur pendant la génération");
