@@ -2,6 +2,7 @@
 import { FormDataSchemaType } from "@/schema/form-schema";
 import { CardSchema } from "@/schema/card.schema";
 import { mistral } from "@/lib/mistral";
+import { revalidatePath } from "next/cache";
 
 const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 5, textFromPdf, japanese}: {text?: string, level: string, romanji: boolean, kanji: boolean, numberOfCards: number, textFromPdf?: string, japanese: boolean}) => {
   try {
@@ -37,7 +38,7 @@ const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 
     if (error?.statusCode === 429) {
       throw new Error("Trop de requêtes. Veuillez attendre une minute avant de réessayer.");
     }
-    throw error;
+    return error;
   }
 };
 
@@ -66,7 +67,7 @@ const getTextFromImage = async (file: Blob | MediaSource) => {
     return cleanText;
   } catch (error) {
     console.error(error);
-    return null;
+    return error;
   }
 }
 const getTextFromPDF = async (file: File) => {
@@ -105,8 +106,7 @@ const cleanText = ocrResponse?.pages
 
  return cleanText;
  } catch (error) {
-  console.error(error);
-  return null;
+  return error;
  }
 }
 
@@ -115,10 +115,10 @@ const generateAnswer = async (data: FormDataSchemaType) => {
   try { 
     const {text, level, numberOfCards, romanji, kanji, textFromPdf, japanese} = data;
     const res = await generateCardsAnki({text, level, numberOfCards, romanji, kanji, textFromPdf, japanese}); 
+    revalidatePath('/');
    return res;
   } catch (error) { 
-    console.error(error);
-    return null;
+    return error;
   }
 };
 
