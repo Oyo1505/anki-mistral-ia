@@ -33,9 +33,11 @@ const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 
   });
  
   return answer?.choices?.[0]?.message?.parsed;
-  } catch (error) {
-    console.error(error);
-    return null;
+  } catch (error: any) {
+    if (error?.statusCode === 429) {
+      throw new Error("Trop de requêtes. Veuillez attendre une minute avant de réessayer.");
+    }
+    throw error;
   }
 };
 
