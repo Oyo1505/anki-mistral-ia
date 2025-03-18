@@ -4,7 +4,7 @@ import { CardSchema } from "@/schema/card.schema";
 import { mistral } from "@/lib/mistral";
 import { revalidatePath } from "next/cache";
 
-const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 5, textFromPdf, japanese}: {text?: string, level: string, romanji: boolean, kanji: boolean, numberOfCards: number, textFromPdf?: string, japanese: boolean}) => {
+const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 5, textFromPdf, japanese}: {text?: string, level: string, romanji: boolean, kanji: boolean, numberOfCards: number, textFromPdf?: string, japanese: boolean}): Promise<string[][] | null | Error> => {
   try {
  
     const prompt = `
@@ -34,15 +34,13 @@ const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 
   });
  
   return answer?.choices?.[0]?.message?.parsed;
-  } catch (error: any) {
-    if (error?.statusCode === 429) {
-      throw new Error("Trop de requêtes. Veuillez attendre une minute avant de réessayer.");
-    }
-    return error;
+  } catch (error) {
+    console.error(error);
+    return new Error("Trop de requêtes. Veuillez attendre une minute avant de réessayer."); 
   }
 };
 
-const getTextFromImage = async (file: Blob | MediaSource) => {
+const getTextFromImage = async (file: Blob | MediaSource): Promise<string> => {
   try {
     // Convertir le fichier en base64
     const buffer = await (file as Blob).arrayBuffer();
@@ -67,10 +65,10 @@ const getTextFromImage = async (file: Blob | MediaSource) => {
     return cleanText;
   } catch (error) {
     console.error(error);
-    return error;
+    throw new Error("Trop de requêtes. Veuillez attendre une minute avant de réessayer.");
   }
 }
-const getTextFromPDF = async (file: File) => {
+const getTextFromPDF = async (file: File): Promise<string> => {
  try {
   const fileBuffer = await file.arrayBuffer();
   const base64 = Buffer.from(fileBuffer).toString('base64');
@@ -106,19 +104,25 @@ const cleanText = ocrResponse?.pages
 
  return cleanText;
  } catch (error) {
-  return error;
+  console.error(error);
+  throw new Error("Trop de requêtes. Veuillez attendre une minute avant de réessayer.");
  }
 }
 
-const generateAnswer = async (data: FormDataSchemaType) => {
+const generateAnswer = async (data: FormDataSchemaType): Promise<{data: string[][] | null, status: number} > => {
 
   try { 
     const {text, level, numberOfCards, romanji, kanji, textFromPdf, japanese} = data;
-    const res = await generateCardsAnki({text, level, numberOfCards, romanji, kanji, textFromPdf, japanese}); 
+    const res = await generateCardsAnki({text, level, numberOfCards, romanji, kanji, textFromPdf, japanese});
     revalidatePath('/');
-   return res;
+    if(res instanceof Error) {
+      return {data: null, status: 500};
+    } else {
+      return {data: res, status: 200};
+    }
   } catch (error) { 
-    return error;
+    console.error(error);
+    return {data: null, status: 500};
   }
 };
 
