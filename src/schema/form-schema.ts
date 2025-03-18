@@ -8,8 +8,8 @@ export const FormDataSchema = z.object({
     "Les fichiers ne doivent pas dépasser 5 MB"
   )
   .refine(
-    files => !files || files.every(file => file.size >= 90000),
-    "Les fichiers doivent faire au moins 90 KB pour une bonne qualité d'OCR"
+    files => !files || files.every(file => file.size >= 20000),
+    "Les fichiers doivent faire au moins 20 KB pour une bonne qualité d'OCR"
   ).optional(),
   textFromPdf: z.string().optional(),
   text: z.string().max(5000, 'Le texte ne doit pas dépasser 15000 caractères').optional(),

@@ -39,6 +39,74 @@ const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 
   }
 };
 
+const getTextFromImage = async (file: Blob | MediaSource) => {
+  try {
+    // Convertir le fichier en base64
+    const buffer = await (file as Blob).arrayBuffer();
+    const base64 = Buffer.from(buffer).toString('base64');
+    const mimeType = (file as Blob).type;
+    const base64Url = `data:${mimeType};base64,${base64}`;
+
+    const ocrResponse = await mistral.ocr.process({
+      model: "mistral-ocr-latest",
+      document: {
+        type: "image_url",
+        imageUrl: base64Url
+      }
+    });
+    
+    const cleanText = ocrResponse?.pages[0]?.markdown
+    .replace(/\$\\rightarrow\$/g, '→')
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => line.length > 0)
+    .join('\n');
+    return cleanText;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+const getTextFromPDF = async (file: File) => {
+ try {
+  const fileBuffer = await file.arrayBuffer();
+  const base64 = Buffer.from(fileBuffer).toString('base64');
+  const base64Url = `data:application/pdf;base64,${base64}`;
+  const ocrResponse = await mistral.ocr.process({
+    model: "mistral-ocr-latest",
+    document: {
+        type: "document_url",
+        documentUrl: base64Url
+    },
+    includeImageBase64: true
+});
+
+const cleanText = ocrResponse?.pages
+    ?.map(page => page.markdown)
+    .filter(text => text && !text.startsWith('![')) 
+    .join('\n')
+    .replace(/\$\\rightarrow\$/g, '→')
+    .replace(/\$\\Rightarrow\$/g, '→')
+    .replace(/\$\\square\$/g, '_____')
+    .replace(/\$\\qquad\$/g, '_____')
+    .replace(/<br>/g, '\n') 
+    .replace(/#+\s/g, '') 
+    .replace(/\(.*?\)/g, '') 
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => 
+      line.length > 0 && 
+      !line.startsWith('![') && 
+      !line.match(/^[A-Za-z\s]+$/) 
+    )
+    .join('\n');
+
+ return cleanText;
+ } catch (error) {
+  console.error(error);
+  return null;
+ }
+}
 
 const generateAnswer = async (data: FormDataSchemaType) => {
 
@@ -52,4 +120,4 @@ const generateAnswer = async (data: FormDataSchemaType) => {
   }
 };
 
-export { generateCardsAnki, generateAnswer };
+export { generateCardsAnki, generateAnswer, getTextFromImage, getTextFromPDF };
