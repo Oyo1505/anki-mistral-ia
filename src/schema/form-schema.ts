@@ -16,7 +16,8 @@ export const FormDataSchema = z.object({
   csv: z.boolean().optional(),
   romanji: z.boolean().optional().default(false),
   kanji: z.boolean().optional().default(false),
-  japanese: z.boolean().optional().default(false)
+  japanese: z.boolean().optional().default(false),
+  typeCard: z.string().optional().default('basique')
 })
 
 export type FormDataSchemaType = z.infer<typeof FormDataSchema>;
