@@ -12,6 +12,7 @@ import Input from './input';
 import ButtonUpload from './button-upload';
 import { toast } from 'react-toastify';
 import CsvViewer from './csv-viewer';
+import SelectTypeCard from './select-type-card';
 
 export default function Form() {
 
@@ -28,6 +29,7 @@ export default function Form() {
 
   const {register, handleSubmit, setValue, watch, formState: { errors }, reset } = useForm({
     defaultValues: {
+      typeCard: 'basique',
       level: 'N1',
       romanji: false,
       kanji: false,
@@ -70,6 +72,7 @@ export default function Form() {
             });
             
             if (dataRes && status === 200) {
+              console.log(dataRes);
               setCsvData(dataRes);
               toast.success("Génération terminée", { autoClose: 3000 });
               reset();
@@ -106,6 +109,8 @@ export default function Form() {
   const text = watch('text');
   const isSubmitDisabled = (!text || text.trim() === '') && (!files || files.length === 0);
   const csvDataSuccess = csvData  && csvData.length > 0 &&  !isPending;
+  const isCardKanji = watch('typeCard');
+  const allInJapanese = watch('japanese');
 
   return (
     <>
@@ -115,8 +120,9 @@ export default function Form() {
       <form className="w-full flex flex-col items-start justify-start gap-4" onSubmit={handleSubmit(onSubmit)}>
         <TextArea register={register} errors={errors} id="text" />
         <div className='w-full grid grid-cols-1 md:grid-cols-2 gap-2'>
-          <SelectLevel className='w-full' handleChangeSelectLevelAction={handleChangeSelectLevel} levels={levels.reverse()} />
+         {isCardKanji === 'basique' ? <SelectLevel className='w-full' handleChangeSelectLevelAction={handleChangeSelectLevel} levels={levels.reverse()} /> : null}
           <Input className='w-full' type="number" label="cards" title="Nombre de cartes (max 15)" max={15} min={1} defaultValue={5} {...register('numberOfCards', { valueAsNumber: true })} />
+          <SelectTypeCard register={register} />
         </div>
         <ButtonUpload 
           setValueAction={setValue} 
@@ -132,11 +138,13 @@ export default function Form() {
           }
         })}
         />
-        <div className="w-full flex flex-col items-start justify-start">
-          <Checkbox label="romanji" title="Voulez-vous inclure les romanji ?" handleChangeCheckboxAction={handleChangeCheckboxRomanji}/>
-          <Checkbox label="kanji" title="Voulez-vous inclure les kanji ?" handleChangeCheckboxAction={handleChangeCheckboxKanji} />
-          <Checkbox label="japonais" title="Tout en japonais (énoncés/questions/réponses) ?" handleChangeCheckboxAction={handleChangeCheckboxJapanese} />
-        </div>
+        {isCardKanji === 'basique' && (
+          <div className="w-full flex flex-col items-start justify-start">
+           {allInJapanese ? null : <Checkbox label="romanji" title="Voulez-vous inclure les romanji ?" handleChangeCheckboxAction={handleChangeCheckboxRomanji}/> }
+           {allInJapanese ? null : <Checkbox label="kanji" title="Voulez-vous inclure les kanji ?" handleChangeCheckboxAction={handleChangeCheckboxKanji} /> }
+            <Checkbox label="japonais" title="Tout en japonais (énoncés/questions/réponses) ?" handleChangeCheckboxAction={handleChangeCheckboxJapanese} /> 
+          </div>
+        )}
         <button 
           type='submit' 
           className={`w-full p-2 rounded-md text-white font-bold ${
@@ -160,7 +168,7 @@ export default function Form() {
       </div>
     </div>
    
-     {isCsvVisible && csvDataSuccess && <CsvViewer csvFile={csvData} />}
+     {isCsvVisible && csvDataSuccess && <CsvViewer  csvFile={csvData} />}
     </div>
     {csvDataSuccess && 
           <>

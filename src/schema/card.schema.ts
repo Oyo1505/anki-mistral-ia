@@ -10,9 +10,9 @@ export type CardSchemaBaseType = z.infer<typeof CardSchemaBase>;
 
 export const CardSchemaKanji = z.array(
   z.object({
-    word: z.string().describe('le mot original'),
-    kanji: z.string().describe('le mot en KANJI OBLIGATOIREMENT'),
-    kana: z.string().describe('le mot en HIRAGANA OBLIGATOIREMENT'),
+    word: z.string().describe('le mot original, en francais'),
+    kanji: z.string().describe('le mot en KANJI OBLIGATOIREMENT, katakana interdit'),
+    hiragana: z.string().describe('le mot en HIRAGANA OBLIGATOIREMENT'),
   }));
 
 export type CardSchemaKanjiType = z.infer<typeof CardSchemaKanji>;
