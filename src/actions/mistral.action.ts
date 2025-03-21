@@ -2,8 +2,9 @@
 import { FormDataSchemaType } from "@/schema/form-schema";
 import { CardSchemaBase, CardSchemaKanji } from "@/schema/card.schema";
 import { mistral } from "@/lib/mistral";
+import { revalidatePath } from "next/cache";
 
-const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 5, textFromPdf, japanese, typeCardKanji}: {text?: string, level: string, romanji: boolean, kanji: boolean, numberOfCards: number, textFromPdf?: string, japanese: boolean, typeCardKanji: boolean}) => {
+const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 5, textFromPdf, japanese, typeCardKanji}: {text?: string, level: string, romanji: boolean, kanji: boolean, numberOfCards: number, textFromPdf?: string, japanese: boolean, typeCardKanji: boolean}): Promise<string[][] | null | Error> => {
   try {
  
     const prompt = !typeCardKanji ? `
@@ -36,21 +37,94 @@ const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 
   return answer?.choices?.[0]?.message?.parsed;
   } catch (error) {
     console.error(error);
-    return null;
+    return new Error("Trop de requêtes. Veuillez attendre une minute avant de réessayer."); 
   }
 };
 
+const getTextFromImage = async (file: Blob | MediaSource): Promise<string> => {
+  try {
+    // Convertir le fichier en base64
+    const buffer = await (file as Blob).arrayBuffer();
+    const base64 = Buffer.from(buffer).toString('base64');
+    const mimeType = (file as Blob).type;
+    const base64Url = `data:${mimeType};base64,${base64}`;
 
-const generateAnswer = async (data: FormDataSchemaType) => {
+    const ocrResponse = await mistral.ocr.process({
+      model: "mistral-ocr-latest",
+      document: {
+        type: "image_url",
+        imageUrl: base64Url
+      }
+    });
+    
+    const cleanText = ocrResponse?.pages[0]?.markdown
+    .replace(/\$\\rightarrow\$/g, '→')
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => line.length > 0)
+    .join('\n');
+    return cleanText;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Trop de requêtes. Veuillez attendre une minute avant de réessayer.");
+  }
+}
+const getTextFromPDF = async (file: File): Promise<string> => {
+ try {
+  const fileBuffer = await file.arrayBuffer();
+  const base64 = Buffer.from(fileBuffer).toString('base64');
+  const base64Url = `data:application/pdf;base64,${base64}`;
+  const ocrResponse = await mistral.ocr.process({
+    model: "mistral-ocr-latest",
+    document: {
+        type: "document_url",
+        documentUrl: base64Url
+    },
+    includeImageBase64: true
+});
+
+const cleanText = ocrResponse?.pages
+    ?.map(page => page.markdown)
+    .filter(text => text && !text.startsWith('![')) 
+    .join('\n')
+    .replace(/\$\\rightarrow\$/g, '→')
+    .replace(/\$\\Rightarrow\$/g, '→')
+    .replace(/\$\\square\$/g, '_____')
+    .replace(/\$\\qquad\$/g, '_____')
+    .replace(/<br>/g, '\n') 
+    .replace(/#+\s/g, '') 
+    .replace(/\(.*?\)/g, '') 
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => 
+      line.length > 0 && 
+      !line.startsWith('![') && 
+      !line.match(/^[A-Za-z\s]+$/) 
+    )
+    .join('\n');
+
+ return cleanText;
+ } catch (error) {
+  console.error(error);
+  throw new Error("Trop de requêtes. Veuillez attendre une minute avant de réessayer.");
+ }
+}
+
+const generateAnswer = async (data: FormDataSchemaType): Promise<{data: string[][] | null, status: number} > => {
 
   try { 
     const {text, level, numberOfCards, romanji, kanji, textFromPdf, japanese, typeCardKanji} = data;
-    const res = await generateCardsAnki({text, level, numberOfCards, romanji, kanji, textFromPdf, japanese, typeCardKanji}); 
-   return res;
+    const res = await generateCardsAnki({text, level, numberOfCards, romanji, kanji, textFromPdf, japanese, typeCardKanji});
+    revalidatePath('/');
+    if(res instanceof Error) {
+      return {data: null, status: 500};
+    } else {
+      return {data: res, status: 200};
+    }
   } catch (error) { 
     console.error(error);
-    return null;
+    return {data: null, status: 500};
   }
 };
 
-export { generateCardsAnki, generateAnswer };
+export { generateCardsAnki, generateAnswer, getTextFromImage, getTextFromPDF };

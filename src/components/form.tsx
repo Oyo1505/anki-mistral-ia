@@ -5,12 +5,11 @@ import SelectLevel from './select-level';
 import { useForm } from 'react-hook-form';
 import { FormDataSchema, FormDataSchemaType } from '@/schema/form-schema';
 import Checkbox from './checkbox';
-import {  generateAnswer } from '@/actions/mistral.action';
+import { generateAnswer, getTextFromImage, getTextFromPDF } from '@/actions/mistral.action';
 import { CSVLink } from "react-csv";
 import { useState, useTransition } from 'react';
 import Input from './input';
 import ButtonUpload from './button-upload';
-import extractTextFromImage from '@/utils/extract-text-from-image';
 import { toast } from 'react-toastify';
 import CsvViewer from './csv-viewer';
 
@@ -52,31 +51,29 @@ export default function Form() {
        
           let res = '';
           if (files?.[0] && (files[0].type === 'image/jpeg' || files[0].type === 'image/png' || files[0].type === 'image/jpg')) {
-            const url = URL.createObjectURL(files[0]);
-            const convertResult = await convert(url);
+            const convertResult = await getTextFromImage(files[0]);
             if (convertResult) {
               res = convertResult;
               setValue('textFromPdf', res, { shouldValidate: true });
             } 
           }
           if (files?.[0] && (files[0].type === 'application/pdf')) {
-            const convertResult = await convertPdf(files[0]);
+            const convertResult = await getTextFromPDF(files[0]);
             if (convertResult) {
               res = convertResult; 
               setValue('textFromPdf', res, { shouldValidate: true });
             }
           }
-          const answer = await generateAnswer({
-            ...data,
+          const { data: dataRes, status } = await generateAnswer({
+             ...data,
               textFromPdf: res 
             });
             
-            if (answer) {
-              setCsvData(answer);
+            if (dataRes && status === 200) {
+              setCsvData(dataRes);
               toast.success("Génération terminée", { autoClose: 3000 });
               reset();
             }
-          
         } catch (error) {
           toast.dismiss(id);
           toast.error("Erreur pendant la génération");
@@ -88,41 +85,6 @@ export default function Form() {
     } catch (error) {
       toast.error("Erreur lors de la génération des cartes");
       console.error("Erreur générale:", error);
-    }
-  };
-
-  const convert = async (url: string | undefined) => {
-    try{
-    if (url?.length) {
-      const copyTexts: Array<string> =  [];
-      await extractTextFromImage(url).then((txt: string) => {
-        copyTexts.push(txt);
-      })
-      return copyTexts.join('\n');
-    }
-  } catch (error) {
-    toast.error("Erreur lors de l'extraction du texte");
-    console.error("Erreur lors de l'extraction du texte:", error);
-  }
-  };
-  const convertPdf = async (file: File) => {
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-  
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      });
-      if (!response.ok) {
-        throw new Error('Erreur lors de l\'upload');
-      }
-      const data = await response.json();
-      return data.text;
-    } catch (error) {
-      toast.error("Erreur lors de l'extraction du PDF");
-      console.error("Erreur lors de l'extraction du PDF:", error);
-      return '';
     }
   };
 
