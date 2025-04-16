@@ -4,7 +4,7 @@ import { CardSchemaBase, CardSchemaKanji } from "@/schema/card.schema";
 import { mistral } from "@/lib/mistral";
 import { revalidatePath } from "next/cache";
 
-const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 5, textFromPdf, japanese, typeCard}: {text?: string, level: string, romanji: boolean, kanji: boolean, numberOfCards: number, textFromPdf?: string, japanese: boolean, typeCard: string}): Promise<string[][] | null | Error> => {
+const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 5, textFromPdf, japanese, typeCard}: {text?: string, level: string, romanji: boolean, kanji: boolean, numberOfCards: number, textFromPdf?: string, japanese: boolean, typeCard: string}): Promise<string[][] | {error: string, status: number} | Error> => {
   try {
     const prompt = typeCard  === 'basique' ? `
     ${textFromPdf && textFromPdf.length > 0 && `Voici le texte des fichier pdf ou d'une image à partir duquel tu dois générer les cartes anki : ${textFromPdf}.`}.
@@ -14,7 +14,7 @@ const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 
      Tu dois intergrer IMPERATIVEMENT les mots en KATAKANA et en HIRAGANA si tu en detectes, n'invente pas des mots en KATAKANA ou ne traduit pas les mots en KATAKANA quand cela est possible.
     `: `Fais des cartes avec des mots en KANJI, HIRAGANA pour apprendre les kanjis. ${text && text.length > 0 && `Voici le texte venant du textearea du formulaire à partir duquel tu dois générer les cartes anki ou des instructions : ${text}.`} 
       ${textFromPdf && textFromPdf.length > 0 && `Voici le texte des fichier pdf ou d'une image à partir duquel tu dois générer les cartes anki : ${textFromPdf}.`}`;
-
+    try {
     const answer = await mistral.chat.parse({
       model: "mistral-large-latest",
       temperature: 0.2,
@@ -33,12 +33,17 @@ const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 
     }],
     responseFormat: typeCard === 'basique' ? CardSchemaBase : CardSchemaKanji,
   });
- 
+  
   return answer?.choices?.[0]?.message?.parsed;
+}
+  catch(err){
+    console.error(err);
+    throw new Error("Une erreur est survenue dans la génération des cartes. Veuillez réessayer.");
+  }
   } catch (error) {
     console.error(error);
-    return new Error("Trop de requêtes. Veuillez attendre une minute avant de réessayer."); 
-  }
+    throw new Error("Trop de requêtes. Veuillez attendre une minute avant de réessayer.");
+    }
 };
 
 const getTextFromImage = async (file: Blob | MediaSource): Promise<string> => {
@@ -66,7 +71,7 @@ const getTextFromImage = async (file: Blob | MediaSource): Promise<string> => {
     return cleanText;
   } catch (error) {
     console.error(error);
-    throw new Error("Trop de requêtes. Veuillez attendre une minute avant de réessayer.");
+    throw new Error("Erreur dans la conversion de l'image en texte.");
   }
 }
 const getTextFromPDF = async (file: File): Promise<string> => {
@@ -106,24 +111,25 @@ const cleanText = ocrResponse?.pages
  return cleanText;
  } catch (error) {
   console.error(error);
-  throw new Error("Trop de requêtes. Veuillez attendre une minute avant de réessayer.");
+  throw new Error("Erreur dans la conversion du pdf en texte.");
  }
 }
 
-const generateAnswer = async (data: FormDataSchemaType): Promise<{data: string[][] | null, status: number} > => {
+const generateAnswer = async (data: FormDataSchemaType): Promise<{data: string[][] | null, status: number, error?: string} > => {
 
   try { 
     const {text, level, numberOfCards, romanji, kanji, textFromPdf, japanese, typeCard} = data;
     const res = await generateCardsAnki({text, level, numberOfCards, romanji, kanji, textFromPdf, japanese, typeCard});
     revalidatePath('/');
-    if(res instanceof Error) {
-      return {data: null, status: 500};
+    
+    if (typeof res === 'object' && 'status' in res && res.status === 500) {
+      return {data: null, status: 500, error: 'Une erreur est survenue dans la génération de la reponse. Veuillez réessayer.'};
     } else {
-      return {data: res, status: 200};
+      return {data: res as string[][], status: 200};
     }
   } catch (error) { 
     console.error(error);
-    return {data: null, status: 500};
+    return {data: null, status: 500, error: error instanceof Error ? error.message : 'Une erreur inconnue est survenue'};
   }
 };
 
