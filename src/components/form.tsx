@@ -42,41 +42,56 @@ export default function Form() {
     },
     resolver: zodResolver(FormDataSchema)
   });
+
   const files = watch('files');
+
+  const processFile = async (file: File): Promise<string | null> => {
+    try {
+      if (file.type === 'application/pdf') {
+        return await getTextFromPDF(file);
+      }
+      
+      if (['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
+        return await getTextFromImage(file);
+      }
+      
+      return null;
+    } catch (error) {
+      console.error("Erreur lors du traitement du fichier:", error);
+      return null;
+    }
+  };
 
   const onSubmit = async (data: FormDataSchemaType) => {
     try {   
-    
       startTransition(async () => {
         const id = toast.loading('En cours de génération', { autoClose: false });
         try {
-       
           let res = '';
-          if (files?.[0] && (files[0].type === 'image/jpeg' || files[0].type === 'image/png' || files[0].type === 'image/jpg')) {
-            const convertResult = await getTextFromImage(files[0]);
+          
+          if (files?.[0]) {
+            const convertResult = await processFile(files[0]);
             if (convertResult) {
               res = convertResult;
               setValue('textFromPdf', res, { shouldValidate: true });
-            } 
-          }
-          if (files?.[0] && (files[0].type === 'application/pdf')) {
-            const convertResult = await getTextFromPDF(files[0]);
-            if (convertResult) {
-              res = convertResult; 
-              setValue('textFromPdf', res, { shouldValidate: true });
             }
           }
-          const { data: dataRes, status } = await generateAnswer({
-             ...data,
+
+          if (res) {
+            const { data: dataRes, status, error } = await generateAnswer({
+              ...data,
               textFromPdf: res 
             });
-            
+         
             if (dataRes && status === 200) {
-              console.log(dataRes);
               setCsvData(dataRes);
               toast.success("Génération terminée", { autoClose: 3000 });
               reset();
+            } else if (error && status === 500) {
+              toast.dismiss(id);
+              toast.error(error);
             }
+          }
         } catch (error) {
           toast.dismiss(id);
           toast.error("Erreur pendant la génération");
@@ -84,7 +99,6 @@ export default function Form() {
         }
         toast.dismiss(id);
       });
-     
     } catch (error) {
       toast.error("Erreur lors de la génération des cartes");
       console.error("Erreur générale:", error);
