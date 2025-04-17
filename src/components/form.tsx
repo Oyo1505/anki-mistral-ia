@@ -11,6 +11,7 @@ import { useState, useTransition } from 'react';
 import Input from './input';
 import ButtonUpload from './button-upload';
 import { toast } from 'react-toastify';
+import type { Id } from 'react-toastify';
 import CsvViewer from './csv-viewer';
 import SelectTypeCard from './select-type-card';
 
@@ -61,6 +62,20 @@ export default function Form() {
       return null;
     }
   };
+  
+  const displayToast = (dataRes: string[][] | null, status: number, error: string | null, id: Id) => {
+    if (dataRes && status === 200) {
+      setCsvData(dataRes);
+      toast.success("Génération terminée", { autoClose: 3000 });
+      reset();
+    } else if (error && status === 500) {
+      toast.dismiss(id);
+      toast.error(error);
+    } else {
+      toast.dismiss(id);
+      toast.error("Une erreur inattendue s'est produite");
+    }
+  }
 
   const onSubmit = async (data: FormDataSchemaType) => {
     try {   
@@ -81,18 +96,10 @@ export default function Form() {
               ...(res && res.length > 0 && { textFromPdf: res })
             });
          
-            if (dataRes && status === 200) {
-              setCsvData(dataRes);
-              toast.success("Génération terminée", { autoClose: 3000 });
-              reset();
-            } else if (error && status === 500) {
-              toast.dismiss(id);
-              toast.error(error);
-            }
+            displayToast(dataRes, status, error || null, id.toString());
           
         } catch (error) {
-          toast.dismiss(id);
-          toast.error("Erreur pendant la génération");
+          displayToast(null, 500, "Erreur pendant la génération", id.toString());
           console.error("Erreur pendant la génération:", error);
         }
         toast.dismiss(id);
