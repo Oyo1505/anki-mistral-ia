@@ -76,11 +76,9 @@ export default function Form() {
               setValue('textFromPdf', res, { shouldValidate: true });
             }
           }
-
-          if (res) {
             const { data: dataRes, status, error } = await generateAnswer({
               ...data,
-              textFromPdf: res 
+              ...(res && res.length > 0 && { textFromPdf: res })
             });
          
             if (dataRes && status === 200) {
@@ -91,7 +89,7 @@ export default function Form() {
               toast.dismiss(id);
               toast.error(error);
             }
-          }
+          
         } catch (error) {
           toast.dismiss(id);
           toast.error("Erreur pendant la génération");
