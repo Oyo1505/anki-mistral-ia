@@ -67,6 +67,7 @@ export default function Form() {
     if (dataRes && status === 200) {
       setCsvData(dataRes);
       toast.success("Génération terminée", { autoClose: 3000 });
+      reset();
     } else if (error && status === 500) {
       toast.dismiss(id);
       toast.error(error);
