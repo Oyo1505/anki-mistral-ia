@@ -123,6 +123,7 @@ const generateAnswer = async (data: FormDataSchemaType): Promise<{data: string[]
     revalidatePath('/');
     
     if (typeof res === 'object' && 'status' in res && res.status === 500) {
+      console.error(res.status);
       return {data: null, status: 500, error: 'Une erreur est survenue dans la génération de la reponse. Veuillez réessayer.'};
     } else {
       return {data: res as string[][], status: 200};
