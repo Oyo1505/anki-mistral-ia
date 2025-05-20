@@ -14,6 +14,9 @@ import { toast } from 'react-toastify';
 import type { Id } from 'react-toastify';
 import CsvViewer from './csv-viewer';
 import SelectTypeCard from './select-type-card';
+import delay from '@/utils/time/delay';
+
+const MILLISECONDS_DELAY = 1000;
 
 export default function Form() {
 
@@ -89,6 +92,7 @@ export default function Form() {
             if (convertResult) {
               res = convertResult;
               setValue('textFromPdf', res, { shouldValidate: true });
+              await delay(MILLISECONDS_DELAY); //1 second delay to avoid rate limit
             }
           }
             const { data: dataRes, status, error } = await generateAnswer({
@@ -178,11 +182,11 @@ export default function Form() {
       </form>
       {csvDataSuccess && 
       <>
-      <button className='w-full p-2 rounded-md border-2 border-gray-300 text-center cursor-pointer font-bold' onClick={() => setIsCsvVisible(!isCsvVisible)}>{isCsvVisible ? 'Masquer les cartes' : 'Voir les cartes'}</button>
+      <button className='w-full p-2 rounded-md border-2 border-gray-300 text-center cursor-pointer font-bold' onClick={() => setIsCsvVisible(()=>!isCsvVisible)}>{isCsvVisible ? 'Masquer les cartes' : 'Voir les cartes'}</button>
       </>
       }
       <div className='w-full flex items-start justify-between gap-2'>
-        <a className='text-sm text-center border-2 bg-blue-500 text-white  rounded-md p-2' href="https://relieved-circle-d57.notion.site/Tuto-cr-ation-carte-basique-Anki-avec-ChatGPT-19a6823eb75b80e7b564dbc8cf73762d" target="_blank" rel="noopener noreferrer">Tutoriel pour importer dans Anki</a>
+        <a className='text-sm text-center border-2 bg-blue-500 text-white  rounded-md p-2' href="https://relieved-circle-d57.notion.site/Tuto-cr-ation-carte-basique-Anki-avec-ChatGPT-19a6823eb75b80e7b564dbc8cf73762d" target="_blank" rel="noopener noreferrer">Tutoriel pour importer des cartes dans Anki</a>
         <a className='text-sm text-center border-2 bg-blue-500 text-white rounded-md p-2' href="https://apps.ankiweb.net/" target="_blank" rel="noopener noreferrer">Télécharger Anki</a>
       </div>
     </div>

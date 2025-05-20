@@ -14,7 +14,9 @@ const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 
      Tu dois intergrer IMPERATIVEMENT les mots en KATAKANA et en HIRAGANA si tu en detectes, n'invente pas des mots en KATAKANA ou ne traduit pas les mots en KATAKANA quand cela est possible.
     `: `Fais des cartes avec des mots en KANJI, HIRAGANA pour apprendre les kanjis. ${text && text.length > 0 && `Voici le texte venant du textearea du formulaire à partir duquel tu dois générer les cartes anki ou des instructions : ${text}.`} 
       ${textFromPdf && textFromPdf.length > 0 && `Voici le texte des fichier pdf ou d'une image à partir duquel tu dois générer les cartes anki : ${textFromPdf}.`}`;
+
     try {
+      
     const answer = await mistral.chat.parse({
       model: "mistral-large-latest",
       temperature: 0.2,
@@ -23,7 +25,7 @@ const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 
       content: typeCard === 'basique' ? `Tu es fais pour faire des carte anki basique de japonais.
       Tu dois intergrer IMPERATIVEMENT les mots en KATAKANA et en HIRAGANA si tu en detectes ou ne traduit pas les mots en KATAKANA quand cela est possible.
       Tu dois repondre en japonais et en francais. Pour un niveau de japonais de ${level}, tu dois générer ${numberOfCards} cartes anki basiques ${romanji ? 'avec les romanji' : 'ne pas utiliser les romanji'} ${kanji ? 'et les kanji si il y en a' : 'ne pas utiliser les kanji'}.
-      Tu peux faire des cartes avec des phrases a trou, des QCM, des exercices de grammaire, des mots a deviner, des phrases, des expressions, des mots complexes tout en respectant le niveau donner qui est: ${level}.
+      Tu peux faire des cartes avec des phrases a trou, des QCM, des exercices de grammaire, des mots a deviner, des phrases, des expressions, des mots complexes tout en respectant le niveau donner qui est: ${level}.N\'invente pas des mots en KATAKANA
       ${japanese && 'Tu dois écrire les énoncés, questions, réponses en japonais. PAS DE FRANCAIS.'}
       ` : `Tu es fais pour faire des cartes anki pour apprendre les kanjis japonais avec des mots en KANJI, HIRAGANA, les mots en KATAKANA sont INTERDIT. Tu dois générer ${numberOfCards} cartes anki.`
     },
