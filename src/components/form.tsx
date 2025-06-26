@@ -164,7 +164,7 @@ export default function Form() {
         {isCardKanji === 'basique' && (
           <div className="w-full flex flex-col items-start justify-start">
            {allInJapanese ? null : <Checkbox label="romanji" title="Voulez-vous inclure les romanji ?" handleChangeCheckboxAction={handleChangeCheckboxRomanji}/> }
-           {allInJapanese ? null : <Checkbox label="kanji" title="Voulez-vous inclure les kanji ?" handleChangeCheckboxAction={handleChangeCheckboxKanji} /> }
+            <Checkbox label="kanji" title="Voulez-vous inclure les kanji ?" handleChangeCheckboxAction={handleChangeCheckboxKanji} /> 
             <Checkbox label="japonais" title="Tout en japonais (énoncés/questions/réponses) ?" handleChangeCheckboxAction={handleChangeCheckboxJapanese} /> 
           </div>
         )}
