@@ -2,6 +2,12 @@
 
 Un générateur intelligent de cartes Anki pour l'apprentissage du japonais, alimenté par l'API Mistral AI.
 
+## Démo
+[Try it!](https://anki-mistral-ia.vercel.app/)
+
+## Getting Started
+
+
 ## 🎯 Description
 
 Anki Mistral AI est une application web moderne qui génère automatiquement des cartes Anki pour l'apprentissage du japonais. L'application utilise l'API Mistral AI pour créer des cartes personnalisées basées sur du texte saisi ou extrait d'images et de PDF.
