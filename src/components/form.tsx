@@ -156,7 +156,7 @@ export default function Form() {
     <div className='w-full border-2 md:w-1/2  2xl:w-1/4 p-4 border-white shadow-zinc-600 shadow-2xl rounded-md flex flex-col items-start justify-start gap-4 bg-white'>
       <h1 className="text-xl w-full text-center font-bold">Générateur de cartes Anki (Basique)</h1>
       <form className="w-full flex flex-col items-start justify-start gap-4" onSubmit={handleSubmit(onSubmit)}>
-        <TextArea register={register} errors={errors} id="text" />
+        <TextArea {...register('text', { required: true })} errors={errors} id="text" />
         <div className='w-full grid grid-cols-1 md:grid-cols-2 gap-2'>
          {isCardKanji === 'basique' ? <SelectLevel className='w-full' handleChangeSelectLevelAction={handleChangeSelectLevel} levels={levels.reverse()} /> : null}
           <Input className='w-full' type="number" label="cards" title="Nombre de cartes (max 15)" max={15} min={1} defaultValue={5} {...register('numberOfCards', { valueAsNumber: true })} />
