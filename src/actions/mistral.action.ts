@@ -3,8 +3,6 @@ import { FormDataSchemaType } from "@/schema/form-schema";
 import { mistral } from "@/lib/mistral";
 import { revalidatePath } from "next/cache";
 import prompt from "@/utils/string/prompt";
-import { retryWithBackoff } from "@/utils/time/delay";
-import { BASE_DELAY, MAX_RETRIES } from "@/shared/constants/numbers";
 import { CardSchemaBase, CardSchemaKanji } from "@/schema/card.schema";
 
 const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 5, textFromPdf, japanese, typeCard}: {text?: string, level: string, romanji: boolean, kanji: boolean, numberOfCards: number, textFromPdf?: string, japanese: boolean, typeCard: string}): Promise<string[][] | {error: string, status: number} | Error> => {
