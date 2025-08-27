@@ -11,7 +11,7 @@ export default function SelectLevel({className, levels, handleChangeSelectLevelA
  
   return (
   <div className={clsx("flex flex-col items-start justify-start", className)}>
-    <label htmlFor="level">Niveau</label>
+    <label className="font-semibold" htmlFor="level">Niveau</label>
     <select id="level" className="w-full h-full p-2 rounded-md border-2 border-gray-300" onChange={handleChangeSelectLevelAction}>
       {levels.map((level) => (
         <option key={level.value} value={level.value}>

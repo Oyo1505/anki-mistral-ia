@@ -15,21 +15,16 @@ import type { Id } from 'react-toastify';
 import CsvViewer from './csv-viewer';
 import SelectTypeCard from './select-type-card';
 import delay from '@/utils/time/delay';
+import { levels } from '@/shared/constants/levels';
+import { MILLISECONDS_DELAY } from '@/shared/constants/numbers';
 
-const MILLISECONDS_DELAY = 1000;
 
 export default function Form() {
 
   const [csvData, setCsvData] = useState<string[][]>([]);
   const [isPending, startTransition] = useTransition();
   const [isCsvVisible, setIsCsvVisible] = useState(false);
-  const levels = [
-    { value: "N1 Avancé", label: "N1 - Avancé (Maîtrise complète)" },
-    { value: "N2 Pré-avancé", label: "N2 - Pré-avancé (Niveau courant)" },
-    { value: "N3 Intermédiaire", label: "N3 - Intermédiaire" },
-    { value: "N4 Pré-intermédiaire", label: "N4 - Pré-intermédiaire (Basique)" },
-    { value: "N5 Débutant", label: "N5 - Débutant (Élémentaire)" }
-  ]
+
 
   const {register, handleSubmit, setValue, watch, formState: { errors }, reset } = useForm({
     defaultValues: {

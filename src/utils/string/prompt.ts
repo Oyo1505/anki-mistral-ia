@@ -25,7 +25,7 @@ const prompt = ({
     return promptBasique(textFromPdf, text);
   } else  {
     return [
-      'Fais des cartes avec des mots en KANJI, HIRAGANA pour apprendre les kanjis.',
+      'Fais des cartes avec des mots en KANJI, HIRAGANA pour apprendre les kanjis. les KATATANA sont interdits.',
       promptBasique(textFromPdf, text),
     ].filter(Boolean).join('\n');
     }
