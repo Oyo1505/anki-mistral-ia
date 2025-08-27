@@ -163,7 +163,7 @@ export default function Form() {
           <SelectTypeCard register={register} />
         </div>
         <ButtonUpload 
-          setValueAction={setValue} 
+          setValueAction={setValue as any} 
           errors={errors}
           files={files}
           {...register('files', {

@@ -33,7 +33,6 @@ const FormChatBot = () => {
       level: formData.level,
       isSubmitted: formData.isSubmitted,
     },
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     resolver: zodResolver(FormDataSchemaChatBot)
   });
 
