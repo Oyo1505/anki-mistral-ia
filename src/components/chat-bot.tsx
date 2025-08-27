@@ -1,17 +1,17 @@
 'use client'
 import { useChatBotContext } from "@/context/chat-bot-context";
-import Input from "./input";
 import { useForm } from "react-hook-form";
 import { threadChatBot } from "@/actions/chat-bot.action";
 import { useState, useEffect, useRef } from "react";
 import { ChatMessage } from "@/interfaces/chat.interface";
 import { LOADING_MESSAGE_DELAY, LOADING_MESSAGE_DELAY_2, LOADING_MESSAGE_DELAY_3 } from "@/shared/constants/numbers";
+import TextArea from "./text-area";
 
 
 const ArrowDownIcon = () => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-10">
-      <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-.53 14.03a.75.75 0 0 0 1.06 0l3-3a.75.75 0 1 0-1.06-1.06l-1.72 1.72V8.25a.75.75 0 0 0-1.5 0v5.69l-1.72-1.72a.75.75 0 0 0-1.06 1.06l3 3Z" clip-rule="evenodd" />
+      <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-.53 14.03a.75.75 0 0 0 1.06 0l3-3a.75.75 0 1 0-1.06-1.06l-1.72 1.72V8.25a.75.75 0 0 0-1.5 0v5.69l-1.72-1.72a.75.75 0 0 0-1.06 1.06l3 3Z" clipRule="evenodd" />
     </svg>
   )
 }
@@ -21,7 +21,7 @@ const ChatBot = () => {
   const [loadingMessage, setLoadingMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const { register, handleSubmit, setValue, formState: {isSubmitting} } = useForm({
+  const { register, handleSubmit, setValue, formState: {isSubmitting, errors} } = useForm({
     defaultValues: {
       message: '',
     },
@@ -35,8 +35,17 @@ const ChatBot = () => {
     scrollToBottom();
   }, [messages, isLoading]);
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && !isLoading) {
+  useEffect(() => {
+    scrollToBottom();
+  }, []);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && e.shiftKey && !isLoading) {
+      e.preventDefault();
+      setValue('message', e.currentTarget.value + '\n');
+    }
+      
+    if (e.key === 'Enter' && !e.shiftKey && !isLoading) {
       e.preventDefault();
       const userMessage = e.currentTarget.value;
       if (userMessage.trim()) {
@@ -66,7 +75,7 @@ const ChatBot = () => {
         handleLoadingMessage();
     
         const response = await threadChatBot({
-          message: data.message, 
+          message: data.message.trim(), 
           conversationHistory: messages, 
           typeExercice: formData.type, 
           level: formData.level, 
@@ -148,15 +157,13 @@ const ChatBot = () => {
             <div ref={messagesEndRef} />
 
           </div>
-          <form onSubmit={handleSubmit(handleSendMessage)} className="w-full h-1/3 flex flex-col items-start justify-start gap-4 bg-slate-100 p-4">
-            <Input 
-              autoComplete="off" 
-              label="message" 
-              title="" 
+          <form onSubmit={handleSubmit(handleSendMessage)} className="w-full h-auto flex flex-col items-start justify-start gap-4 bg-slate-100 p-4">
+            <TextArea 
+              label="" 
+              errors={errors}
+              id="message"
               {...register('message', {required: true})} 
-              type="text" 
-              placeholder={isLoading ? "Veuillez patienter..." : "Tapez votre message..."} 
-              className="w-full h-full p-2 border-slate-800 outline-none focus:border-slate-500" 
+              className="w-full h-auto p-2 border-slate-800 outline-none focus:border-slate-500 resize-none" 
               onKeyDown={handleKeyDown}
               disabled={isLoading}
             />
