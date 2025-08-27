@@ -75,7 +75,7 @@ const ChatBot = () => {
         handleLoadingMessage();
     
         const response = await threadChatBot({
-          message: data.message, 
+          message: data.message.trim(), 
           conversationHistory: messages, 
           typeExercice: formData.type, 
           level: formData.level, 
@@ -163,7 +163,7 @@ const ChatBot = () => {
               errors={errors}
               id="message"
               {...register('message', {required: true})} 
-              className="w-full h-auto p-2 border-slate-800 outline-none focus:border-slate-500" 
+              className="w-full h-auto p-2 border-slate-800 outline-none focus:border-slate-500 resize-none" 
               onKeyDown={handleKeyDown}
               disabled={isLoading}
             />
