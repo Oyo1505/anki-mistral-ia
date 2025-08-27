@@ -1,9 +1,9 @@
 'use client'
 import { FormDataSchemaType } from "@/schema/form-schema";
-import { FieldErrors, UseFormRegister } from "react-hook-form";
+import { FieldErrors } from "react-hook-form";
 
 interface TextAreaProps {
-  register: UseFormRegister<FormDataSchemaType>;
+  register: any;
   errors: FieldErrors<FormDataSchemaType>;
   id: string; 
 }

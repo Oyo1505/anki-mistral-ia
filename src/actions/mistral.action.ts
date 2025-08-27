@@ -33,8 +33,14 @@ const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 
     }],
     responseFormat: typeCard === 'basique' ? CardSchemaBase : CardSchemaKanji,
   });
-  
-  return answer?.choices?.[0]?.message?.parsed;
+
+  const parsedResult = answer?.choices?.[0]?.message?.parsed;
+
+  if (!parsedResult) {
+
+    throw new Error("La réponse du modèle est vide ou n'a pas pu être parsée correctement.");
+  }
+  return parsedResult as string[][];
 }
   catch(err){
     console.error(err);

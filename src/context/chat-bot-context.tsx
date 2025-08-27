@@ -1,0 +1,105 @@
+'use client'
+import { ChatMessage } from "@/interfaces/chat.interface";
+import { createContext, useContext, useEffect, useState } from "react";
+
+export type FormDataChatBot = {
+  name: string;
+  type: string;
+  level: string;
+  isSubmitted: boolean;
+  idThreadChatBot?: string;
+}
+
+type ChatBotContextType = {
+// eslint-disable-next-line no-unused-vars
+  messages: ChatMessage[];
+  // eslint-disable-next-line no-unused-vars
+  setMessages: (messages: ChatMessage[]) => void;
+  // eslint-disable-next-line no-unused-vars
+  formData: FormDataChatBot;
+    // eslint-disable-next-line no-unused-vars
+  setFormData: (formData: FormDataChatBot) => void;
+  // eslint-disable-next-line no-unused-vars
+  handleSetFormData: (formData: FormDataChatBot) => void;
+  // eslint-disable-next-line no-unused-vars
+  handleSetMessages: (messages: ChatMessage[]) => void;
+  // eslint-disable-next-line no-unused-vars
+}
+
+ const ChatBotContext = createContext<ChatBotContextType>({
+  messages: [],
+  setMessages: () => {},
+  formData: {
+    name: '',
+    type: '',
+    level: '',
+    isSubmitted: false,
+    idThreadChatBot: '',
+  },
+  setFormData: () => {},
+  handleSetFormData: () => {},
+  handleSetMessages: () => {},
+});
+
+const ChatBotContextProvider = ({ children }: { children: React.ReactNode }) => {
+ 
+  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('chatBotMessagesAnki');
+      if (saved) {
+        return JSON.parse(saved).map((msg: ChatMessage) => ({
+          ...msg,
+          timestamp: new Date(msg.timestamp),
+        }));
+      }
+    }
+    return [
+      {
+        role: 'assistant',
+        message: 'Bonjour, comment puis-je vous aider ?',
+        timestamp: new Date(),
+        id: 'welcome',
+      }
+    ];
+  });
+
+  const [formData, setFormData] = useState<FormDataChatBot>({
+    name: '',
+    type: '',
+    level: '',
+    isSubmitted: false,
+    idThreadChatBot: '',
+  });
+
+  useEffect(() => {
+    const formDataFromLocalStorage = localStorage.getItem('formData');
+    if (formDataFromLocalStorage) {
+      setFormData(JSON.parse(formDataFromLocalStorage));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (formData.isSubmitted) {
+      localStorage.setItem('formData', JSON.stringify(formData));
+      localStorage.setItem('chatBotMessagesAnki', JSON.stringify(messages));
+    }
+  }, [formData, messages]);
+
+  const handleSetFormData = (formData: FormDataChatBot): void => {
+    setFormData(prev => ({...prev, ...formData}));
+    localStorage.setItem('formData', JSON.stringify(formData));
+  }
+  const handleSetMessages = (messages: ChatMessage[]): void => {
+    setMessages(messages);
+    localStorage.setItem('chatBotMessagesAnki', JSON.stringify(messages));
+  }
+  return (
+    <ChatBotContext.Provider value={{ messages, setMessages, formData, setFormData, handleSetFormData, handleSetMessages }}>
+      {children}
+    </ChatBotContext.Provider>
+  );
+};
+
+export default ChatBotContextProvider;
+
+export const useChatBotContext = () : ChatBotContextType => useContext(ChatBotContext);
