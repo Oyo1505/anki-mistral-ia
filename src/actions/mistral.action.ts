@@ -3,17 +3,13 @@ import { FormDataSchemaType } from "@/schema/form-schema";
 import { mistral } from "@/lib/mistral";
 import { revalidatePath } from "next/cache";
 import prompt from "@/utils/string/prompt";
-import { retryWithBackoff } from "@/utils/time/delay";
-import { BASE_DELAY, MAX_RETRIES } from "@/shared/constants/numbers";
 import { CardSchemaBase, CardSchemaKanji } from "@/schema/card.schema";
 
 const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 5, textFromPdf, japanese, typeCard}: {text?: string, level: string, romanji: boolean, kanji: boolean, numberOfCards: number, textFromPdf?: string, japanese: boolean, typeCard: string}): Promise<string[][] | {error: string, status: number} | Error> => {
   try {
 
     try {
-      const response = await retryWithBackoff(
-        async () => {  
-          return await mistral.chat.parse({
+       const response = await mistral.chat.parse({
           model: "mistral-large-latest",
           temperature: 0.2,
           messages: [{ 
@@ -37,10 +33,7 @@ const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 
         responseFormat: typeCard === 'basique' ? CardSchemaBase : CardSchemaKanji,
         maxTokens: 10000,
       });
-    },
-    MAX_RETRIES,
-    BASE_DELAY
-  );
+  
   
   const parsedResult = response?.choices?.[0]?.message?.parsed;
 
