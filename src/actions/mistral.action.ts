@@ -11,9 +11,7 @@ const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 
   try {
 
     try {
-      const response = await retryWithBackoff(
-        async () => {  
-          return await mistral.chat.parse({
+       const response = await mistral.chat.parse({
           model: "mistral-large-latest",
           temperature: 0.2,
           messages: [{ 
@@ -37,10 +35,7 @@ const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 
         responseFormat: typeCard === 'basique' ? CardSchemaBase : CardSchemaKanji,
         maxTokens: 10000,
       });
-    },
-    MAX_RETRIES,
-    BASE_DELAY
-  );
+  
   
   const parsedResult = response?.choices?.[0]?.message?.parsed;
 

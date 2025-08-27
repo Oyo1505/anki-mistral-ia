@@ -112,6 +112,7 @@ export default function Form() {
               await delay(MILLISECONDS_DELAY); //1 second delay to avoid rate limit
             }
           }
+          console.log(data);
             const { data: dataRes, status, error } = await generateAnswer({
               ...data,
               ...(res && res.length > 0 && { textFromPdf: res })
