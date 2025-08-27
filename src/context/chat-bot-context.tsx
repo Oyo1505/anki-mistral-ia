@@ -11,12 +11,19 @@ export type FormDataChatBot = {
 }
 
 type ChatBotContextType = {
+// eslint-disable-next-line no-unused-vars
   messages: ChatMessage[];
+  // eslint-disable-next-line no-unused-vars
   setMessages: (messages: ChatMessage[]) => void;
+  // eslint-disable-next-line no-unused-vars
   formData: FormDataChatBot;
+    // eslint-disable-next-line no-unused-vars
   setFormData: (formData: FormDataChatBot) => void;
+  // eslint-disable-next-line no-unused-vars
   handleSetFormData: (formData: FormDataChatBot) => void;
+  // eslint-disable-next-line no-unused-vars
   handleSetMessages: (messages: ChatMessage[]) => void;
+  // eslint-disable-next-line no-unused-vars
 }
 
  const ChatBotContext = createContext<ChatBotContextType>({
@@ -76,7 +83,7 @@ const ChatBotContextProvider = ({ children }: { children: React.ReactNode }) => 
       localStorage.setItem('formData', JSON.stringify(formData));
       localStorage.setItem('chatBotMessagesAnki', JSON.stringify(messages));
     }
-  }, [formData.isSubmitted]);
+  }, [formData, messages]);
 
   const handleSetFormData = (formData: FormDataChatBot): void => {
     setFormData(prev => ({...prev, ...formData}));

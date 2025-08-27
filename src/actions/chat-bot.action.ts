@@ -1,8 +1,8 @@
 "use server";
 import { ChatMessage } from "@/interfaces/chat.interface";
 import { mistral } from "@/lib/mistral";
-import { MILLISECONDS_DELAY, MAX_RETRIES, BASE_DELAY } from "@/shared/constants/numbers";
-import delay, { retryWithBackoff } from "@/utils/time/delay";
+import { MAX_RETRIES, BASE_DELAY } from "@/shared/constants/numbers";
+import { retryWithBackoff } from "@/utils/time/delay";
 import { revalidatePath } from "next/cache";
 
 export const threadChatBot = async ({message, conversationHistory, typeExercice, level, name}: {message: string, conversationHistory: ChatMessage[], typeExercice: string, level: string, name: string}): Promise<any> => {

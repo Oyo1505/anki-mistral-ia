@@ -48,7 +48,7 @@ const FormChatBot = () => {
         <SelectLevel className='w-full' handleChangeSelectLevelAction={handleChangeSelectLevel} levels={levels} />
         <button type="submit" disabled={isSubmitting} className="w-full p-2 rounded-md text-white font-bold bg-blue-500 cursor-pointer">Submit</button>
         {errors.name && <p className="text-red-500">Le nom est requis</p>}
-        {errors.type && <p className="text-red-500">Le type d'exercice est requis</p>}
+        {errors.type && <p className="text-red-500">Le type d&apos;exercice est requis</p>}
       </form>
     </div>
     )}

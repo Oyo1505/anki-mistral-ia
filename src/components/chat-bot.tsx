@@ -146,7 +146,7 @@ const ChatBot = () => {
             )}
               
             <div ref={messagesEndRef} />
-          
+
           </div>
           <form onSubmit={handleSubmit(handleSendMessage)} className="w-full h-1/3 flex flex-col items-start justify-start gap-4 bg-slate-100 p-4">
             <Input 
