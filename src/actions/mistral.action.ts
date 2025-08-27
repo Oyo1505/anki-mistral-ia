@@ -42,7 +42,7 @@ const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 
     BASE_DELAY
   );
   
-  const parsedResult = response?.choices?.[0]?.message?.content;
+  const parsedResult = response?.choices?.[0]?.message?.parsed;
 
   if (!parsedResult) {
 

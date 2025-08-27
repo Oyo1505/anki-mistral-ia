@@ -17,7 +17,7 @@ export default function TextArea({ errors, id, className, onKeyDown, disabled, l
   return (
     <div className="w-full flex flex-col items-start justify-start">
       <label htmlFor={id}>{label}</label>
-      <textarea id={id} {...props } onKeyDown={onKeyDown} disabled={disabled} placeholder="Votre texte ou instructions" className={clsx(className, "border rounded p-2 w-full h-48 focus:outline-none focus:ring-2 focus:ring-gray-300 border-gray-300")} />
+      <textarea id={id} {...props } autoComplete="off" onKeyDown={onKeyDown} disabled={disabled} placeholder="Votre texte ou instructions" className={clsx(className, "border rounded p-2 w-full h-48 focus:outline-none focus:ring-2 focus:ring-gray-300 border-gray-300")} />
       {errors.text && <p className="text-red-600 text-xs">{errors.text.message}</p>}
     </div>
   );

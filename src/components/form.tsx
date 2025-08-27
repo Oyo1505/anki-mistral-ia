@@ -39,6 +39,8 @@ import { z } from 'zod';
   typeCard: z.string().optional().default('basique')
 })
 
+const levelsReverse = levels.reverse();
+
 export default function Form() {
 
   const [csvData, setCsvData] = useState<string[][]>([]);
@@ -149,7 +151,7 @@ export default function Form() {
   const csvDataSuccess = csvData  && csvData.length > 0 &&  !isPending;
   const isCardKanji = watch('typeCard');
   const allInJapanese = watch('japanese');
-
+ 
   return (
     <>
     <div className='w-full flex flex-col md:flex-row  items-start justify-center gap-4 transition-all duration-300 ease-in-out'>
@@ -158,7 +160,7 @@ export default function Form() {
       <form className="w-full flex flex-col items-start justify-start gap-4" onSubmit={handleSubmit(onSubmit)}>
         <TextArea {...register('text', { required: true })} errors={errors} id="text" />
         <div className='w-full grid grid-cols-1 md:grid-cols-2 gap-2'>
-         {isCardKanji === 'basique' ? <SelectLevel className='w-full' handleChangeSelectLevelAction={handleChangeSelectLevel} levels={levels.reverse()} /> : null}
+         {isCardKanji === 'basique' ? <SelectLevel className='w-full' handleChangeSelectLevelAction={handleChangeSelectLevel} levels={levelsReverse} /> : null}
           <Input className='w-full' type="number" label="cards" title="Nombre de cartes (max 15)" max={15} min={1} defaultValue={5} {...register('numberOfCards', { valueAsNumber: true })} />
           <SelectTypeCard register={register} />
         </div>

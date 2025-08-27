@@ -10,7 +10,7 @@ const CsvViewer = ({ csvFile }: { csvFile: object[] }) => {
               <div key={index} className='font-bold text-left'>{header.charAt(0).toUpperCase() + header.slice(1)}</div>
             ))}
           </div>
-          {csvFile.map((row, rowIndex) => (
+          {csvFile?.length > 0 && csvFile.map((row, rowIndex) => (
             <div key={rowIndex} className={`grid ${Object.keys(csvFile[0] || {}).length === 2 ? 'grid-cols-2' : 'grid-cols-3'} gap-6 text-left`}>
               {Object.values(row).map((cell, cellIndex) => (
                 <div className='text-left' key={cellIndex}>{rowIndex + 1} : {String(cell)}</div>
