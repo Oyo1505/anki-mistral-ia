@@ -1,11 +1,21 @@
 'use client'
-import { FormDataChatBot, useChatBotContext } from "@/context/chat-bot-context";
+import { useChatBotContext } from "@/context/chat-bot-context";
 import { levels } from "@/shared/constants/levels";
+import { zodResolver } from "@hookform/resolvers/zod";
 import dynamic from "next/dynamic";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { FormDataSchemaChatBotType } from "@/schema/form-schema";
 
 const Input = dynamic(() => import('./input'), { ssr: false });
 const SelectLevel =  dynamic(() => import('./select-level'), { ssr: false });
+
+ const FormDataSchemaChatBot = z.object({
+  name: z.string().min(1, 'Le nom est requis').max(20, 'Le nom ne doit pas dépasser 20 caractères'),
+  type: z.string().min(1, 'Le type d\'exercice est requis'),
+  level: z.string().min(1, 'Le niveau est requis'),
+  isSubmitted: z.boolean().optional().default(false)
+})
 
 const FormChatBot = () => {
   const { formData, setFormData } = useChatBotContext();
@@ -23,12 +33,14 @@ const FormChatBot = () => {
       level: formData.level,
       isSubmitted: formData.isSubmitted,
     },
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    resolver: zodResolver(FormDataSchemaChatBot)
   });
 
   const handleChangeSelectLevel = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setValue('level', e.target.value);
   }
-  const onSubmit = async (data: FormDataChatBot) => {
+  const onSubmit = async (data: FormDataSchemaChatBotType) => {
     setFormData({
       ...formData,
       name: data.name,

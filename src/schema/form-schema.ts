@@ -21,3 +21,12 @@ export const FormDataSchema = z.object({
 })
 
 export type FormDataSchemaType = z.infer<typeof FormDataSchema>;
+
+export const FormDataSchemaChatBot = z.object({
+  name: z.string().min(1, 'Le nom est requis').max(20, 'Le nom ne doit pas dépasser 20 caractères'),
+  type: z.string().min(1, 'Le type d\'exercice est requis'),
+  level: z.string().min(1, 'Le niveau est requis'),
+  isSubmitted: z.boolean().optional().default(false)
+})
+
+export type FormDataSchemaChatBotType = z.infer<typeof FormDataSchemaChatBot>;
