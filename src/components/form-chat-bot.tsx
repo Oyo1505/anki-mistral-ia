@@ -52,7 +52,7 @@ const FormChatBot = () => {
   return (
     <>
     {!formData.isSubmitted && (
-    <div className="w-full h-auto border-white shadow-zinc-600 shadow-2xl rounded-md p-4 bg-white border-2">
+    <div className="w-full h-full md:h-auto border-white shadow-zinc-600 shadow-2xl rounded-md p-4 bg-white border-2">
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 w-full">
         <Input className='w-full' type="text" label="name" title="Nom*" {...register('name', { required: true })} />
         <Input className='w-full' type="text" label="type" title="Type d'exercice*" {...register('type', { required: true })} />

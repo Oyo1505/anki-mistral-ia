@@ -156,7 +156,7 @@ export default function Form() {
   return (
     <>
     <div className='w-full flex flex-col md:flex-row  items-start justify-center gap-4 transition-all duration-300 ease-in-out'>
-    <div className='w-full border-2 md:w-1/2  2xl:w-1/4 p-4 border-white shadow-zinc-600 shadow-2xl rounded-md flex flex-col items-start justify-start gap-4 bg-white'>
+    <div className='w-full border-2 p-4 border-white shadow-zinc-600 shadow-2xl rounded-md flex flex-col items-start justify-start gap-4 bg-white'>
       <h1 className="text-xl w-full text-center font-bold">Générateur de cartes Anki (Basique)</h1>
       <form className="w-full flex flex-col items-start justify-start gap-4" onSubmit={handleSubmit(onSubmit)}>
         <TextArea {...register('text', { required: true })} errors={errors} id="text" />
