@@ -1,10 +1,11 @@
 'use client'
-import { useChatBotContext } from "@/context/chat-bot-context";
-import { useForm } from "react-hook-form";
 import { threadChatBot } from "@/actions/chat-bot.action";
-import { useState, useEffect, useRef } from "react";
+import { useChatBotContext } from "@/context/chat-bot-context";
 import { ChatMessage } from "@/interfaces/chat.interface";
 import { LOADING_MESSAGE_DELAY, LOADING_MESSAGE_DELAY_2, LOADING_MESSAGE_DELAY_3 } from "@/shared/constants/numbers";
+import { marked } from "marked";
+import { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
 import TextArea from "./text-area";
 
 const RobotIcon = (props: React.SVGProps<SVGSVGElement>) => ( 
@@ -114,7 +115,7 @@ const ChatBot = () => {
       }
     }
   }
- 
+
   return (
     formData.isSubmitted && (
       <div className="w-full min-h-1/2 h-4/5 flex flex-col items-start justify-start gap-4">
@@ -144,10 +145,10 @@ const ChatBot = () => {
         <div className="w-full h-full flex flex-col items-start justify-start relative">   
           <button className="absolute bottom-50 right-3 text-black" onClick={() => scrollToBottom()}> <ArrowDownIcon /></button>
           <div className="w-full h-full flex flex-col items-start justify-start gap-4 bg-slate-100 p-4 rounded-t-md overflow-y-auto">
-            {messages.map((message, index) => (
-              <div key={index} className={`${message.role === 'user' ? 'bg-slate-800 text-white self-end' : 'bg-slate-200 text-slate-800 text-left'} p-2 rounded-md max-w-[80%] `}>
-                <span>{message.role === 'user' ? '' : <RobotIcon />}</span>
-                <div className="text-base whitespace-pre-wrap">{message.message}</div>
+            {messages.map(({role, message}, index) => (
+              <div key={index} className={`${role === 'user' ? 'bg-slate-800 text-white self-end' : 'bg-slate-200 text-slate-800 text-left'} p-2 rounded-md max-w-[80%] `}>
+                <span>{role === 'user' ? '' : <RobotIcon />}</span>
+                <div className="text-base whitespace-pre-wrap">{ <div dangerouslySetInnerHTML={{ __html: marked.parse(message) }} />}</div>
               </div>
             ))}
             
