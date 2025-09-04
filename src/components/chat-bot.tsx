@@ -146,9 +146,9 @@ const ChatBot = () => {
           <button className="absolute bottom-50 right-3 text-black" onClick={() => scrollToBottom()}> <ArrowDownIcon /></button>
           <div className="w-full h-full flex flex-col items-start justify-start gap-4 bg-slate-100 p-4 rounded-t-md overflow-y-auto">
             {messages.map(({role, message}, index) => (
-              <div key={index} className={`${role === 'user' ? 'bg-slate-800 text-white self-end' : 'bg-slate-200 text-slate-800 text-left'} p-2 rounded-md max-w-[80%] `}>
+              <div key={index} className={`${role === 'user' ? 'bg-slate-800 text-white self-end' : 'bg-slate-200 text-slate-800 text-left'} p-2 h-auto rounded-md max-w-[80%] `}>
                 <span>{role === 'user' ? '' : <RobotIcon />}</span>
-                <div className="text-base whitespace-pre-wrap">{ <div dangerouslySetInnerHTML={{ __html: marked.parse(message) }} />}</div>
+                <div className="text-base whitespace-pre-wrap">{ <div className="h-auto" dangerouslySetInnerHTML={{ __html: marked.parse(typeof message === 'string' ? message : '') }} />}</div>
               </div>
             ))}
             
