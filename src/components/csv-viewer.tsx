@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 const CsvViewer = ({ csvFile, setIsCsvVisible }: { csvFile: object[], setIsCsvVisible: (isCsvVisible:boolean) => void }) => {
 
   return (
