@@ -1,10 +1,13 @@
 'use server'
-import { FormDataSchemaType } from "@/schema/form-schema";
 import { mistral } from "@/lib/mistral";
-import { revalidatePath } from "next/cache";
-import prompt from "@/utils/string/prompt";
 import { CardSchemaBase, CardSchemaKanji } from "@/schema/card.schema";
+import { FormDataSchemaType } from "@/schema/form-schema";
+import prompt from "@/utils/string/prompt";
+import { revalidatePath } from "next/cache";
 
+if (!process.env.MISTRAL_API_KEY && process.env.NODE_ENV === 'production') {
+    throw new Error('Mistral API configuration missing');
+}
 const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 5, textFromPdf, japanese, typeCard}: {text?: string, level: string, romanji: boolean, kanji: boolean, numberOfCards: number, textFromPdf?: string, japanese: boolean, typeCard: string}): Promise<string[][] | {error: string, status: number} | Error> => {
   try {
 
@@ -41,7 +44,7 @@ const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 
 
     throw new Error("La réponse du modèle est vide ou n'a pas pu être parsée correctement.");
   }
-  return parsedResult as any;
+  return parsedResult;
 }
   catch(err){
     console.error(err);
@@ -141,4 +144,5 @@ const generateAnswer = async (data: FormDataSchemaType): Promise<{data: string[]
   }
 };
 
-export { generateCardsAnki, generateAnswer, getTextFromImage, getTextFromPDF };
+export { generateAnswer, generateCardsAnki, getTextFromImage, getTextFromPDF };
+

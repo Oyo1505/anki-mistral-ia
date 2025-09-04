@@ -1,11 +1,11 @@
 "use server";
 import { ChatMessage } from "@/interfaces/chat.interface";
 import { mistral } from "@/lib/mistral";
-import { MAX_RETRIES, BASE_DELAY } from "@/shared/constants/numbers";
+import { BASE_DELAY, MAX_RETRIES } from "@/shared/constants/numbers";
 import { retryWithBackoff } from "@/utils/time/delay";
 import { revalidatePath } from "next/cache";
 
-export const threadChatBot = async ({message, conversationHistory, typeExercice, level, name}: {message: string, conversationHistory: ChatMessage[], typeExercice: string, level: string, name: string}): Promise<any> => {
+export const threadChatBot = async ({message, conversationHistory, typeExercice, level, name}: {message: string, conversationHistory: ChatMessage[], typeExercice: string, level: string, name: string}): Promise<unknown> => {
   const conversationContext = conversationHistory
       ? conversationHistory
           .filter((msg) => msg.role === 'user' || msg.role === 'assistant')
