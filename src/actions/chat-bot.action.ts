@@ -3,17 +3,28 @@ import { ChatMessage } from "@/interfaces/chat.interface";
 import { mistral } from "@/lib/mistral";
 import { BASE_DELAY, MAX_RETRIES } from "@/shared/constants/numbers";
 import { retryWithBackoff } from "@/utils/time/delay";
+import { ContentChunk } from "@mistralai/mistralai/models/components";
 import { revalidatePath } from "next/cache";
 
-export const threadChatBot = async ({message, conversationHistory, typeExercice, level, name}: {message: string, conversationHistory: ChatMessage[], typeExercice: string, level: string, name: string}): Promise<unknown> => {
+export const threadChatBot = async ({message, conversationHistory, typeExercice, level, name}: {message: string, conversationHistory: ChatMessage[], typeExercice: string, level: string, name: string})
+: Promise<{role: 'user' | 'assistant' | 'system', message: string | ContentChunk[] | null | undefined, timestamp: Date }> => {
   const conversationContext = conversationHistory
       ? conversationHistory
           .filter((msg) => msg.role === 'user' || msg.role === 'assistant')
           .slice(-4)
-          .map((msg) => ({
-            role: msg.role,
-            content: msg.message,
-          }))
+          .map((msg) => {
+            if (msg.role === 'user') {
+              return {
+                role: 'user' as const,
+                content: typeof msg.message === 'string' ? msg.message : '',
+              };
+            } else {
+              return {
+                role: 'assistant' as const,
+                content: msg.message,
+              };
+            }
+          })
       : [];
 
   try {

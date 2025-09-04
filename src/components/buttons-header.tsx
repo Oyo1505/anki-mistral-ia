@@ -8,7 +8,7 @@ const ButtonsHeader = () => {
 
   return (
   
-    <div className="flex items-center w-full justify-start gap-4">
+    <div className="flex pt-4 items-center w-full justify-start gap-4 mb-2.5">
       {pathname !== '/' && 
       <Link href="/" 
           className="rounded-md bg-white py-2 px-4 border border-transparent text-center font-bold text-sm text-slate-800 transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 hover:text-white active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">

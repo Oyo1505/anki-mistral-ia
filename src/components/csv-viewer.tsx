@@ -1,5 +1,4 @@
-// eslint-disable-next-line no-unused-vars
-const CsvViewer = ({ csvFile, setIsCsvVisible }: { csvFile: object[], setIsCsvVisible: (isCsvVisible:boolean) => void }) => {
+const CsvViewer = ({ csvFile, setIsCsvVisible }: { csvFile: object[]; setIsCsvVisible: (_: boolean) => void }) => {
 
   return (
     <div className='relative w-full md:max-h-[95vh] overflow-y-auto  bg-white p-4 rounded-md transition-all duration-300 ease-in-out'>

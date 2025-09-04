@@ -1,11 +1,11 @@
 'use client'
 import { useChatBotContext } from "@/context/chat-bot-context";
+import { FormDataSchemaChatBotType } from "@/schema/form-schema";
 import { levels } from "@/shared/constants/levels";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dynamic from "next/dynamic";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { FormDataSchemaChatBotType } from "@/schema/form-schema";
 
 const Input = dynamic(() => import('./input'), { ssr: false });
 const SelectLevel =  dynamic(() => import('./select-level'), { ssr: false });
