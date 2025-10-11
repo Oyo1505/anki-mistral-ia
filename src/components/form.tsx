@@ -132,10 +132,6 @@ export default function Form() {
     }
   };
 
-  const handleChangeSelectLevel = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setValue('level', e.target.value);
-  }
-
   const handleChangeCheckboxRomanji = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue('romanji', e.target.checked);
   }
@@ -161,7 +157,7 @@ export default function Form() {
       <form className="w-full flex flex-col items-start justify-start gap-4" onSubmit={handleSubmit(onSubmit)}>
         <TextArea {...register('text', { required: true })} errors={errors} id="text" />
         <div className='w-full grid grid-cols-1 md:grid-cols-2 gap-2'>
-         {isCardKanji === 'basique' ? <SelectLevel className='w-full' handleChangeSelectLevelAction={handleChangeSelectLevel} levels={levelsReverse} /> : null}
+         {isCardKanji === 'basique' ? <SelectLevel className='w-full' register={register} levels={levelsReverse} defaultValue='N1' /> : null}
           <Input className='w-full' type="number" label="cards" title="Nombre de cartes (max 15)" max={15} min={1} defaultValue={5} {...register('numberOfCards', { valueAsNumber: true })} />
           <SelectTypeCard register={register} />
         </div>
