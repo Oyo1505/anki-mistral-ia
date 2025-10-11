@@ -15,7 +15,7 @@ const ButtonsHeader = () => {
         Card
       </Link> }  
       { pathname !== '/chat' && 
-      <Link href="chat" 
+      <Link data-testid='button-chat' href="chat" 
         className="rounded-md bg-white py-2 px-4 border border-transparent text-center font-bold text-sm text-slate-800 transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 hover:text-white active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
          Discuter avec le Chat Bot
       </Link> }

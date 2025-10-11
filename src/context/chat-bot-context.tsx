@@ -66,7 +66,7 @@ const ChatBotContextProvider = ({ children }: { children: React.ReactNode }) => 
   const [formData, setFormData] = useState<FormDataChatBot>({
     name: '',
     type: '',
-    level: '',
+    level: 'N1 Avancé',
     isSubmitted: false,
     idThreadChatBot: '',
   });
