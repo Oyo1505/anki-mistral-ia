@@ -1,4 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+
+// Charger les variables d'environnement de test
+dotenv.config({ path: path.resolve(__dirname, '.env.test.local') });
+dotenv.config({ path: path.resolve(__dirname, '.env.local') });
 
 /**
  * Configuration Playwright pour Next.js 15
@@ -90,5 +96,10 @@ export default defineConfig({
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000, // 2 minutes pour démarrer Next.js
+    env: {
+      MISTRAL_API_KEY: process.env.MISTRAL_API_KEY || '',
+      MISTRAL_ID_AGENT: process.env.MISTRAL_ID_AGENT || '',
+      NODE_ENV: 'test',
+    },
   },
 });

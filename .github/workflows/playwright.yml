@@ -77,6 +77,13 @@ jobs:
           echo "MISTRAL_API_KEY=${{ secrets.MISTRAL_API_KEY }}" >> $GITHUB_ENV
           echo "NODE_ENV=test" >> $GITHUB_ENV
 
+      - name: Create .env.test.local for Playwright
+        run: |
+          cat > .env.test.local << EOF
+          NODE_ENV=test
+          MISTRAL_API_KEY=${{ secrets.MISTRAL_API_KEY }}
+          EOF
+
       - name: Run Playwright tests
         run: pnpm test:e2e 
 

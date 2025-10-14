@@ -41,6 +41,7 @@
     "@types/node": "^24.3.0",
     "@types/react": "^19.1.11",
     "@types/tesseract.js": "^2.0.0",
+    "dotenv": "^17.2.3",
     "eslint": "^9.34.0",
     "eslint-config-next": "15.5.2",
     "jest": "^30.2.0",
