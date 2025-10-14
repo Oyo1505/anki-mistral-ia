@@ -95,7 +95,7 @@ export default defineConfig({
     command: 'pnpm dev',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000, // 2 minutes pour démarrer Next.js
+    timeout: 120 * 1000, 
     env: {
       MISTRAL_API_KEY: process.env.MISTRAL_API_KEY || '',
       MISTRAL_ID_AGENT: process.env.MISTRAL_ID_AGENT || '',
