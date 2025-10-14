@@ -44,6 +44,7 @@ const config = {
   testPathIgnorePatterns: [
     '/node_modules/',
     '/.next/',
+    '/e2e/'
   ],
 
   // Transform ignore patterns for ES modules in node_modules

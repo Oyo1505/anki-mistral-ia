@@ -51,7 +51,7 @@ export default function Form() {
   const {register, handleSubmit, setValue, watch, formState: { errors }, reset } = useForm({
     defaultValues: {
       typeCard: 'basique',
-      level: 'N1',
+      level: 'N5 Débutant',
       romanji: false,
       kanji: false,
       numberOfCards: 5,
@@ -83,11 +83,11 @@ export default function Form() {
     }
   };
   
-  const displayToast = (dataRes: string[][] | null, status: number, error: string | null, id: Id) => {
+  const displayToast = ({dataRes,status,error,id,typeCard }: {dataRes: string[][] | null, status: number, error: string | null, id: Id, typeCard:string | undefined}) => {
     if (dataRes && status === 200) {
       setCsvData(dataRes);
       toast.success("Génération terminée", { autoClose: 3000 });
-      reset();
+      reset({typeCard: typeCard});
     } else if (error && status === 500) {
       toast.dismiss(id);
       toast.error(error);
@@ -112,16 +112,16 @@ export default function Form() {
               await delay(MILLISECONDS_DELAY); //1 second delay to avoid rate limit
             }
           }
-          console.log(data);
-            const { data: dataRes, status, error } = await generateAnswer({
+       
+            const { data: dataRes, status, error, typeCard } = await generateAnswer({
               ...data,
               ...(res && res.length > 0 && { textFromPdf: res })
             });
          
-            displayToast(dataRes, status, error || null, id.toString());
+            displayToast({ dataRes, status, error: error || null, id: id.toString(), typeCard });
           
         } catch (error) {
-          displayToast(null, 500, "Erreur pendant la génération", id.toString());
+          displayToast({ dataRes: null, status: 500, error: "Erreur pendant la génération", id: id.toString(), typeCard: undefined });
           console.error("Erreur pendant la génération:", error);
         }
         toast.dismiss(id);
@@ -148,7 +148,6 @@ export default function Form() {
   const csvDataSuccess = csvData  && csvData.length > 0 &&  !isPending;
   const isCardKanji = watch('typeCard');
   const allInJapanese = watch('japanese');
- 
   return (
     <>
     <div className='w-full flex flex-col md:flex-row items-start justify-center gap-4 transition-all duration-300 ease-in-out'>
@@ -157,7 +156,7 @@ export default function Form() {
       <form className="w-full flex flex-col items-start justify-start gap-4" onSubmit={handleSubmit(onSubmit)}>
         <TextArea {...register('text', { required: true })} errors={errors} id="text" />
         <div className='w-full grid grid-cols-1 md:grid-cols-2 gap-2'>
-         {isCardKanji === 'basique' ? <SelectLevel className='w-full' register={register} levels={levelsReverse} defaultValue='N1' /> : null}
+         {isCardKanji === 'basique' && <SelectLevel className='w-full' register={register} levels={levelsReverse} defaultValue='N1' /> }
           <Input className='w-full' type="number" label="cards" title="Nombre de cartes (max 15)" max={15} min={1} defaultValue={5} {...register('numberOfCards', { valueAsNumber: true })} />
           <SelectTypeCard register={register} />
         </div>
@@ -208,14 +207,14 @@ export default function Form() {
      {isCsvVisible && csvDataSuccess && 
       <>
      
-      <CsvViewer setIsCsvVisible={setIsCsvVisible} csvFile={csvData} />
+      <CsvViewer setIsCsvVisible={setIsCsvVisible} csvFile={csvData} isCardKanji={isCardKanji}/>
       
       </>}
       
     </div>
     {csvDataSuccess && 
       <>
-        <CSVLink className='fixed bottom-2 right-2 w-auto z-50  p-3 bg-green-500 text-white font-semibold rounded-md text-center cursor-pointer' data={csvData}>Télécharger le fichier CSV</CSVLink>
+        <CSVLink  separator={","}  className='fixed bottom-2 right-2 w-auto z-50  p-3 bg-green-500 text-white font-semibold rounded-md text-center cursor-pointer' data={csvData}>Télécharger le fichier CSV</CSVLink>
       </>
     }
     </>
