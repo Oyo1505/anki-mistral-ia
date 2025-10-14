@@ -24,7 +24,7 @@ describe('ChatBotContextProvider', () => {
     expect(result.current.formData).toEqual({
       name: '',
       type: '',
-      level: '',
+      level: "N1 Avancé",
       isSubmitted: false,
       idThreadChatBot: '',
     })

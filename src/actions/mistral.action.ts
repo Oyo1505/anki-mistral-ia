@@ -2,13 +2,25 @@
 import { mistral } from "@/lib/mistral";
 import { CardSchemaBase, CardSchemaKanji } from "@/schema/card.schema";
 import { FormDataSchemaType } from "@/schema/form-schema";
+import { contentMistralRequest } from "@/utils/string/content-mistral-request";
 import prompt from "@/utils/string/prompt";
 import { revalidatePath } from "next/cache";
 
 if (!process.env.MISTRAL_API_KEY && process.env.NODE_ENV === 'production') {
     throw new Error('Mistral API configuration missing');
 }
-const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 5, textFromPdf, japanese, typeCard}: {text?: string, level: string, romanji: boolean, kanji: boolean, numberOfCards: number, textFromPdf?: string, japanese: boolean, typeCard: string}): Promise<string[][] | {error: string, status: number} | Error> => {
+type generateCardsAnkiParams = {
+  text?: string;
+  level: string;
+  romanji: boolean;
+  kanji: boolean;
+  numberOfCards: number;
+  textFromPdf?: string;
+  japanese: boolean;
+  typeCard: string;
+};
+
+const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 5, textFromPdf, japanese, typeCard}: generateCardsAnkiParams): Promise<string[][] | {error: string, status: number} | Error> => {
   try {
 
     try {
@@ -17,17 +29,7 @@ const generateCardsAnki = async ({ text, level, romanji, kanji, numberOfCards = 
           temperature: 0.2,
           messages: [{ 
           role: "system",
-          content: typeCard === 'basique' ? 
-          `-> Tu es fais pour faire des carte anki basique de japonais.
-          -> Tu dois intergrer IMPERATIVEMENT les mots en KATAKANA et en HIRAGANA si tu en detectes ou ne traduit pas les mots en KATAKANA quand cela est possible.
-          -> Tu dois repondre en japonais et en francais. Pour un niveau de japonais de ${level}.
-          -> Tu dois générer ${numberOfCards} cartes anki ${romanji ? 'avec les romanji' : 'ne pas utiliser les romanji'}
-          -> ${kanji ? 'tu peux intégrer les kanji si il y en a' : 'ne pas utiliser les kanji'}.
-          -> Tu peux faire des cartes avec des phrases a trou, des QCM, des exercices de grammaire, des mots a deviner, des phrases, des expressions, des mots complexes tout en respectant le niveau donner qui est: ${level}.N\'invente pas des mots en KATAKANA
-          -> ${japanese && 'Tu dois écrire les énoncés, questions, réponses en japonais. PAS DE FRANCAIS.'}
-          -> Tu dois intergrer IMPERATIVEMENT les mots en KATAKANA et en HIRAGANA si tu en detectes ou ne traduit pas les mots en KATAKANA quand cela est possible.
-          -> Pour un niveau de japonais de ${level}.
-          ` : `Tu es fais pour faire des cartes anki pour apprendre les kanjis japonais avec des mots en KANJI, HIRAGANA, les mots en KATAKANA sont INTERDIT. Tu dois générer ${numberOfCards} cartes anki.`
+          content: contentMistralRequest({ typeCard, japanese, numberOfCards, level, kanji, romanji }) 
         },
         { 
           role: "user", 
@@ -125,7 +127,7 @@ const cleanText = ocrResponse?.pages
  }
 }
 
-const generateAnswer = async (data: FormDataSchemaType): Promise<{data: string[][] | null, status: number, error?: string} > => {
+const generateAnswer = async (data: FormDataSchemaType): Promise<{data: string[][] | null, status: number, error?: string, typeCard?:string} > => {
 
   try { 
     const {text, level, numberOfCards, romanji, kanji, textFromPdf, japanese, typeCard} = data;
@@ -133,10 +135,9 @@ const generateAnswer = async (data: FormDataSchemaType): Promise<{data: string[]
     revalidatePath('/');
     
     if (typeof res === 'object' && 'status' in res && res.status === 500) {
-      console.error(res.status);
       return {data: null, status: 500, error: 'Une erreur est survenue dans la génération de la reponse. Veuillez réessayer.'};
     } else {
-      return {data: res as string[][], status: 200};
+      return {data: res as string[][], status: 200, typeCard : typeCard};
     }
   } catch (error) { 
     console.error(error);

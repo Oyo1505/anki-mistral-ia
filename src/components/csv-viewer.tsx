@@ -1,4 +1,4 @@
-const CsvViewer = ({ csvFile, setIsCsvVisible }: { csvFile: object[]; setIsCsvVisible: (_: boolean) => void }) => {
+const CsvViewer = ({ csvFile, setIsCsvVisible, isCardKanji }: { csvFile: object[]; setIsCsvVisible: (_: boolean) => void, isCardKanji:string }) => {
 
   return (
     <div className='relative w-full md:max-h-[95vh] overflow-y-auto  bg-white p-4 rounded-md transition-all duration-300 ease-in-out'>
@@ -8,15 +8,15 @@ const CsvViewer = ({ csvFile, setIsCsvVisible }: { csvFile: object[]; setIsCsvVi
       </div>
 
       <div className='w-full flex justify-between  flex-col gap-6'>
-          <div className={`w-full grid ${Object.keys(csvFile[0] || {}).length === 2 ? 'grid-cols-2' : 'grid-cols-3'} gap-4`}>
+          <div className={`w-full grid ${isCardKanji === "basique" ? 'grid-cols-2' : 'grid-cols-5'} gap-4`}>
             {Object.keys(csvFile[0] || {}).map((header, index) => (
               <div key={index} className='font-bold text-left'>{header.charAt(0).toUpperCase() + header.slice(1)}</div>
             ))}
           </div>
           {csvFile?.length > 0 && csvFile.map((row, rowIndex) => (
-            <div key={rowIndex} className={`grid ${Object.keys(csvFile[0] || {}).length === 2 ? 'grid-cols-2' : 'grid-cols-3'} gap-6 text-left`}>
+            <div key={rowIndex} className={`grid ${isCardKanji === "basique" ? 'grid-cols-2' : 'grid-cols-5'} gap-6 text-left`}>
               {Object.values(row).map((cell, cellIndex) => (
-                <div className='text-left' key={cellIndex}>{rowIndex + 1} : {String(cell)}</div>
+                <div className='text-left' key={cellIndex}> {String(cell)}</div>
               ))}
             </div>
           ))}

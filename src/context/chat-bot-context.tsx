@@ -57,7 +57,7 @@ const ChatBotContextProvider = ({ children }: { children: React.ReactNode }) => 
       {
         role: 'assistant',
         message: 'Bonjour, comment puis-je vous aider ?',
-        timestamp: new Date(),
+        timestamp: new Date().toLocaleDateString(),
         id: 'welcome',
       }
     ];
