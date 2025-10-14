@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import clsx from "clsx";
 import { UseFormRegister } from "react-hook-form";
@@ -10,24 +10,29 @@ interface SelectLevelProps {
   defaultValue?: string;
 }
 
-export default function SelectLevel({className, levels, register, defaultValue}: SelectLevelProps) {
-
+export default function SelectLevel({
+  className,
+  levels,
+  register,
+  defaultValue,
+}: SelectLevelProps) {
   return (
-  <div className={clsx("flex flex-col items-start justify-start", className)}>
-    <label className="font-semibold" htmlFor="level">Niveau*</label>
-    <select
-      id="level"
-      className="w-full h-full p-2 rounded-md border-2 border-gray-300"
-      defaultValue={defaultValue}
-      {...register('level')}
-    >
-      {levels.map((level) => (
-        <option key={level.value} value={level.value}>
-          {level.label}
-        </option>
-      ))}
-    </select>
-  </div>
+    <div className={clsx("flex flex-col items-start justify-start", className)}>
+      <label className="font-semibold" htmlFor="level">
+        Niveau*
+      </label>
+      <select
+        id="level"
+        className="w-full h-full p-2 rounded-md border-2 border-gray-300"
+        defaultValue={defaultValue}
+        {...register("level")}
+      >
+        {levels.map((level) => (
+          <option key={level.value} value={level.value}>
+            {level.label}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 }
-

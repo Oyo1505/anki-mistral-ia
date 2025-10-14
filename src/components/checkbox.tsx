@@ -1,4 +1,4 @@
-'use client'
+"use client";
 interface CheckboxProps {
   label: string;
   title: string;
@@ -6,11 +6,20 @@ interface CheckboxProps {
   handleChangeCheckboxAction: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export default function Checkbox({label, title, handleChangeCheckboxAction}: CheckboxProps) {
+export default function Checkbox({
+  label,
+  title,
+  handleChangeCheckboxAction,
+}: CheckboxProps) {
   return (
     <div className="flex w-full gap-2 justify-between">
-     <label htmlFor={label}>{title}</label>
-     <input id={label} className="ml-2" type="checkbox" onChange={handleChangeCheckboxAction} />
+      <label htmlFor={label}>{title}</label>
+      <input
+        id={label}
+        className="ml-2"
+        type="checkbox"
+        onChange={handleChangeCheckboxAction}
+      />
     </div>
-  )
+  );
 }

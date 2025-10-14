@@ -8,6 +8,7 @@
     "start": "cross-env NODE_OPTIONS='--openssl-legacy-provider --inspect' next start",
     "lint": "next lint",
     "test": "jest",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,scss}\"",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:ci": "jest --ci --coverage --maxWorkers=2",

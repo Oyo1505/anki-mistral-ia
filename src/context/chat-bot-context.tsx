@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { ChatMessage } from "@/interfaces/chat.interface";
 import { createContext, useContext, useEffect, useState } from "react";
 
@@ -8,44 +8,47 @@ export type FormDataChatBot = {
   level: string;
   isSubmitted: boolean;
   idThreadChatBot?: string;
-}
+};
 
 type ChatBotContextType = {
-// eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line no-unused-vars
   messages: ChatMessage[];
   // eslint-disable-next-line no-unused-vars
   setMessages: (messages: ChatMessage[]) => void;
   // eslint-disable-next-line no-unused-vars
   formData: FormDataChatBot;
-    // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line no-unused-vars
   setFormData: (formData: FormDataChatBot) => void;
   // eslint-disable-next-line no-unused-vars
   handleSetFormData: (formData: FormDataChatBot) => void;
   // eslint-disable-next-line no-unused-vars
   handleSetMessages: (messages: ChatMessage[]) => void;
   // eslint-disable-next-line no-unused-vars
-}
+};
 
- const ChatBotContext = createContext<ChatBotContextType>({
+const ChatBotContext = createContext<ChatBotContextType>({
   messages: [],
   setMessages: () => {},
   formData: {
-    name: '',
-    type: '',
-    level: '',
+    name: "",
+    type: "",
+    level: "",
     isSubmitted: false,
-    idThreadChatBot: '',
+    idThreadChatBot: "",
   },
   setFormData: () => {},
   handleSetFormData: () => {},
   handleSetMessages: () => {},
 });
 
-const ChatBotContextProvider = ({ children }: { children: React.ReactNode }) => {
- 
+const ChatBotContextProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [messages, setMessages] = useState<ChatMessage[]>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('chatBotMessagesAnki');
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("chatBotMessagesAnki");
       if (saved) {
         return JSON.parse(saved).map((msg: ChatMessage) => ({
           ...msg,
@@ -55,24 +58,24 @@ const ChatBotContextProvider = ({ children }: { children: React.ReactNode }) => 
     }
     return [
       {
-        role: 'assistant',
-        message: 'Bonjour, comment puis-je vous aider ?',
+        role: "assistant",
+        message: "Bonjour, comment puis-je vous aider ?",
         timestamp: new Date().toLocaleDateString(),
-        id: 'welcome',
-      }
+        id: "welcome",
+      },
     ];
   });
 
   const [formData, setFormData] = useState<FormDataChatBot>({
-    name: '',
-    type: '',
-    level: 'N1 Avancé',
+    name: "",
+    type: "",
+    level: "N1 Avancé",
     isSubmitted: false,
-    idThreadChatBot: '',
+    idThreadChatBot: "",
   });
 
   useEffect(() => {
-    const formDataFromLocalStorage = localStorage.getItem('formData');
+    const formDataFromLocalStorage = localStorage.getItem("formData");
     if (formDataFromLocalStorage) {
       setFormData(JSON.parse(formDataFromLocalStorage));
     }
@@ -80,21 +83,30 @@ const ChatBotContextProvider = ({ children }: { children: React.ReactNode }) => 
 
   useEffect(() => {
     if (formData.isSubmitted) {
-      localStorage.setItem('formData', JSON.stringify(formData));
-      localStorage.setItem('chatBotMessagesAnki', JSON.stringify(messages));
+      localStorage.setItem("formData", JSON.stringify(formData));
+      localStorage.setItem("chatBotMessagesAnki", JSON.stringify(messages));
     }
   }, [formData, messages]);
 
   const handleSetFormData = (formData: FormDataChatBot): void => {
-    setFormData(prev => ({...prev, ...formData}));
-    localStorage.setItem('formData', JSON.stringify(formData));
-  }
+    setFormData((prev) => ({ ...prev, ...formData }));
+    localStorage.setItem("formData", JSON.stringify(formData));
+  };
   const handleSetMessages = (messages: ChatMessage[]): void => {
     setMessages(messages);
-    localStorage.setItem('chatBotMessagesAnki', JSON.stringify(messages));
-  }
+    localStorage.setItem("chatBotMessagesAnki", JSON.stringify(messages));
+  };
   return (
-    <ChatBotContext.Provider value={{ messages, setMessages, formData, setFormData, handleSetFormData, handleSetMessages }}>
+    <ChatBotContext.Provider
+      value={{
+        messages,
+        setMessages,
+        formData,
+        setFormData,
+        handleSetFormData,
+        handleSetMessages,
+      }}
+    >
       {children}
     </ChatBotContext.Provider>
   );
@@ -102,4 +114,5 @@ const ChatBotContextProvider = ({ children }: { children: React.ReactNode }) => 
 
 export default ChatBotContextProvider;
 
-export const useChatBotContext = () : ChatBotContextType => useContext(ChatBotContext);
+export const useChatBotContext = (): ChatBotContextType =>
+  useContext(ChatBotContext);
