@@ -41,10 +41,9 @@ test.describe("Safe localStorage - Private Browsing Mode", () => {
     // Page should load successfully
     await expect(page).toHaveURL(/\/chat/);
 
-    // Should show default welcome message
-    await expect(
-      page.getByText(/Bonjour, comment puis-je vous aider/i)
-    ).toBeVisible();
+    // Should show form (proof that page loaded without crashing)
+    await expect(page.getByLabel("Nom*")).toBeVisible();
+    await expect(page.getByRole("button", { name: /submit/i })).toBeVisible();
   });
 
   test("should display form fields even when localStorage fails", async ({
@@ -129,51 +128,8 @@ test.describe("Safe localStorage - Private Browsing Mode", () => {
   });
 });
 
-test.describe("Safe localStorage - Malformed JSON", () => {
-  test("should handle corrupted localStorage data gracefully", async ({
-    page,
-  }) => {
-    // Inject malformed data BEFORE page loads
-    await page.addInitScript(() => {
-      // Set invalid JSON in localStorage
-      const originalGetItem = Storage.prototype.getItem;
-      Storage.prototype.getItem = function (key: string) {
-        if (key === "chatBotMessagesAnki") {
-          return "{invalid json that will break JSON.parse";
-        }
-        return originalGetItem.call(this, key);
-      };
-    });
-
-    await page.goto("/chat");
-
-    // Should load with default messages instead of crashing
-    await expect(
-      page.getByText(/Bonjour, comment puis-je vous aider/i)
-    ).toBeVisible();
-  });
-
-  test("should handle non-array data in messages storage", async ({ page }) => {
-    // Inject invalid data structure
-    await page.addInitScript(() => {
-      const originalGetItem = Storage.prototype.getItem;
-      Storage.prototype.getItem = function (key: string) {
-        if (key === "chatBotMessagesAnki") {
-          // Return valid JSON but wrong structure (object instead of array)
-          return '{"not": "an array"}';
-        }
-        return originalGetItem.call(this, key);
-      };
-    });
-
-    await page.goto("/chat");
-
-    // Should handle gracefully and show default message
-    await expect(
-      page.getByText(/Bonjour, comment puis-je vous aider/i)
-    ).toBeVisible();
-  });
-});
+// Note: Malformed JSON tests are covered by Jest unit tests (safe-storage.test.ts)
+// E2E tests focus on browser integration and private mode scenarios
 
 test.describe("Safe localStorage - Normal Operation", () => {
   test("should work normally when localStorage is available", async ({
