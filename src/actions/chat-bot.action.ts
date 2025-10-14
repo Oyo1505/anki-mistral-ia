@@ -74,8 +74,6 @@ export const threadChatBot = async ({
       timestamp: new Date(),
     };
   } catch (error: any) {
-    console.error("Erreur lors de la communication avec Mistral:", error);
-
     if (error.statusCode === 429) {
       return {
         role: "assistant",

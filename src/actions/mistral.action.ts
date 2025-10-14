@@ -33,57 +33,48 @@ const generateCardsAnki = async ({
   string[][] | { error: string; status: number } | Error
 > => {
   try {
-    try {
-      const response = await mistral.chat.parse({
-        model: "mistral-large-latest",
-        temperature: 0.2,
-        messages: [
-          {
-            role: "system",
-            content: contentMistralRequest({
-              typeCard,
-              japanese,
-              numberOfCards,
-              level,
-              kanji,
-              romanji,
-            }),
-          },
-          {
-            role: "user",
-            content: prompt({
-              typeCard,
-              textFromPdf,
-              text,
-              romanji,
-              kanji,
-              japanese,
-              numberOfCards,
-              level,
-            }),
-          },
-        ],
-        responseFormat:
-          typeCard === "basique" ? CardSchemaBase : CardSchemaKanji,
-        maxTokens: 10000,
-      });
+    const response = await mistral.chat.parse({
+      model: "mistral-large-latest",
+      temperature: 0.2,
+      messages: [
+        {
+          role: "system",
+          content: contentMistralRequest({
+            typeCard,
+            japanese,
+            numberOfCards,
+            level,
+            kanji,
+            romanji,
+          }),
+        },
+        {
+          role: "user",
+          content: prompt({
+            typeCard,
+            textFromPdf,
+            text,
+            romanji,
+            kanji,
+            japanese,
+            numberOfCards,
+            level,
+          }),
+        },
+      ],
+      responseFormat: typeCard === "basique" ? CardSchemaBase : CardSchemaKanji,
+      maxTokens: 10000,
+    });
 
-      const parsedResult = response?.choices?.[0]?.message?.parsed;
+    const parsedResult = response?.choices?.[0]?.message?.parsed;
 
-      if (!parsedResult) {
-        throw new Error(
-          "La réponse du modèle est vide ou n'a pas pu être parsée correctement."
-        );
-      }
-      return parsedResult;
-    } catch (err) {
-      console.error(err);
+    if (!parsedResult) {
       throw new Error(
-        "Une erreur est survenue dans la génération des cartes. Veuillez réessayer."
+        "La réponse du modèle est vide ou n'a pas pu être parsée correctement."
       );
     }
+    return parsedResult;
   } catch (error) {
-    console.error(error);
     throw new Error(
       "Trop de requêtes. Veuillez attendre une minute avant de réessayer."
     );
@@ -113,7 +104,6 @@ const getTextFromImage = async (file: Blob | MediaSource): Promise<string> => {
       .join("\n");
     return cleanText;
   } catch (error) {
-    console.error(error);
     throw new Error("Erreur dans la conversion de l'image en texte.");
   }
 };
@@ -155,7 +145,6 @@ const getTextFromPDF = async (file: File): Promise<string> => {
 
     return cleanText;
   } catch (error) {
-    console.error(error);
     throw new Error("Erreur dans la conversion du pdf en texte.");
   }
 };
@@ -202,7 +191,6 @@ const generateAnswer = async (
       return { data: res as string[][], status: 200, typeCard: typeCard };
     }
   } catch (error) {
-    console.error(error);
     return {
       data: null,
       status: 500,

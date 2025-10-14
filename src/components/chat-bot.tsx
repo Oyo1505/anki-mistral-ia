@@ -7,11 +7,11 @@ import {
   LOADING_MESSAGE_DELAY_2,
   LOADING_MESSAGE_DELAY_3,
 } from "@/shared/constants/numbers";
+import DOMPurify from "dompurify";
 import { marked } from "marked";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import TextArea from "./text-area";
-
 const ArrowDownIcon = () => {
   return (
     <svg
@@ -54,10 +54,6 @@ const ChatBot = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages, isLoading]);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && e.shiftKey && !isLoading) {
@@ -127,7 +123,6 @@ const ChatBot = () => {
           handleSetMessages([...updatedMessages, errorMessage]);
         }
       } catch (error) {
-        console.error("Erreur lors de l'envoi du message:", error);
         const errorMessage: ChatMessage = {
           role: "assistant",
           message: "Une erreur inattendue s'est produite. Veuillez réessayer.",
@@ -145,16 +140,15 @@ const ChatBot = () => {
     formData.isSubmitted && (
       <div className="w-full min-h-1/2 h-4/5 flex flex-col items-start justify-start gap-4">
         <div className="w-full flex items-center justify-between">
-          <div
-            role="button"
-            aria-label="Précédent"
+          <button
+            aria-label="Retour au formulaire de configuration"
             className="cursor-pointer text-center font-semibold text-slate-800 bg-white p-2 rounded-md border-2 border-slate-800 hover:bg-slate-800 hover:text-white transition-all duration-300 ease-in-out"
             onClick={() =>
               handleSetFormData({ ...formData, isSubmitted: false })
             }
           >
             Précédent
-          </div>
+          </button>
           <button
             aria-label="relancer la discussion"
             onClick={() =>
@@ -196,8 +190,24 @@ const ChatBot = () => {
                     <div
                       className="h-auto"
                       dangerouslySetInnerHTML={{
-                        __html: marked.parse(
-                          typeof message === "string" ? message : ""
+                        __html: DOMPurify.sanitize(
+                          marked.parse(
+                            typeof message === "string" ? message : ""
+                          ),
+                          {
+                            ALLOWED_TAGS: [
+                              "p",
+                              "br",
+                              "strong",
+                              "em",
+                              "code",
+                              "pre",
+                              "ul",
+                              "ol",
+                              "li",
+                            ],
+                            ALLOWED_ATTR: ["class"],
+                          }
                         ),
                       }}
                     />

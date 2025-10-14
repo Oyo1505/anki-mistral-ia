@@ -1,4 +1,15 @@
-const SelectTypeCard = ({ register }: { register: any }) => {
+import { FormDataSchemaType } from "@/schema/form-schema";
+import { UseFormRegister } from "react-hook-form";
+
+interface SelectTypeCardProps {
+  register: UseFormRegister<FormDataSchemaType>;
+}
+
+const SelectTypeCard = ({
+  register,
+}: {
+  register: SelectTypeCardProps["register"];
+}) => {
   return (
     <div className="flex flex-col items-start justify-start">
       <label htmlFor="typeCard" className="w-full font-semibold">
