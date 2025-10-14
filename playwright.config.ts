@@ -50,32 +50,39 @@ export default defineConfig({
   },
 
   // Configuration des navigateurs à tester
-  projects: [
-    {
+  // En CI: Chromium uniquement pour la rapidité
+  // En local: Tous les navigateurs pour la compatibilité complète
+  projects: (() => {
+    const chromiumProject = {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
-    },
+    };
 
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
+    if (process.env.CI) {
+      return [chromiumProject];
+    }
 
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
-
-    // Tests sur mobile
-    {
-      name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
-    },
-    {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
-    },
-  ],
+    return [
+      chromiumProject,
+      {
+        name: 'firefox',
+        use: { ...devices['Desktop Firefox'] },
+      },
+      {
+        name: 'webkit',
+        use: { ...devices['Desktop Safari'] },
+      },
+      // Tests sur mobile
+      {
+        name: 'Mobile Chrome',
+        use: { ...devices['Pixel 5'] },
+      },
+      {
+        name: 'Mobile Safari',
+        use: { ...devices['iPhone 12'] },
+      },
+    ];
+  })(),
 
   // Serveur de développement
   webServer: {
