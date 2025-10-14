@@ -12,8 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9.14.3
       - uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
@@ -34,6 +32,7 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -62,11 +61,11 @@ jobs:
 
       - name: Validate secrets
         env:
-          MISTRAL_KEY: ${{ secrets.MISTRAL_API_KEY || '' }}
+          MISTRAL_KEY: ${{ secrets.MISTRAL_API_KEY }}
         run: |
           if [ -z "$MISTRAL_KEY" ]; then
-            echo "⚠️  Warning: MISTRAL_API_KEY secret not configured"
-            echo "Tests requiring Mistral AI may fail"
+            echo "ℹ️  Info: MISTRAL_API_KEY not configured"
+            echo "E2E tests will run with empty API key (UI-only tests)"
           fi
 
       - name: Setup environment variables
