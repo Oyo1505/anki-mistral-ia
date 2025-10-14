@@ -11,15 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.14.3
       - uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
           cache: 'pnpm'
-
       - run: pnpm install --frozen-lockfile
       - run: pnpm test:ci 
   test:
@@ -36,6 +34,8 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: 9.14.3
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -65,7 +65,7 @@ jobs:
 
       - name: Validate secrets
         env:
-          MISTRAL_KEY: ${{ secrets.MISTRAL_API_KEY }}
+          MISTRAL_KEY: ${{ secrets.MISTRAL_API_KEY || '' }}
         run: |
           if [ -z "$MISTRAL_KEY" ]; then
             echo "⚠️  Warning: MISTRAL_API_KEY secret not configured"
@@ -76,13 +76,6 @@ jobs:
         run: |
           echo "MISTRAL_API_KEY=${{ secrets.MISTRAL_API_KEY }}" >> $GITHUB_ENV
           echo "NODE_ENV=test" >> $GITHUB_ENV
-
-      - name: Create .env.test.local for Playwright
-        run: |
-          cat > .env.test.local << EOF
-          NODE_ENV=test
-          MISTRAL_API_KEY=${{ secrets.MISTRAL_API_KEY }}
-          EOF
 
       - name: Run Playwright tests
         run: pnpm test:e2e 
