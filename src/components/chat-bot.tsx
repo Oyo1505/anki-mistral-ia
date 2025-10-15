@@ -193,9 +193,9 @@ const ChatBot = () => {
                       className="h-auto"
                       dangerouslySetInnerHTML={{
                         __html: DOMPurify.sanitize(
-                          marked.parse(
+                          marked.parseInline(
                             typeof message === "string" ? message : ""
-                          ),
+                          ) as string,
                           {
                             ALLOWED_TAGS: [
                               "p",
