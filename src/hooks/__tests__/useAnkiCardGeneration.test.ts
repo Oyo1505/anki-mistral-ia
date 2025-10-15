@@ -16,12 +16,16 @@ jest.mock("@/utils/time/delay", () => ({
 jest.mock("@/lib/mistral", () => ({
   mistral: {},
 }));
-// Create a mock for useDisplayToast that accepts parameters
-const mockDisplayToast = jest.fn();
+
+// Mock useDisplayToast with a factory function
+// The key is to create a stable mock function that will be returned
+const mockDisplayToastFn = jest.fn();
+
 jest.mock("../useDisplayToast", () => ({
-  useDisplayToast: jest.fn(() => ({
-    displayToast: mockDisplayToast,
-  })),
+  __esModule: true,
+  useDisplayToast: () => ({
+    displayToast: mockDisplayToastFn,
+  }),
 }));
 
 import { renderHook, waitFor } from "@testing-library/react";
@@ -139,7 +143,7 @@ describe("useAnkiCardGeneration", () => {
       });
     });
 
-    it("should update csvData state on successful generation", async () => {
+    it("should call displayToast with correct data on successful generation", async () => {
       const mockCsvData = [
         ["Question 1", "Answer 1"],
         ["Question 2", "Answer 2"],
@@ -163,7 +167,13 @@ describe("useAnkiCardGeneration", () => {
       });
 
       await waitFor(() => {
-        expect(result.current.csvData).toEqual(mockCsvData);
+        expect(mockDisplayToastFn).toHaveBeenCalledWith({
+          dataRes: mockCsvData,
+          status: 200,
+          error: null,
+          id: mockToastId.toString(),
+          typeCard: "basique",
+        });
       });
     });
   });
