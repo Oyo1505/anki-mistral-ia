@@ -1,23 +1,17 @@
 "use client";
-import {
-  generateAnswer,
-  getTextFromImage,
-  getTextFromPDF,
-} from "@/actions/mistral.action";
-import { logError } from "@/lib/logError";
+import { useAnkiCardGeneration } from "@/hooks/useAnkiCardGeneration";
 import { FormDataSchema, FormDataSchemaType } from "@/schema/form-schema";
 import { levels } from "@/shared/constants/levels";
-import { MILLISECONDS_DELAY } from "@/shared/constants/numbers";
-import delay from "@/utils/time/delay";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dynamic from "next/dynamic";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { CSVLink } from "react-csv";
 import { useForm } from "react-hook-form";
-import type { Id } from "react-toastify";
-import { toast } from "react-toastify";
 import ButtonUpload from "./button-upload";
 import Checkbox from "./checkbox";
+import FormButtonSubmit from "./form_button_submit";
+import FooterForm from "./form_footer";
+import ButtonDisplayCard from "./form_button_display_card";
 import Input from "./input";
 import SelectLevel from "./select-level";
 import SelectTypeCard from "./select-type-card";
@@ -30,17 +24,14 @@ const CsvViewer = dynamic(() => import("@/components/csv-viewer"), {
 const levelsReverse = levels.reverse();
 
 export default function Form() {
-  const [csvData, setCsvData] = useState<string[][]>([]);
-  const [isPending, startTransition] = useTransition();
   const [isCsvVisible, setIsCsvVisible] = useState(false);
-
   const {
     register,
     handleSubmit,
     setValue,
     watch,
-    formState: { errors },
     reset,
+    formState: { errors },
   } = useForm({
     defaultValues: {
       typeCard: "basique",
@@ -56,104 +47,11 @@ export default function Form() {
     },
     resolver: zodResolver(FormDataSchema),
   });
-
+  const { csvData, isPending, generateCards } = useAnkiCardGeneration(setValue, reset);
   const files = watch("files");
 
-  const processFile = async (file: File): Promise<string | null> => {
-    try {
-      if (file.type === "application/pdf") {
-        return await getTextFromPDF(file);
-      }
-
-      if (["image/jpeg", "image/png", "image/jpg"].includes(file.type)) {
-        return await getTextFromImage(file);
-      }
-
-      return null;
-    } catch (error) {
-      logError(error, "processFile");
-      toast.error("Erreur lors du traitement du fichier");
-      return null;
-    }
-  };
-
-  const displayToast = ({
-    dataRes,
-    status,
-    error,
-    id,
-    typeCard,
-  }: {
-    dataRes: string[][] | null;
-    status: number;
-    error: string | null;
-    id: Id;
-    typeCard: string | undefined;
-  }) => {
-    if (dataRes && status === 200) {
-      setCsvData(dataRes);
-      toast.success("Génération terminée", { autoClose: 3000 });
-      reset({ typeCard: typeCard });
-    } else if (error && status === 500) {
-      toast.dismiss(id);
-      toast.error(error);
-    } else {
-      toast.dismiss(id);
-      toast.error("Une erreur inattendue s'est produite");
-    }
-  };
-
   const onSubmit = async (data: FormDataSchemaType) => {
-    try {
-      startTransition(async () => {
-        const id = toast.loading("En cours de génération", {
-          autoClose: false,
-        });
-        try {
-          let res = "";
-
-          if (files?.[0]) {
-            const convertResult = await processFile(files[0]);
-            if (convertResult) {
-              res = convertResult;
-              setValue("textFromPdf", res, { shouldValidate: true });
-              await delay(MILLISECONDS_DELAY); //1 second delay to avoid rate limit
-            }
-          }
-
-          const {
-            data: dataRes,
-            status,
-            error,
-            typeCard,
-          } = await generateAnswer({
-            ...data,
-            ...(res && res.length > 0 && { textFromPdf: res }),
-          });
-
-          displayToast({
-            dataRes,
-            status,
-            error: error || null,
-            id: id.toString(),
-            typeCard,
-          });
-        } catch (error) {
-          logError(error, "onSubmit");
-          displayToast({
-            dataRes: null,
-            status: 500,
-            error: "Erreur pendant la génération",
-            id: id.toString(),
-            typeCard: undefined,
-          });
-        }
-        toast.dismiss(id);
-      });
-    } catch (error) {
-      logError(error, "onSubmit");
-      toast.error("Erreur lors de la génération des cartes");
-    }
+    await generateCards(data);
   };
 
   const handleChangeCheckboxRomanji = (
@@ -255,52 +153,17 @@ export default function Form() {
                 />
               </div>
             )}
-            <button
-              type="submit"
-              className={`w-full p-2 rounded-md text-white font-bold ${
-                isPending
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : isSubmitDisabled
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-blue-500 cursor-pointer"
-              }`}
-              disabled={isPending || isSubmitDisabled}
-            >
-              {isPending
-                ? "Génération en cours..."
-                : isSubmitDisabled
-                ? "Veuillez entrer du texte ou ajouter une image"
-                : "Générer"}
-            </button>
+            <FormButtonSubmit
+              isPending={isPending}
+              isSubmitDisabled={isSubmitDisabled}
+            />
           </form>
-          {csvDataSuccess && (
-            <>
-              <button
-                className="w-full p-2 rounded-md border-2 border-gray-300 text-center cursor-pointer font-bold"
-                onClick={() => setIsCsvVisible(() => !isCsvVisible)}
-              >
-                {isCsvVisible ? "Masquer les cartes" : "Voir les cartes"}
-              </button>
-            </>
-          )}
-          <div className="w-full flex items-start justify-between gap-2">
-            <a
-              className="text-sm text-center border-2 bg-blue-500 text-white  rounded-md p-2"
-              href="https://relieved-circle-d57.notion.site/Tuto-cr-ation-carte-basique-Anki-avec-ChatGPT-19a6823eb75b80e7b564dbc8cf73762d"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Tutoriel pour importer des cartes dans Anki
-            </a>
-            <a
-              className="text-sm text-center border-2 bg-blue-500 text-white rounded-md p-2"
-              href="https://apps.ankiweb.net/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Télécharger Anki
-            </a>
-          </div>
+          <ButtonDisplayCard
+            isCsvVisible={isCsvVisible}
+            setIsCsvVisible={setIsCsvVisible}
+            csvDataSuccess={csvDataSuccess}
+          />
+          <FooterForm />
         </div>
 
         {isCsvVisible && csvDataSuccess && (
