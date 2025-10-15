@@ -1,10 +1,5 @@
-'use client'
+"use client";
 
 export default function AnswerMistral({ answer }: { answer: string }) {
-
-  return (
-    <div>
-     {answer}
-    </div>
-  );
+  return <div>{answer}</div>;
 }

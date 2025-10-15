@@ -18,6 +18,8 @@
 /playwright/.cache/
 
 /.claude/
+/.claudedocs/
+/.vscode/
 # next.js
 /.next/
 /out/
