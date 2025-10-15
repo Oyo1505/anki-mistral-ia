@@ -1,5 +1,6 @@
 "use server";
 import { ChatMessage } from "@/interfaces/chat.interface";
+import { logError } from "@/lib/logError";
 import { mistral } from "@/lib/mistral";
 import { BASE_DELAY, MAX_RETRIES } from "@/shared/constants/numbers";
 import { retryWithBackoff } from "@/utils/time/delay";
@@ -74,6 +75,7 @@ export const threadChatBot = async ({
       timestamp: new Date(),
     };
   } catch (error: any) {
+    logError(error, "threadChatBot");
     if (error.statusCode === 429) {
       return {
         role: "assistant",

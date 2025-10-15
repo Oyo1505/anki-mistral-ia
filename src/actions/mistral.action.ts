@@ -1,4 +1,5 @@
 "use server";
+import { logError } from "@/lib/logError";
 import { mistral } from "@/lib/mistral";
 import { CardSchemaBase, CardSchemaKanji } from "@/schema/card.schema";
 import { FormDataSchemaType } from "@/schema/form-schema";
@@ -75,9 +76,14 @@ const generateCardsAnki = async ({
     }
     return parsedResult;
   } catch (error) {
-    throw new Error(
-      "Trop de requêtes. Veuillez attendre une minute avant de réessayer."
-    );
+    logError(error, "generateCardsAnki");
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : "Une erreur inconnue est survenue",
+      status: 500,
+    };
   }
 };
 
@@ -104,7 +110,8 @@ const getTextFromImage = async (file: Blob | MediaSource): Promise<string> => {
       .join("\n");
     return cleanText;
   } catch (error) {
-    throw new Error("Erreur dans la conversion de l'image en texte.");
+    logError(error, "getTextFromImage");
+    throw new Error("Error in image to text conversion.");
   }
 };
 
@@ -145,7 +152,8 @@ const getTextFromPDF = async (file: File): Promise<string> => {
 
     return cleanText;
   } catch (error) {
-    throw new Error("Erreur dans la conversion du pdf en texte.");
+    logError(error, "getTextFromPDF");
+    throw new Error("Error in PDF to text conversion.");
   }
 };
 
@@ -191,6 +199,7 @@ const generateAnswer = async (
       return { data: res as string[][], status: 200, typeCard: typeCard };
     }
   } catch (error) {
+    logError(error, "generateAnswer");
     return {
       data: null,
       status: 500,

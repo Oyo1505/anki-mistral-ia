@@ -2,6 +2,7 @@
 import { threadChatBot } from "@/actions/chat-bot.action";
 import { useChatBotContext } from "@/context/chat-bot-context";
 import { ChatMessage } from "@/interfaces/chat.interface";
+import { logError } from "@/lib/logError";
 import {
   LOADING_MESSAGE_DELAY,
   LOADING_MESSAGE_DELAY_2,
@@ -123,6 +124,7 @@ const ChatBot = () => {
           handleSetMessages([...updatedMessages, errorMessage]);
         }
       } catch (error) {
+        logError(error, "handleSendMessage");
         const errorMessage: ChatMessage = {
           role: "assistant",
           message: "Une erreur inattendue s'est produite. Veuillez réessayer.",

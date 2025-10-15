@@ -1,7 +1,7 @@
 "use client";
 import { ChatMessage } from "@/interfaces/chat.interface";
 import { safeStorage } from "@/utils/safe-storage";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 export type FormDataChatBot = {
   name: string;
@@ -70,13 +70,16 @@ const ChatBotContextProvider = ({
     }));
   });
 
-  const defaultFormData: FormDataChatBot = {
-    name: "",
-    type: "",
-    level: "N1 Avancé",
-    isSubmitted: false,
-    idThreadChatBot: "",
-  };
+  const defaultFormData: FormDataChatBot = useMemo(
+    () => ({
+      name: "",
+      type: "",
+      level: "N1 Avancé",
+      isSubmitted: false,
+      idThreadChatBot: "",
+    }),
+    []
+  );
 
   const [formData, setFormData] = useState<FormDataChatBot>(defaultFormData);
 
@@ -86,7 +89,7 @@ const ChatBotContextProvider = ({
       defaultFormData
     );
     setFormData(savedFormData);
-  }, []);
+  }, [defaultFormData]);
 
   useEffect(() => {
     if (formData.isSubmitted) {

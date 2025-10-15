@@ -4,6 +4,7 @@ import {
   getTextFromImage,
   getTextFromPDF,
 } from "@/actions/mistral.action";
+import { logError } from "@/lib/logError";
 import { FormDataSchema, FormDataSchemaType } from "@/schema/form-schema";
 import { levels } from "@/shared/constants/levels";
 import { MILLISECONDS_DELAY } from "@/shared/constants/numbers";
@@ -70,7 +71,9 @@ export default function Form() {
 
       return null;
     } catch (error) {
-      throw new Error("Erreur dans la conversion du fichier en texte.");
+      logError(error, "processFile");
+      toast.error("Erreur lors du traitement du fichier");
+      return null;
     }
   };
 
@@ -136,6 +139,7 @@ export default function Form() {
             typeCard,
           });
         } catch (error) {
+          logError(error, "onSubmit");
           displayToast({
             dataRes: null,
             status: 500,
@@ -147,6 +151,7 @@ export default function Form() {
         toast.dismiss(id);
       });
     } catch (error) {
+      logError(error, "onSubmit");
       toast.error("Erreur lors de la génération des cartes");
     }
   };
