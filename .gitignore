@@ -24,6 +24,7 @@
 /.next/
 /out/
 /claudedocs/
+claudedocs/
 /docs/
 # production
 /build
@@ -39,9 +40,9 @@ yarn-error.log*
 
 # env files (can opt-in for commiting if needed)
 .env*
-fra.traineddata
-jpn.traineddata
-eng.traineddata
+/fra.traineddata
+/jpn.traineddata
+/eng.traineddata
 # vercel
 .vercel
 
