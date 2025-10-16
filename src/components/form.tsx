@@ -4,14 +4,14 @@ import { FormDataSchema, FormDataSchemaType } from "@/schema/form-schema";
 import { levels } from "@/shared/constants/levels";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { CSVLink } from "react-csv";
 import { useForm } from "react-hook-form";
 import ButtonUpload from "./button-upload";
 import Checkbox from "./checkbox";
+import ButtonDisplayCard from "./form_button_display_card";
 import FormButtonSubmit from "./form_button_submit";
 import FooterForm from "./form_footer";
-import ButtonDisplayCard from "./form_button_display_card";
 import Input from "./input";
 import SelectLevel from "./select-level";
 import SelectTypeCard from "./select-type-card";
@@ -20,8 +20,6 @@ const CsvViewer = dynamic(() => import("@/components/csv-viewer"), {
   loading: () => <div>Chargement du visualiseur...</div>,
   ssr: false,
 });
-
-const levelsReverse = levels.reverse();
 
 export default function Form() {
   const [isCsvVisible, setIsCsvVisible] = useState(false);
@@ -47,9 +45,12 @@ export default function Form() {
     },
     resolver: zodResolver(FormDataSchema),
   });
-  const { csvData, isPending, generateCards } = useAnkiCardGeneration(setValue, reset);
+  const { csvData, isPending, generateCards } = useAnkiCardGeneration(
+    setValue,
+    reset
+  );
   const files = watch("files");
-
+  const levelsReverse = useMemo(() => [...levels].reverse(), []);
   const onSubmit = async (data: FormDataSchemaType) => {
     await generateCards(data);
   };
