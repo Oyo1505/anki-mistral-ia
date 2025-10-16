@@ -42,7 +42,6 @@ yarn-error.log*
 .env*
 /fra.traineddata
 /jpn.traineddata
-/eng.traineddata
 # vercel
 .vercel
 
