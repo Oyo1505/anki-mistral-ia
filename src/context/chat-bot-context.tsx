@@ -1,7 +1,14 @@
 "use client";
 import { ChatMessage } from "@/interfaces/chat.interface";
 import { safeStorage } from "@/utils/safe-storage";
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 export type FormDataChatBot = {
   name: string;
@@ -98,25 +105,27 @@ const ChatBotContextProvider = ({
     }
   }, [formData, messages]);
 
-  const handleSetFormData = (formData: FormDataChatBot): void => {
+  const handleSetFormData = useCallback((formData: FormDataChatBot): void => {
     setFormData((prev) => ({ ...prev, ...formData }));
     safeStorage.setItem("formData", formData);
-  };
-  const handleSetMessages = (messages: ChatMessage[]): void => {
+  }, []);
+  const handleSetMessages = useCallback((messages: ChatMessage[]): void => {
     setMessages(messages);
     safeStorage.setItem("chatBotMessagesAnki", messages);
-  };
+  }, []);
+  const contextValue = useMemo(
+    () => ({
+      formData,
+      messages,
+      setFormData,
+      setMessages,
+      handleSetFormData,
+      handleSetMessages,
+    }),
+    [formData, messages, setFormData, setMessages, handleSetFormData, handleSetMessages]
+  );
   return (
-    <ChatBotContext.Provider
-      value={{
-        messages,
-        setMessages,
-        formData,
-        setFormData,
-        handleSetFormData,
-        handleSetMessages,
-      }}
-    >
+    <ChatBotContext.Provider value={contextValue}>
       {children}
     </ChatBotContext.Provider>
   );

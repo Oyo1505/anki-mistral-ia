@@ -4,7 +4,7 @@ import { FormDataSchema, FormDataSchemaType } from "@/schema/form-schema";
 import { levels } from "@/shared/constants/levels";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dynamic from "next/dynamic";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { CSVLink } from "react-csv";
 import { useForm } from "react-hook-form";
 import ButtonUpload from "./button-upload";
@@ -51,31 +51,42 @@ export default function Form() {
   );
   const files = watch("files");
   const levelsReverse = useMemo(() => [...levels].reverse(), []);
-  const onSubmit = async (data: FormDataSchemaType) => {
-    await generateCards(data);
-  };
+  const onSubmit = useCallback(
+    async (data: FormDataSchemaType) => {
+      await generateCards(data);
+    },
+    [generateCards]
+  );
 
-  const handleChangeCheckboxRomanji = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setValue("romanji", e.target.checked);
-  };
+  const handleChangeCheckboxRomanji = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setValue("romanji", e.target.checked);
+    },
+    [setValue]
+  );
 
-  const handleChangeCheckboxKanji = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setValue("kanji", e.target.checked);
-  };
-  const handleChangeCheckboxJapanese = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setValue("japanese", e.target.checked);
-  };
+  const handleChangeCheckboxKanji = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setValue("kanji", e.target.checked);
+    },
+    [setValue]
+  );
+  const handleChangeCheckboxJapanese = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setValue("japanese", e.target.checked);
+    },
+    [setValue]
+  );
 
   const text = watch("text");
-  const isSubmitDisabled =
-    (!text || text.trim() === "") && (!files || files.length === 0);
-  const csvDataSuccess = csvData && csvData.length > 0 && !isPending;
+  const isSubmitDisabled = useMemo(
+    () => (!text || text.trim() === "") && (!files || files.length === 0),
+    [text, files]
+  );
+  const csvDataSuccess = useMemo(
+    () => csvData && csvData.length > 0 && !isPending,
+    [csvData, isPending]
+  );
   const isCardKanji = watch("typeCard");
   const allInJapanese = watch("japanese");
   return (

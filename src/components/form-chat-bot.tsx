@@ -4,6 +4,7 @@ import { FormDataSchemaChatBotType } from "@/schema/form-schema";
 import { levels } from "@/shared/constants/levels";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dynamic from "next/dynamic";
+import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -25,7 +26,7 @@ const FormDataSchemaChatBot = z.object({
 });
 
 const FormChatBot = () => {
-  const { formData, setFormData } = useChatBotContext();
+  const { formData, handleSetFormData } = useChatBotContext();
 
   const {
     register,
@@ -42,15 +43,17 @@ const FormChatBot = () => {
     resolver: zodResolver(FormDataSchemaChatBot),
   });
 
-  const onSubmit = (data: FormDataSchemaChatBotType) => {
-    setFormData({
-      ...formData,
-      name: data.name,
-      type: data.type,
-      level: data.level,
-      isSubmitted: true,
-    });
-  };
+  const onSubmit = useCallback(
+    (data: FormDataSchemaChatBotType) => {
+      handleSetFormData({
+        name: data.name,
+        type: data.type,
+        level: data.level,
+        isSubmitted: true,
+      });
+    },
+    [handleSetFormData]
+  );
 
   return (
     <>
