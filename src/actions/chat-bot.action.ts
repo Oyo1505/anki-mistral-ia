@@ -74,7 +74,7 @@ export const threadChatBot = async ({
       message: response.choices[0].message.content,
       timestamp: new Date(),
     };
-  } catch (error: any) {
+  } catch (error) {
     logError(error, "threadChatBot");
     if (error.statusCode === 429) {
       return {

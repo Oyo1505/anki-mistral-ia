@@ -1,19 +1,21 @@
 # Claude Code Configuration
 
 ## Project Overview
+
 Anki Mistral AI - Application Next.js qui intègre l'IA Mistral avec la fonctionnalité de cartes flash Anki, incluant le support OCR pour le traitement de texte français et japonais.
 
 ## Stack Technique
+
 - **Framework**: Next.js 15.5.2 avec TypeScript
 - **Styling**: Tailwind CSS 4.1.12
 - **AI**: Mistral AI (@mistralai/mistralai)
-- **OCR**: Tesseract.js (langues: français, japonais)
 - **Forms**: React Hook Form + Zod validation
 - **Export**: React CSV
 - **Testing**: Jest (unitaires) + Playwright (E2E)
 - **Package Manager**: pnpm 9.14.3
 
 ## Scripts de Développement
+
 ```bash
 # Développement
 pnpm dev             # Serveur de développement avec Turbopack
@@ -37,6 +39,7 @@ pnpm test:e2e:codegen # Générer des tests automatiquement
 ```
 
 ## Structure du Projet
+
 ```
 src/
 ├── actions/           # Server actions
@@ -58,18 +61,17 @@ src/
     └── chat.interface.ts
 ```
 
-## Fichiers OCR
-- `fra.traineddata` - Modèle Tesseract pour le français
-- `jpn.traineddata` - Modèle Tesseract pour le japonais
-
 ## Variables d'Environnement
+
 Configurées dans `.env.local` (voir `.env` pour template)
 
 ## Branches
+
 - **Actuelle**: `header-container`
 - **Principale**: main (à confirmer)
 
 ## Notes de Développement
+
 - Utilise les Server Actions Next.js pour l'intégration Mistral
 - Interface de chat avec contexte React
 - Export CSV des conversations/données
@@ -77,7 +79,9 @@ Configurées dans `.env.local` (voir `.env` pour template)
 - Support multilingue avec OCR
 
 ## Testing
+
 - **Jest** : 41 tests unitaires (100% réussite)
+
   - Validation Zod
   - Contexte React
   - Logique métier
@@ -91,6 +95,7 @@ Configurées dans `.env.local` (voir `.env` pour template)
   - Voir [PLAYWRIGHT_GUIDE.md](PLAYWRIGHT_GUIDE.md) et [PLAYWRIGHT_SETUP_COMPLETE.md](PLAYWRIGHT_SETUP_COMPLETE.md)
 
 ## Commandes Utiles
+
 ```bash
 # Installation des dépendances
 pnpm install

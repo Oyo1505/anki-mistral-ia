@@ -3,7 +3,7 @@
  * Focus sur la logique sans les complications des fake timers
  */
 
-import delay, { retryWithBackoff } from "../delay";
+import delay, { retryWithBackoff } from "../time/delay";
 
 describe("delay - Tests Simplifiés", () => {
   it("devrait retourner une Promise", () => {

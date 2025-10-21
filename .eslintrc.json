@@ -2,11 +2,10 @@
   "extends": "next/core-web-vitals",
   "settings": {
     "react": {
-      "version": "18.2.0"
+      "version": "19.2.0"
     }
   },
   "rules": {
-    "react-hooks/rules-of-hooks": "off",
     "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }]
   }
 }

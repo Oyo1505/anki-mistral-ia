@@ -1,3 +1,5 @@
+import isErrorWithStatusCode from "../number/isErrorWithStatusCode";
+
 export default function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -12,10 +14,14 @@ export async function retryWithBackoff<T>(
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
       return await fn();
-    } catch (error: any) {
+    } catch (error) {
       lastError = error;
 
-      if (error.statusCode === 429 && attempt < maxRetries) {
+      if (
+        isErrorWithStatusCode(error) &&
+        error.statusCode === 429 &&
+        attempt < maxRetries
+      ) {
         const delayMs = baseDelay * Math.pow(2, attempt); // Backoff exponentiel
         console.log(
           `Rate limit atteint, retry dans ${delayMs}ms (tentative ${

@@ -1,9 +1,11 @@
+import { FormDataSchemaType } from "@/schema/form-schema";
 import { useCallback } from "react";
+import { UseFormReset } from "react-hook-form";
 import { Id, toast } from "react-toastify";
 
 export const useDisplayToast = (
   setCsvData: (_data: string[][]) => void,
-  reset: (_values?: any) => void
+  reset: UseFormReset<FormDataSchemaType>
 ) => {
   const displayToast = useCallback(
     ({
@@ -22,7 +24,6 @@ export const useDisplayToast = (
       if (dataRes && status === 200) {
         setCsvData(dataRes);
         toast.success("Génération terminée", { autoClose: 3000 });
-        // Restore form reset functionality
         reset({ typeCard: typeCard });
       } else if (error && status === 500) {
         toast.dismiss(id);

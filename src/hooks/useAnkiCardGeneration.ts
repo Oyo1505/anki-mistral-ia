@@ -6,10 +6,14 @@ import { fileProcessor } from "@/services/File-processor-service";
 import { MILLISECONDS_DELAY } from "@/shared/constants/numbers";
 import delay from "@/utils/time/delay";
 import { useCallback, useState, useTransition } from "react";
+import { UseFormReset, UseFormSetValue } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useDisplayToast } from "./useDisplayToast";
 
-export const useAnkiCardGeneration = (setValue: any, reset: any) => {
+export const useAnkiCardGeneration = (
+  setValue: UseFormSetValue<FormDataSchemaType>,
+  reset: UseFormReset<FormDataSchemaType>
+) => {
   const [csvData, setCsvData] = useState<string[][]>([]);
   const [isPending, startTransition] = useTransition();
   const { displayToast } = useDisplayToast(setCsvData, reset);
