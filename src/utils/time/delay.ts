@@ -1,4 +1,4 @@
-import isErrorWithStatusCode from "../number/isErrorWithStatusCode";
+import isErrorWithStatusCode from "../boolean/isErrorWithStatusCode";
 
 export default function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));

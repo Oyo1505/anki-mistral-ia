@@ -1,4 +1,4 @@
-import isErrorWithStatusCode from "../number/isErrorWithStatusCode";
+import isErrorWithStatusCode from "../boolean/isErrorWithStatusCode";
 
 describe("isErrorWithStatusCode", () => {
   it("should return true for error with statusCode", () => {

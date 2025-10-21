@@ -3,6 +3,7 @@ import { ChatMessage } from "@/interfaces/chat.interface";
 import { logError } from "@/lib/logError";
 import { mistral } from "@/lib/mistral";
 import { BASE_DELAY, MAX_RETRIES } from "@/shared/constants/numbers";
+import isErrorWithStatusCode from "@/utils/boolean/isErrorWithStatusCode";
 import { retryWithBackoff } from "@/utils/time/delay";
 import { ContentChunk } from "@mistralai/mistralai/models/components";
 import { revalidatePath } from "next/cache";
@@ -76,7 +77,7 @@ export const threadChatBot = async ({
     };
   } catch (error) {
     logError(error, "threadChatBot");
-    if (error.statusCode === 429) {
+    if (isErrorWithStatusCode(error)) {
       return {
         role: "assistant",
         message:
