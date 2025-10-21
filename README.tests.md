@@ -39,17 +39,18 @@ pnpm test:ci
 ## Configuration Files
 
 ### jest.config.js
+
 - Next.js 15 compatible configuration using `next/jest`
 - TypeScript support via SWC (built into Next.js)
 - jsdom test environment for React components
-- Path aliases matching `tsconfig.json` (@/*)
+- Path aliases matching `tsconfig.json` (@/\*)
 - Coverage collection configured
 
 ### jest.setup.js
+
 - @testing-library/jest-dom matchers
 - Next.js router mocks
 - Mistral AI SDK mocks
-- Tesseract.js OCR mocks
 - Browser API mocks (ResizeObserver, matchMedia)
 
 ## Test Coverage
@@ -57,11 +58,13 @@ pnpm test:ci
 Current test suites cover:
 
 ### 1. **Utility Functions** (`src/utils/time/`)
+
 - ✅ `delay()` - Promise-based timeout
 - ✅ `retryWithBackoff()` - Exponential backoff retry logic
 - Tests use fake timers for precise timing control
 
 ### 2. **Zod Schemas** (`src/schema/`)
+
 - ✅ FormDataSchema validation
   - File size limits (20KB - 5MB)
   - Text length constraints
@@ -71,6 +74,7 @@ Current test suites cover:
   - Required fields (type, level)
 
 ### 3. **React Context** (`src/context/`)
+
 - ✅ ChatBotContextProvider
   - State management
   - localStorage persistence
@@ -78,6 +82,7 @@ Current test suites cover:
   - Form data updates
 
 ### 4. **React Components** (`src/components/`)
+
 - ✅ FormChatBot
   - Form rendering
   - User input handling
@@ -86,6 +91,7 @@ Current test suites cover:
   - Dynamic component loading
 
 ### 5. **Server Actions** (`src/actions/`)
+
 - ✅ threadChatBot
   - Mistral AI integration
   - Conversation history management
@@ -95,85 +101,90 @@ Current test suites cover:
 ## Mocking Strategy
 
 ### External Dependencies
+
 ```typescript
 // Mistral AI SDK
-jest.mock('@mistralai/mistralai', () => ({
+jest.mock("@mistralai/mistralai", () => ({
   Mistral: jest.fn().mockImplementation(() => ({
     chat: {
       stream: jest.fn(),
       complete: jest.fn(),
     },
   })),
-}))
-
+}));
 ```
 
 ### Next.js Features
+
 ```typescript
 // Router
-jest.mock('next/navigation', () => ({
+jest.mock("next/navigation", () => ({
   useRouter: () => ({
     push: jest.fn(),
     replace: jest.fn(),
     // ...
   }),
-}))
+}));
 
 // Dynamic imports
-jest.mock('next/dynamic', () => ({
+jest.mock("next/dynamic", () => ({
   __esModule: true,
-  default: (fn: any) => fn().then ? fn : () => fn,
-}))
+  default: (fn: any) => (fn().then ? fn : () => fn),
+}));
 ```
 
 ## Writing New Tests
 
 ### Component Test Template
+
 ```typescript
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
-describe('YourComponent', () => {
-  it('should render correctly', () => {
-    render(<YourComponent />)
-    expect(screen.getByText('Expected Text')).toBeInTheDocument()
-  })
+describe("YourComponent", () => {
+  it("should render correctly", () => {
+    render(<YourComponent />);
+    expect(screen.getByText("Expected Text")).toBeInTheDocument();
+  });
 
-  it('should handle user interaction', async () => {
-    const user = userEvent.setup()
-    render(<YourComponent />)
+  it("should handle user interaction", async () => {
+    const user = userEvent.setup();
+    render(<YourComponent />);
 
-    await user.click(screen.getByRole('button'))
+    await user.click(screen.getByRole("button"));
 
     await waitFor(() => {
-      expect(screen.getByText('Result')).toBeInTheDocument()
-    })
-  })
-})
+      expect(screen.getByText("Result")).toBeInTheDocument();
+    });
+  });
+});
 ```
 
 ### Server Action Test Template
+
 ```typescript
-import { yourAction } from '../your-action'
+import { yourAction } from "../your-action";
 
-jest.mock('@/lib/some-dependency')
+jest.mock("@/lib/some-dependency");
 
-describe('yourAction', () => {
+describe("yourAction", () => {
   beforeEach(() => {
-    jest.clearAllMocks()
-  })
+    jest.clearAllMocks();
+  });
 
-  it('should perform action successfully', async () => {
+  it("should perform action successfully", async () => {
     // Arrange
-    const mockData = { /* test data */ }
+    const mockData = {
+      /* test data */
+    };
 
     // Act
-    const result = await yourAction(mockData)
+    const result = await yourAction(mockData);
 
     // Assert
-    expect(result).toEqual(expectedResult)
-  })
-})
+    expect(result).toEqual(expectedResult);
+  });
+});
 ```
 
 ## Best Practices
@@ -189,15 +200,19 @@ describe('yourAction', () => {
 ## Troubleshooting
 
 ### Issue: "act() warning"
+
 **Solution**: Wrap state updates in `act()` or use `waitFor()`
 
 ### Issue: "Module not found"
+
 **Solution**: Check path aliases in `jest.config.js` match `tsconfig.json`
 
 ### Issue: "Timer issues"
+
 **Solution**: Ensure `jest.useFakeTimers()` in beforeEach, `jest.useRealTimers()` in afterEach
 
 ### Issue: "Dynamic import errors"
+
 **Solution**: Mock `next/dynamic` to return synchronous components
 
 ## CI/CD Integration

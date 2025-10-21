@@ -83,7 +83,7 @@ describe("ChatBotContextProvider", () => {
     ];
 
     act(() => {
-      result.current.setMessages(newMessages);
+      result.current.setAllMessages(newMessages);
     });
 
     expect(result.current.messages).toEqual(newMessages);
@@ -157,7 +157,7 @@ describe("ChatBotContextProvider", () => {
 
     act(() => {
       result.current.setFormData(newFormData);
-      result.current.setMessages(newMessages);
+      result.current.setAllMessages(newMessages);
     });
 
     await waitFor(() => {
@@ -255,5 +255,55 @@ describe("ChatBotContextProvider", () => {
     });
 
     expect(result.current.messages[0].timestamp).toBeInstanceOf(Date);
+  });
+
+  it("should limit messages to 50 in memory and localStorage", () => {
+    const { result } = renderHook(() => useChatBotContext(), {
+      wrapper: ChatBotContextProvider,
+    });
+
+    // Créer 100 messages
+    const manyMessages: ChatMessage[] = Array.from({ length: 100 }, (_, i) => ({
+      role: i % 2 === 0 ? "user" : "assistant",
+      message: `Message ${i + 1}`,
+      timestamp: new Date(),
+      id: `msg-${i + 1}`,
+    }));
+
+    act(() => {
+      result.current.handleSetMessages(manyMessages);
+    });
+
+    // Vérifier que seuls les 50 derniers messages sont en mémoire
+    expect(result.current.messages).toHaveLength(50);
+    expect(result.current.messages[0].message).toBe("Message 51");
+    expect(result.current.messages[49].message).toBe("Message 100");
+
+    // Vérifier que seuls les 50 derniers messages sont dans localStorage
+    const saved = localStorage.getItem("chatBotMessagesAnki");
+    expect(saved).toBeTruthy();
+    const parsedMessages = JSON.parse(saved!);
+    expect(parsedMessages).toHaveLength(50);
+  });
+
+  it("should limit messages to 50 when loading from localStorage", () => {
+    // Créer 100 messages dans localStorage
+    const manyMessages = Array.from({ length: 100 }, (_, i) => ({
+      role: i % 2 === 0 ? "user" : "assistant",
+      message: `Message ${i + 1}`,
+      timestamp: new Date().toISOString(),
+      id: `msg-${i + 1}`,
+    }));
+
+    localStorage.setItem("chatBotMessagesAnki", JSON.stringify(manyMessages));
+
+    const { result } = renderHook(() => useChatBotContext(), {
+      wrapper: ChatBotContextProvider,
+    });
+
+    // Vérifier que seuls les 50 derniers messages sont chargés
+    expect(result.current.messages).toHaveLength(50);
+    expect(result.current.messages[0].message).toBe("Message 51");
+    expect(result.current.messages[49].message).toBe("Message 100");
   });
 });

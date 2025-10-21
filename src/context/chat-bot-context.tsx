@@ -10,6 +10,25 @@ import {
   useState,
 } from "react";
 
+// Limite maximale de messages en mémoire et localStorage
+const MAX_MESSAGES_IN_MEMORY = 50;
+
+/**
+ * Limite le tableau de messages aux N derniers messages
+ * @param messages - Tableau de messages à limiter
+ * @param maxMessages - Nombre maximum de messages à conserver (défaut: 50)
+ * @returns Tableau limité aux derniers messages
+ */
+const limitMessages = (
+  messages: ChatMessage[],
+  maxMessages: number = MAX_MESSAGES_IN_MEMORY
+): ChatMessage[] => {
+  if (messages.length <= maxMessages) {
+    return messages;
+  }
+  return messages.slice(-maxMessages);
+};
+
 export type FormDataChatBot = {
   name: string;
   type: string;
@@ -22,7 +41,7 @@ type ChatBotContextType = {
   // eslint-disable-next-line no-unused-vars
   messages: ChatMessage[];
   // eslint-disable-next-line no-unused-vars
-  setMessages: (messages: ChatMessage[]) => void;
+  setAllMessages: (messages: ChatMessage[]) => void;
   // eslint-disable-next-line no-unused-vars
   formData: FormDataChatBot;
   // eslint-disable-next-line no-unused-vars
@@ -36,7 +55,7 @@ type ChatBotContextType = {
 
 const ChatBotContext = createContext<ChatBotContextType>({
   messages: [],
-  setMessages: () => {},
+  setAllMessages: () => {},
   formData: {
     name: "",
     type: "",
@@ -63,19 +82,25 @@ const ChatBotContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+  const [allMessages, setAllMessages] = useState<ChatMessage[]>(() => {
     const saved = safeStorage.getItem<ChatMessage[]>(
       "chatBotMessagesAnki",
       defaultMessages
     );
 
     // Transform timestamp strings back to Date objects
-    return saved.map((msg) => ({
+    const messagesWithDates = saved.map((msg) => ({
       ...msg,
       timestamp:
         msg.timestamp instanceof Date ? msg.timestamp : new Date(msg.timestamp),
     }));
+
+    //Immediately limit to 50 messages on initial load
+    return limitMessages(messagesWithDates);
   });
+
+  // Messages limités exposés dans le contexte
+  const messages = useMemo(() => limitMessages(allMessages), [allMessages]);
 
   const defaultFormData: FormDataChatBot = useMemo(
     () => ({
@@ -109,20 +134,31 @@ const ChatBotContextProvider = ({
     setFormData((prev) => ({ ...prev, ...formData }));
     safeStorage.setItem("formData", formData);
   }, []);
+
   const handleSetMessages = useCallback((messages: ChatMessage[]): void => {
-    setMessages(messages);
-    safeStorage.setItem("chatBotMessagesAnki", messages);
+    // Limiter à 50 messages AVANT de stocker
+    const limitedMessages = limitMessages(messages);
+    setAllMessages(limitedMessages);
+    safeStorage.setItem("chatBotMessagesAnki", limitedMessages);
   }, []);
+
   const contextValue = useMemo(
     () => ({
       formData,
       messages,
       setFormData,
-      setMessages,
+      setAllMessages,
       handleSetFormData,
       handleSetMessages,
     }),
-    [formData, messages, setFormData, setMessages, handleSetFormData, handleSetMessages]
+    [
+      formData,
+      messages,
+      setFormData,
+      setAllMessages,
+      handleSetFormData,
+      handleSetMessages,
+    ]
   );
   return (
     <ChatBotContext.Provider value={contextValue}>

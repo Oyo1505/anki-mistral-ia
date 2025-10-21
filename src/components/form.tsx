@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import dynamic from "next/dynamic";
 import { useCallback, useMemo, useState } from "react";
 import { CSVLink } from "react-csv";
-import { useForm } from "react-hook-form";
+import { useForm, UseFormSetValue } from "react-hook-form";
 import ButtonUpload from "./button-upload";
 import Checkbox from "./checkbox";
 import ButtonDisplayCard from "./form_button_display_card";
@@ -131,13 +131,16 @@ export default function Form() {
               <SelectTypeCard register={register} />
             </div>
             <ButtonUpload
-              setValueAction={setValue as any}
+              setValueAction={setValue as UseFormSetValue<FormDataSchemaType>}
               errors={errors}
               files={files}
               {...register("files", {
-                validate: (fileList: File[] | undefined) => {
+                validate: (fileList: FileList | File[] | undefined) => {
                   if (!fileList) return true;
-                  if (fileList.length > 3) {
+                  const length = Array.isArray(fileList)
+                    ? fileList.length
+                    : (fileList as FileList).length;
+                  if (length > 3) {
                     return "Maximum 3 fichiers autorisés";
                   }
                   return true;

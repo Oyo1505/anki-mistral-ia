@@ -15,7 +15,6 @@ const FormDataSchemaChatBot = z.object({
   name: z
     .string()
     .min(1, "Le nom est requis")
-    .max(20, "Le nom ne doit pas dépasser 20 caractères")
     .max(20, "Le nom ne doit pas dépasser 20 caractères"),
   type: z
     .string()
