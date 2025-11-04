@@ -4,9 +4,23 @@
 
 Anki Mistral AI - Application Next.js qui intègre l'IA Mistral avec la fonctionnalité de cartes flash Anki, incluant le support OCR pour le traitement de texte français et japonais.
 
+### While implementing
+
+- Have to respect Clean code pratice.
+
+- All Tests have to passed green
+
+- You should update the plan as you work.
+
+- After you complete tasks in the plan, you should update and append detailed descriptions of the changes you made, so following tasks can be easily hand over to other engineers.
+
+### Directory Structure
+
+The project follows a domain-driven architecture pattern with **SOLID principles** and **Dependency Injection**:
+
 ## Stack Technique
 
-- **Framework**: Next.js 15.5.2 avec TypeScript
+- **Framework**: Next.js 16 avec TypeScript
 - **Styling**: Tailwind CSS 4.1.12
 - **AI**: Mistral AI (@mistralai/mistralai)
 - **Forms**: React Hook Form + Zod validation

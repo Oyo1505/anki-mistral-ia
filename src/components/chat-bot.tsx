@@ -10,7 +10,7 @@ import {
 } from "@/shared/constants/numbers";
 import DOMPurify from "dompurify";
 import { marked } from "marked";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import TextArea from "./text-area";
 const ArrowDownIcon = () => {
@@ -48,15 +48,15 @@ const ChatBot = () => {
     },
   });
 
-  const scrollToBottom = useCallback(() => {
+  const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, []);
+  };
 
   useEffect(() => {
     scrollToBottom();
   }, [messages, isLoading, scrollToBottom]);
 
-  const handleLoadingMessage = useCallback((): void => {
+  const handleLoadingMessage = (): void => {
     setTimeout(
       () => setLoadingMessage("Connexion à l'IA..."),
       LOADING_MESSAGE_DELAY
@@ -69,88 +69,73 @@ const ChatBot = () => {
       () => setLoadingMessage("Finalisation..."),
       LOADING_MESSAGE_DELAY_3
     );
-  }, []);
+  };
+  const handleSendMessage = async (data: { message: string }) => {
+    if (data.message !== "" && !isLoading) {
+      try {
+        setIsLoading(true);
+        setLoadingMessage("Envoi du message...");
 
-  const handleSendMessage = useCallback(
-    async (data: { message: string }) => {
-      if (data.message !== "" && !isLoading) {
-        try {
-          setIsLoading(true);
-          setLoadingMessage("Envoi du message...");
+        const userMessage: ChatMessage = {
+          role: "user",
+          message: data.message,
+          timestamp: new Date(),
+        };
+        const updatedMessages = [...messages, userMessage];
+        handleSetMessages(updatedMessages);
+        setValue("message", "");
 
-          const userMessage: ChatMessage = {
-            role: "user",
-            message: data.message,
-            timestamp: new Date(),
-          };
-          const updatedMessages = [...messages, userMessage];
-          handleSetMessages(updatedMessages);
-          setValue("message", "");
+        handleLoadingMessage();
 
-          handleLoadingMessage();
+        const response = await threadChatBot({
+          message: data.message.trim(),
+          conversationHistory: messages,
+          typeExercice: formData.type,
+          level: formData.level,
+          name: formData.name,
+        });
 
-          const response = await threadChatBot({
-            message: data.message.trim(),
-            conversationHistory: messages,
-            typeExercice: formData.type,
-            level: formData.level,
-            name: formData.name,
-          });
-
-          if (response.role === "assistant") {
-            handleSetMessages([...updatedMessages, response]);
-          } else {
-            const errorMessage: ChatMessage = {
-              role: "assistant",
-              message:
-                "Une erreur est survenue lors de la récupération de la réponse.",
-              timestamp: new Date(),
-            };
-            handleSetMessages([...updatedMessages, errorMessage]);
-          }
-        } catch (error) {
-          logError(error, "handleSendMessage");
+        if (response.role === "assistant") {
+          handleSetMessages([...updatedMessages, response]);
+        } else {
           const errorMessage: ChatMessage = {
             role: "assistant",
             message:
-              "Une erreur inattendue s'est produite. Veuillez réessayer.",
+              "Une erreur est survenue lors de la récupération de la réponse.",
             timestamp: new Date(),
           };
-          handleSetMessages([...messages, errorMessage]);
-        } finally {
-          setIsLoading(false);
-          setLoadingMessage("");
+          handleSetMessages([...updatedMessages, errorMessage]);
         }
+      } catch (error) {
+        logError(error, "handleSendMessage");
+        const errorMessage: ChatMessage = {
+          role: "assistant",
+          message: "Une erreur inattendue s'est produite. Veuillez réessayer.",
+          timestamp: new Date(),
+        };
+        handleSetMessages([...messages, errorMessage]);
+      } finally {
+        setIsLoading(false);
+        setLoadingMessage("");
       }
-    },
-    [
-      formData,
-      handleSetMessages,
-      messages,
-      handleLoadingMessage,
-      isLoading,
-      setValue,
-    ]
-  );
+    }
+  };
 
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      if (e.key === "Enter" && e.shiftKey && !isLoading) {
-        e.preventDefault();
-        setValue("message", e.currentTarget.value + "\n");
-      }
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && e.shiftKey && !isLoading) {
+      e.preventDefault();
+      setValue("message", e.currentTarget.value + "\n");
+    }
 
-      if (e.key === "Enter" && !e.shiftKey && !isLoading) {
-        e.preventDefault();
-        const userMessage = e.currentTarget.value;
-        if (userMessage.trim()) {
-          handleSendMessage({ message: userMessage });
-          e.currentTarget.value = "";
-        }
+    if (e.key === "Enter" && !e.shiftKey && !isLoading) {
+      e.preventDefault();
+      const userMessage = e.currentTarget.value;
+      if (userMessage.trim()) {
+        handleSendMessage({ message: userMessage });
+        e.currentTarget.value = "";
       }
-    },
-    [isLoading, setValue, handleSendMessage]
-  );
+    }
+  };
 
   return (
     formData.isSubmitted && (

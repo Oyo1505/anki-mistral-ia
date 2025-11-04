@@ -1,6 +1,5 @@
 "use client";
 import { FormDataSchemaType } from "@/schema/form-schema";
-import { useCallback } from "react";
 import { FieldErrors, UseFormSetValue } from "react-hook-form";
 
 interface ButtonUploadProps {
@@ -20,14 +19,11 @@ export default function ButtonUpload({
   setValueAction,
   ...props
 }: ButtonUploadProps) {
-  const handleChange = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (e.target.files?.[0]) {
-        setValueAction("files", Array.from(e.target.files));
-      }
-    },
-    [setValueAction]
-  );
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) {
+      setValueAction("files", Array.from(e.target.files));
+    }
+  };
   return (
     <div className="w-full flex flex-col gap-2">
       <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">

@@ -1,16 +1,13 @@
 "use server";
+import { MistralData } from "@/lib/data/mistral.data";
 import { logError } from "@/lib/logError";
-import { mistral } from "@/lib/mistral";
-import { CardSchemaBase, CardSchemaKanji } from "@/schema/card.schema";
 import { FormDataSchemaType } from "@/schema/form-schema";
-import { contentMistralRequest } from "@/utils/string/content-mistral-request";
-import prompt from "@/utils/string/prompt";
 import { revalidatePath } from "next/cache";
 
 if (!process.env.MISTRAL_API_KEY && process.env.NODE_ENV === "production") {
   throw new Error("Mistral API configuration missing");
 }
-type generateCardsAnkiParams = {
+export type generateCardsAnkiParams = {
   text?: string;
   level: string;
   romanji: boolean;
@@ -34,47 +31,18 @@ const generateCardsAnki = async ({
   string[][] | { error: string; status: number } | Error
 > => {
   try {
-    const response = await mistral.chat.parse({
-      model: "mistral-large-latest",
-      temperature: 0.2,
-      messages: [
-        {
-          role: "system",
-          content: contentMistralRequest({
-            typeCard,
-            japanese,
-            numberOfCards,
-            level,
-            kanji,
-            romanji,
-          }),
-        },
-        {
-          role: "user",
-          content: prompt({
-            typeCard,
-            textFromPdf,
-            text,
-            romanji,
-            kanji,
-            japanese,
-            numberOfCards,
-            level,
-          }),
-        },
-      ],
-      responseFormat: typeCard === "basique" ? CardSchemaBase : CardSchemaKanji,
-      maxTokens: 10000,
+    const response = await MistralData.parse({
+      text,
+      level,
+      romanji,
+      kanji,
+      numberOfCards,
+      textFromPdf,
+      japanese,
+      typeCard,
     });
 
-    const parsedResult = response?.choices?.[0]?.message?.parsed;
-
-    if (!parsedResult) {
-      throw new Error(
-        "La réponse du modèle est vide ou n'a pas pu être parsée correctement."
-      );
-    }
-    return parsedResult;
+    return response;
   } catch (error) {
     logError(error, "generateCardsAnki");
     return {
@@ -84,76 +52,6 @@ const generateCardsAnki = async ({
           : "Une erreur inconnue est survenue",
       status: 500,
     };
-  }
-};
-
-const getTextFromImage = async (file: Blob | MediaSource): Promise<string> => {
-  try {
-    const buffer = await (file as Blob).arrayBuffer();
-    const base64 = Buffer.from(buffer).toString("base64");
-    const mimeType = (file as Blob).type;
-    const base64Url = `data:${mimeType};base64,${base64}`;
-
-    const ocrResponse = await mistral.ocr.process({
-      model: "mistral-ocr-latest",
-      document: {
-        type: "image_url",
-        imageUrl: base64Url,
-      },
-    });
-
-    const cleanText = ocrResponse?.pages[0]?.markdown
-      .replace(/\$\\rightarrow\$/g, "→")
-      .split("\n")
-      .map((line) => line.trim())
-      .filter((line) => line.length > 0)
-      .join("\n");
-    return cleanText;
-  } catch (error) {
-    logError(error, "getTextFromImage");
-    throw new Error("Error in image to text conversion.");
-  }
-};
-
-const getTextFromPDF = async (file: File): Promise<string> => {
-  try {
-    const fileBuffer = await file.arrayBuffer();
-    const base64 = Buffer.from(fileBuffer).toString("base64");
-    const base64Url = `data:application/pdf;base64,${base64}`;
-    const ocrResponse = await mistral.ocr.process({
-      model: "mistral-ocr-latest",
-      document: {
-        type: "document_url",
-        documentUrl: base64Url,
-      },
-      includeImageBase64: true,
-    });
-
-    const cleanText = ocrResponse?.pages
-      ?.map((page) => page.markdown)
-      .filter((text) => text && !text.startsWith("!["))
-      .join("\n")
-      .replace(/\$\\rightarrow\$/g, "→")
-      .replace(/\$\\Rightarrow\$/g, "→")
-      .replace(/\$\\square\$/g, "_____")
-      .replace(/\$\\qquad\$/g, "_____")
-      .replace(/<br>/g, "\n")
-      .replace(/#+\s/g, "")
-      .replace(/\(.*?\)/g, "")
-      .split("\n")
-      .map((line) => line.trim())
-      .filter(
-        (line) =>
-          line.length > 0 &&
-          !line.startsWith("![") &&
-          !line.match(/^[A-Za-z\s]+$/)
-      )
-      .join("\n");
-
-    return cleanText;
-  } catch (error) {
-    logError(error, "getTextFromPDF");
-    throw new Error("Error in PDF to text conversion.");
   }
 };
 
@@ -211,4 +109,4 @@ const generateAnswer = async (
   }
 };
 
-export { generateAnswer, generateCardsAnki, getTextFromImage, getTextFromPDF };
+export { generateAnswer, generateCardsAnki };

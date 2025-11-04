@@ -6,20 +6,20 @@
 // Mock environment and dependencies BEFORE imports
 process.env.MISTRAL_API_KEY = "test-api-key-32-characters-long-minimum-required";
 
-jest.mock("@/actions/mistral.action");
+jest.mock("@/lib/data/ocr.data");
 jest.mock("@/lib/logError");
 jest.mock("@/lib/mistral", () => ({
   mistral: {},
 }));
 
 import { FileProcessorService, fileProcessor } from "../File-processor-service";
-import { getTextFromImage, getTextFromPDF } from "@/actions/mistral.action";
+import { OCRData } from "@/lib/data/ocr.data";
 
-const mockGetTextFromPDF = getTextFromPDF as jest.MockedFunction<
-  typeof getTextFromPDF
+const mockProcessPDFOCR = OCRData.processPDFOCR as jest.MockedFunction<
+  typeof OCRData.processPDFOCR
 >;
-const mockGetTextFromImage = getTextFromImage as jest.MockedFunction<
-  typeof getTextFromImage
+const mockProcessImageOCR = OCRData.processImageOCR as jest.MockedFunction<
+  typeof OCRData.processImageOCR
 >;
 
 describe("FileProcessorService", () => {
@@ -38,11 +38,11 @@ describe("FileProcessorService", () => {
         });
         const extractedText = "Extracted text from PDF";
 
-        mockGetTextFromPDF.mockResolvedValue(extractedText);
+        mockProcessPDFOCR.mockResolvedValue(extractedText);
 
         const result = await service.processFile(mockPdfFile);
 
-        expect(mockGetTextFromPDF).toHaveBeenCalledWith(mockPdfFile);
+        expect(mockProcessPDFOCR).toHaveBeenCalledWith(mockPdfFile);
         expect(result).toBe(extractedText);
       });
 
@@ -51,7 +51,7 @@ describe("FileProcessorService", () => {
           type: "application/pdf",
         });
 
-        mockGetTextFromPDF.mockRejectedValue(new Error("PDF parsing failed"));
+        mockProcessPDFOCR.mockRejectedValue(new Error("PDF parsing failed"));
 
         const result = await service.processFile(mockPdfFile);
 
@@ -63,7 +63,7 @@ describe("FileProcessorService", () => {
           type: "application/pdf",
         });
 
-        mockGetTextFromPDF.mockResolvedValue("");
+        mockProcessPDFOCR.mockResolvedValue("");
 
         const result = await service.processFile(mockPdfFile);
 
@@ -78,11 +78,11 @@ describe("FileProcessorService", () => {
         });
         const extractedText = "Text from JPEG image";
 
-        mockGetTextFromImage.mockResolvedValue(extractedText);
+        mockProcessImageOCR.mockResolvedValue(extractedText);
 
         const result = await service.processFile(mockJpegFile);
 
-        expect(mockGetTextFromImage).toHaveBeenCalledWith(mockJpegFile);
+        expect(mockProcessImageOCR).toHaveBeenCalledWith(mockJpegFile);
         expect(result).toBe(extractedText);
       });
 
@@ -92,11 +92,11 @@ describe("FileProcessorService", () => {
         });
         const extractedText = "Text from PNG image";
 
-        mockGetTextFromImage.mockResolvedValue(extractedText);
+        mockProcessImageOCR.mockResolvedValue(extractedText);
 
         const result = await service.processFile(mockPngFile);
 
-        expect(mockGetTextFromImage).toHaveBeenCalledWith(mockPngFile);
+        expect(mockProcessImageOCR).toHaveBeenCalledWith(mockPngFile);
         expect(result).toBe(extractedText);
       });
 
@@ -105,7 +105,7 @@ describe("FileProcessorService", () => {
           type: "image/jpeg",
         });
 
-        mockGetTextFromImage.mockRejectedValue(
+        mockProcessImageOCR.mockRejectedValue(
           new Error("Image processing failed")
         );
 
@@ -119,7 +119,7 @@ describe("FileProcessorService", () => {
           type: "image/png",
         });
 
-        mockGetTextFromImage.mockResolvedValue("");
+        mockProcessImageOCR.mockResolvedValue("");
 
         const result = await service.processFile(mockImageFile);
 
@@ -136,8 +136,8 @@ describe("FileProcessorService", () => {
         const result = await service.processFile(mockTextFile);
 
         expect(result).toBeNull();
-        expect(mockGetTextFromPDF).not.toHaveBeenCalled();
-        expect(mockGetTextFromImage).not.toHaveBeenCalled();
+        expect(mockProcessPDFOCR).not.toHaveBeenCalled();
+        expect(mockProcessImageOCR).not.toHaveBeenCalled();
       });
 
       it("should return null for Word documents", async () => {
@@ -178,7 +178,7 @@ describe("FileProcessorService", () => {
           type: "application/pdf",
         });
 
-        mockGetTextFromPDF.mockResolvedValue("Large file content");
+        mockProcessPDFOCR.mockResolvedValue("Large file content");
 
         const result = await service.processFile(mockLargeFile);
 
