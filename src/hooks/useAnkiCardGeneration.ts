@@ -3,8 +3,6 @@ import { generateAnswer } from "@/actions/mistral.action";
 import { logError } from "@/lib/logError";
 import { FormDataSchemaType } from "@/schema/form-schema";
 import { fileProcessor } from "@/services/File-processor-service";
-import { MILLISECONDS_DELAY } from "@/shared/constants/numbers";
-import delay from "@/utils/time/delay";
 import { useState, useTransition } from "react";
 import { UseFormReset, UseFormSetValue } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -29,10 +27,10 @@ export const useAnkiCardGeneration = (
       // Process file if present (restore OCR functionality)
       if (data.files?.[0]) {
         const convertResult = await fileProcessor.processFile(data.files[0]);
+
         if (convertResult) {
           processedText = convertResult;
           setValue("textFromPdf", processedText, { shouldValidate: true });
-          await delay(MILLISECONDS_DELAY);
         }
       }
 

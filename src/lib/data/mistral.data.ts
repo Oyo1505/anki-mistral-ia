@@ -1,13 +1,16 @@
 import { generateCardsAnkiParams } from "@/actions/mistral.action";
 import { mistral } from "@/lib/mistral";
 import { CardSchemaBase, CardSchemaKanji } from "@/schema/card.schema";
+import { MAX_RETRIES } from "@/shared/constants/numbers";
 import { contentMistralRequest } from "@/utils/string/content-mistral-request";
 import prompt from "@/utils/string/prompt";
+import { retryWithBackoff } from "@/utils/time/delay";
 import {
   DocumentURLChunk,
   ImageURLChunk,
   OCRResponse,
 } from "@mistralai/mistralai/models/components";
+import { BASE_DELAY } from "../../shared/constants/numbers";
 import { logError } from "../logError";
 type FileSource = File | Blob | MediaSource;
 export class MistralData {
@@ -24,40 +27,46 @@ export class MistralData {
     string[][] | { error: string; status: number } | Error
   > {
     try {
-      const response = await mistral.chat.parse({
-        model: "mistral-large-latest",
-        temperature: 0.2,
-        messages: [
-          {
-            role: "system",
-            content: contentMistralRequest({
-              typeCard,
-              japanese,
-              numberOfCards,
-              level,
-              kanji,
-              romanji,
-            }),
-          },
-          {
-            role: "user",
-            content: prompt({
-              typeCard,
-              textFromPdf,
-              text,
-              romanji,
-              kanji,
-              japanese,
-              numberOfCards,
-              level,
-            }),
-          },
-        ],
-        responseFormat:
-          typeCard === "basique" ? CardSchemaBase : CardSchemaKanji,
-        maxTokens: 10000,
-      });
-      console.log(response);
+      const response = await retryWithBackoff(
+        async () => {
+          return await mistral.chat.parse({
+            model: "mistral-large-latest",
+            temperature: 0.2,
+            messages: [
+              {
+                role: "system",
+                content: contentMistralRequest({
+                  typeCard,
+                  japanese,
+                  numberOfCards,
+                  level,
+                  kanji,
+                  romanji,
+                }),
+              },
+              {
+                role: "user",
+                content: prompt({
+                  typeCard,
+                  textFromPdf,
+                  text,
+                  romanji,
+                  kanji,
+                  japanese,
+                  numberOfCards,
+                  level,
+                }),
+              },
+            ],
+            responseFormat:
+              typeCard === "basique" ? CardSchemaBase : CardSchemaKanji,
+            maxTokens: 10000,
+          });
+        },
+        MAX_RETRIES,
+        BASE_DELAY
+      );
+
       const parsedResult = response?.choices?.[0]?.message?.parsed;
       if (!parsedResult) {
         throw new Error(
@@ -102,11 +111,19 @@ export class MistralData {
             type: "image_url",
             imageUrl: base64Url,
           };
-      const ocrResponse = await mistral.ocr.process({
-        model: "mistral-ocr-latest",
-        document,
-        includeImageBase64: isPDF ? false : true,
-      });
+
+      const ocrResponse = await retryWithBackoff(
+        async () => {
+          return await mistral.ocr.process({
+            model: "mistral-ocr-latest",
+            document,
+            ...(!isPDF && { includeImageBase64: true }),
+          });
+        },
+        MAX_RETRIES,
+        BASE_DELAY
+      );
+
       return ocrResponse;
     } catch (error) {
       logError(error, "MistralData.process");
