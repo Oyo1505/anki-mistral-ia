@@ -1,15 +1,15 @@
-import { getTextFromImage, getTextFromPDF } from "@/actions/mistral.action";
+import { OCRData } from "@/lib/data/ocr.data";
 import { logError } from "@/lib/logError";
 
 export class FileProcessorService {
   async processFile(file: File): Promise<string | null> {
     try {
       if (file.type === "application/pdf") {
-        return await getTextFromPDF(file);
+        return await OCRData.processPDFOCR(file);
       }
 
       if (["image/jpeg", "image/png"].includes(file.type)) {
-        return await getTextFromImage(file);
+        return await OCRData.processImageOCR(file);
       }
 
       return null;

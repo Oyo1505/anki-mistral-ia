@@ -1,9 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  reactCompiler: true,
   pageExtensions: ["mdx", "md", "jsx", "js", "tsx", "ts"],
-  serverExternalPackages: ["pdf-to-png-converter"],
   experimental: {
     serverActions: {
       bodySizeLimit: "10mb",

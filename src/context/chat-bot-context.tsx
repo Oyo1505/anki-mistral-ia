@@ -1,14 +1,7 @@
 "use client";
 import { ChatMessage } from "@/interfaces/chat.interface";
 import { safeStorage } from "@/utils/safe-storage";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 // Limite maximale de messages en mémoire et localStorage
 const MAX_MESSAGES_IN_MEMORY = 50;
@@ -130,18 +123,16 @@ const ChatBotContextProvider = ({
     }
   }, [formData, messages]);
 
-  const handleSetFormData = useCallback((formData: FormDataChatBot): void => {
+  const handleSetFormData = (formData: FormDataChatBot): void => {
     setFormData((prev) => ({ ...prev, ...formData }));
     safeStorage.setItem("formData", formData);
-  }, []);
+  };
 
-  const handleSetMessages = useCallback((messages: ChatMessage[]): void => {
-    // Limiter à 50 messages AVANT de stocker
+  const handleSetMessages = (messages: ChatMessage[]): void => {
     const limitedMessages = limitMessages(messages);
     setAllMessages(limitedMessages);
     safeStorage.setItem("chatBotMessagesAnki", limitedMessages);
-  }, []);
-
+  };
   const contextValue = useMemo(
     () => ({
       formData,

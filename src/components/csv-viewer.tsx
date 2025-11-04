@@ -1,5 +1,3 @@
-import { useMemo } from "react";
-
 const CsvViewer = ({
   csvFile,
   setIsCsvVisible,
@@ -9,7 +7,7 @@ const CsvViewer = ({
   setIsCsvVisible: (_: boolean) => void;
   isCardKanji: string;
 }) => {
-  const csvData = useMemo(() => Object.keys(csvFile[0] || {}), [csvFile]);
+  const csvData = Object.keys(csvFile[0] || {});
   return (
     <div className="relative w-full md:max-h-[95vh] overflow-y-auto  bg-white p-4 rounded-md transition-all duration-300 ease-in-out">
       <div className="flex justify-between items-center">

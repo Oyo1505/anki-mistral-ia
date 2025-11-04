@@ -4,7 +4,7 @@ import { FormDataSchema, FormDataSchemaType } from "@/schema/form-schema";
 import { levels } from "@/shared/constants/levels";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dynamic from "next/dynamic";
-import { useCallback, useMemo, useState } from "react";
+import { useState } from "react";
 import { CSVLink } from "react-csv";
 import { useForm, UseFormSetValue } from "react-hook-form";
 import ButtonUpload from "./button-upload";
@@ -21,6 +21,7 @@ const CsvViewer = dynamic(() => import("@/components/csv-viewer"), {
   ssr: false,
 });
 
+type typeCheckbox = "romanji" | "kanji" | "japanese";
 export default function Form() {
   const [isCsvVisible, setIsCsvVisible] = useState(false);
   const {
@@ -50,43 +51,22 @@ export default function Form() {
     reset
   );
   const files = watch("files");
-  const levelsReverse = useMemo(() => [...levels].reverse(), []);
-  const onSubmit = useCallback(
-    async (data: FormDataSchemaType) => {
-      await generateCards(data);
-    },
-    [generateCards]
-  );
+  const levelsReverse = [...levels].reverse();
+  const onSubmit = async (data: FormDataSchemaType) => {
+    await generateCards(data);
+  };
 
-  const handleChangeCheckboxRomanji = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setValue("romanji", e.target.checked);
-    },
-    [setValue]
-  );
-
-  const handleChangeCheckboxKanji = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setValue("kanji", e.target.checked);
-    },
-    [setValue]
-  );
-  const handleChangeCheckboxJapanese = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setValue("japanese", e.target.checked);
-    },
-    [setValue]
-  );
-
+  const handleChangeCheckbox = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    typeCheckbox: typeCheckbox
+  ) => {
+    setValue(typeCheckbox, e.target.checked);
+  };
   const text = watch("text");
-  const isSubmitDisabled = useMemo(
-    () => (!text || text.trim() === "") && (!files || files.length === 0),
-    [text, files]
-  );
-  const csvDataSuccess = useMemo(
-    () => csvData && csvData.length > 0 && !isPending,
-    [csvData, isPending]
-  );
+  const isSubmitDisabled =
+    (!text || text.trim() === "") && (!files || files.length === 0);
+  const csvDataSuccess = csvData && csvData.length > 0 && !isPending;
+
   const isCardKanji = watch("typeCard");
   const allInJapanese = watch("japanese");
   return (
@@ -153,18 +133,24 @@ export default function Form() {
                   <Checkbox
                     label="romanji"
                     title="Voulez-vous inclure les romanji ?"
-                    handleChangeCheckboxAction={handleChangeCheckboxRomanji}
+                    handleChangeCheckboxAction={(e) =>
+                      handleChangeCheckbox(e, "romanji")
+                    }
                   />
                 )}
                 <Checkbox
                   label="kanji"
                   title="Voulez-vous inclure les kanji ?"
-                  handleChangeCheckboxAction={handleChangeCheckboxKanji}
+                  handleChangeCheckboxAction={(e) =>
+                    handleChangeCheckbox(e, "kanji")
+                  }
                 />
                 <Checkbox
                   label="japonais"
                   title="Tout en japonais (énoncés/questions/réponses) ?"
-                  handleChangeCheckboxAction={handleChangeCheckboxJapanese}
+                  handleChangeCheckboxAction={(e) =>
+                    handleChangeCheckbox(e, "japanese")
+                  }
                 />
               </div>
             )}
