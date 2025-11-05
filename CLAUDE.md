@@ -8,6 +8,8 @@ Anki Mistral AI - Application Next.js qui intègre l'IA Mistral avec la fonction
 
 - Have to respect Clean code pratice.
 
+- Have to respect RGAA, WCAG 2.2 web accessibility level minimun AA.
+
 - All Tests have to passed green
 
 - You should update the plan as you work.
@@ -16,7 +18,9 @@ Anki Mistral AI - Application Next.js qui intègre l'IA Mistral avec la fonction
 
 ### Directory Structure
 
-The project follows a domain-driven architecture pattern with **SOLID principles** and **Dependency Injection**:
+The project follows a **layered architecture** pattern with service layer and server actions:
+
+**Note**: L'architecture actuelle utilise des singletons et méthodes statiques. Une vraie Dependency Injection pourrait être implémentée pour améliorer la testabilité (voir analyse de code).
 
 ## Stack Technique
 
@@ -26,7 +30,7 @@ The project follows a domain-driven architecture pattern with **SOLID principles
 - **Forms**: React Hook Form + Zod validation
 - **Export**: React CSV
 - **Testing**: Jest (unitaires) + Playwright (E2E)
-- **Package Manager**: pnpm 9.14.3
+- **Package Manager**: pnpm 10.20.0
 
 ## Scripts de Développement
 
@@ -56,7 +60,7 @@ pnpm test:e2e:codegen # Générer des tests automatiquement
 
 ```
 src/
-├── actions/           # Server actions
+├── actions/           # Server actions Next.js
 │   ├── chat-bot.action.ts
 │   └── mistral.action.ts
 ├── app/              # App Router pages
@@ -68,11 +72,26 @@ src/
 │   ├── chat-bot.tsx
 │   ├── form-chat-bot.tsx
 │   ├── csv-viewer.tsx
-│   └── ui/           # Composants UI
-├── context/          # React Context
+│   └── ui/           # Composants UI réutilisables
+├── context/          # React Context pour state management
 │   └── chat-bot-context.tsx
-└── interfaces/       # Types TypeScript
-    └── chat.interface.ts
+├── hooks/            # Custom React hooks
+│   └── useAnkiCardGeneration.ts
+├── interfaces/       # Types et interfaces TypeScript
+│   └── chat.interface.ts
+├── lib/              # Librairies et clients externes
+│   ├── data/         # Couche d'accès aux données
+│   ├── mistral.ts    # Client Mistral AI
+│   └── logError.ts   # Gestion centralisée des erreurs
+├── schema/           # Schémas Zod de validation
+│   └── form-schema.ts
+├── services/         # Services métier
+│   └── File-processor-service.ts
+└── utils/            # Fonctions utilitaires
+    ├── boolean/      # Type guards et validations
+    ├── string/       # Manipulation de texte
+    ├── time/         # Délais et retry logic
+    └── safe-storage.ts # Wrapper localStorage sécurisé
 ```
 
 ## Variables d'Environnement
@@ -81,8 +100,8 @@ Configurées dans `.env.local` (voir `.env` pour template)
 
 ## Branches
 
-- **Actuelle**: `header-container`
-- **Principale**: main (à confirmer)
+- **Actuelle**: `main`
+- **Principale**: `main`
 
 ## Notes de Développement
 
@@ -123,3 +142,49 @@ pnpm lint
 # Build optimisé
 pnpm build
 ```
+
+## Qualité de Code et Architecture
+
+### Points Forts ✅
+
+- **Tests exhaustifs**: 41 tests unitaires + 14 tests E2E (100% de réussite)
+- **Gestion d'erreurs robuste**: Logging centralisé avec `logError`
+- **Validation runtime**: Zod schemas pour type safety
+- **Code splitting**: Imports dynamiques et optimisations
+- **Utilities bien structurées**: Fonctions `retryWithBackoff`, `isErrorWithStatusCode`, `safe-storage`
+- **React 19**: Utilisation du nouveau compilateur React
+- **Accessibilité**: Conformité WCAG 2.2 niveau AA (RGAA)
+
+### Améliorations Recommandées 🔧
+
+**Architecture**:
+- L'architecture actuelle utilise des singletons (`mistral`, `fileProcessor`)
+- Pour une vraie Dependency Injection, considérer la refactorisation vers des interfaces et injection par constructeur
+- Pattern Repository pourrait être ajouté pour la couche data
+
+**Sécurité**:
+- Ajouter rate limiting sur les server actions
+- Implémenter Content Security Policy (CSP)
+- Validation API key pourrait être assouplie en développement
+
+**Performance**:
+- Optimiser ChatBotContext avec `useCallback` pour éviter re-renders
+- Ajouter React.memo sur composants lourds
+- Implémenter virtualization pour grandes listes CSV
+
+**Accessibilité**:
+- Ajouter `aria-describedby` sur les inputs avec erreurs
+- Créer régions `aria-live` pour contenus dynamiques
+- Compléter les labels ARIA sur boutons
+
+**TypeScript**:
+- Éliminer les usages de `any` restants
+- Activer `noUncheckedIndexedAccess: true`
+- Créer type guards typés pour validations
+
+**Résilience**:
+- Ajouter Error Boundary React pour éviter crashes complets
+- Implémenter Suspense boundaries avec skeletons
+- Standardiser le pattern Result<T, E> pour gestion d'erreurs uniforme
+
+Voir l'analyse complète de code pour détails et priorisation des améliorations.
