@@ -21,7 +21,7 @@ const CsvViewer = dynamic(() => import("@/components/csv-viewer"), {
   ssr: false,
 });
 
-type typeCheckbox = "romanji" | "kanji" | "japanese";
+type typeCheckbox = "romanji" | "kanji" | "japanese" | "furigana";
 export default function Form() {
   const [isCsvVisible, setIsCsvVisible] = useState(false);
   const {
