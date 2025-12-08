@@ -6,6 +6,9 @@
 import '@testing-library/jest-dom'
 import { TextEncoder, TextDecoder } from 'util'
 
+// Set dummy Mistral API key for tests (prevents validation errors)
+process.env.MISTRAL_API_KEY = 'test_1234567890abcdefghijklmnopqrstuvwxyz'
+
 // Polyfill TextEncoder/TextDecoder for Node.js environment
 global.TextEncoder = TextEncoder
 global.TextDecoder = TextDecoder

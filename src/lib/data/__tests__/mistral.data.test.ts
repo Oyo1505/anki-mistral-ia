@@ -277,15 +277,20 @@ describe("MistralData", () => {
     beforeEach(() => {
       global.Buffer = Buffer;
 
-      // Créer des mocks propres pour chaque test
-      mockFile = new File(["test content"], "test.pdf", {
-        type: "application/pdf",
-      });
-      mockBlob = new Blob(["test image"], { type: "image/png" });
+      // Créer des mocks avec arrayBuffer pré-défini
+      const mockArrayBuffer = async () => new ArrayBuffer(10);
 
-      // Mock arrayBuffer pour tous les tests
-      jest.spyOn(mockFile, 'arrayBuffer').mockResolvedValue(new ArrayBuffer(10));
-      jest.spyOn(mockBlob, 'arrayBuffer').mockResolvedValue(new ArrayBuffer(10));
+      mockFile = Object.assign(
+        new File(["test content"], "test.pdf", {
+          type: "application/pdf",
+        }),
+        { arrayBuffer: mockArrayBuffer }
+      );
+
+      mockBlob = Object.assign(
+        new Blob(["test image"], { type: "image/png" }),
+        { arrayBuffer: mockArrayBuffer }
+      );
     });
 
     afterEach(() => {
@@ -449,7 +454,10 @@ describe("MistralData", () => {
     });
 
     it("devrait gérer différents types MIME d'images", async () => {
-      const jpegBlob = new Blob(["jpeg content"], { type: "image/jpeg" });
+      const jpegBlob = Object.assign(
+        new Blob(["jpeg content"], { type: "image/jpeg" }),
+        { arrayBuffer: async () => new ArrayBuffer(10) }
+      );
       const mockOCRResponse = { text: "text" };
 
       (retryWithBackoff as jest.Mock).mockImplementation(
