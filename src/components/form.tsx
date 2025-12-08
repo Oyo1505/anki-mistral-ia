@@ -21,7 +21,7 @@ const CsvViewer = dynamic(() => import("@/components/csv-viewer"), {
   ssr: false,
 });
 
-type typeCheckbox = "romanji" | "kanji" | "japanese";
+type typeCheckbox = "romanji" | "kanji" | "japanese" | "furigana";
 export default function Form() {
   const [isCsvVisible, setIsCsvVisible] = useState(false);
   const {
@@ -38,6 +38,7 @@ export default function Form() {
       romanji: false,
       kanji: false,
       numberOfCards: 5,
+      furigana: false,
       files: [],
       textFromPdf: undefined,
       text: "",
@@ -62,13 +63,16 @@ export default function Form() {
   ) => {
     setValue(typeCheckbox, e.target.checked);
   };
+
+  const isCardKanji = watch("typeCard");
+  const allInJapanese = watch("japanese");
   const text = watch("text");
+  const kanji = watch("kanji");
+
   const isSubmitDisabled =
     (!text || text.trim() === "") && (!files || files.length === 0);
   const csvDataSuccess = csvData && csvData.length > 0 && !isPending;
 
-  const isCardKanji = watch("typeCard");
-  const allInJapanese = watch("japanese");
   return (
     <>
       <div className="w-full flex flex-col md:flex-row items-start justify-center gap-4 transition-all duration-300 ease-in-out">
@@ -88,6 +92,7 @@ export default function Form() {
               {...register("text", { required: true })}
               errors={errors}
               id="text"
+              label="Instruction"
             />
             <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-2">
               {isCardKanji === "basique" && (
@@ -145,6 +150,16 @@ export default function Form() {
                     handleChangeCheckbox(e, "kanji")
                   }
                 />
+                {kanji && (
+                  <Checkbox
+                    label="furigana"
+                    title="Voulez-vous inclure les furigana ?"
+                    handleChangeCheckboxAction={(e) =>
+                      handleChangeCheckbox(e, "furigana")
+                    }
+                  />
+                )}
+
                 <Checkbox
                   label="japonais"
                   title="Tout en japonais (énoncés/questions/réponses) ?"

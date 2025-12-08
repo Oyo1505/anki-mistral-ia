@@ -13,7 +13,7 @@ const FormButtonSubmit = ({
           ? "bg-gray-400 cursor-not-allowed"
           : isSubmitDisabled
           ? "bg-gray-400 cursor-not-allowed"
-          : "bg-blue-500 cursor-pointer"
+          : "bg-blue-700 cursor-pointer"
       }`}
       disabled={isPending || isSubmitDisabled}
     >

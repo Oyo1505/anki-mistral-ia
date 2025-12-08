@@ -24,6 +24,7 @@ export const FormDataSchema = z.object({
   csv: z.boolean().optional(),
   romanji: z.boolean().optional().default(false),
   kanji: z.boolean().optional().default(false),
+  furigana: z.boolean().optional().default(false),
   japanese: z.boolean().optional().default(false),
   typeCard: z.string().optional().default("basique"),
 });

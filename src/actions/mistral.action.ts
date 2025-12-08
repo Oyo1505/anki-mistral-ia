@@ -12,6 +12,7 @@ export type generateCardsAnkiParams = {
   level: string;
   romanji: boolean;
   kanji: boolean;
+  furigana: boolean;
   numberOfCards: number;
   textFromPdf?: string;
   japanese: boolean;
@@ -22,6 +23,7 @@ const generateCardsAnki = async ({
   text,
   level,
   romanji,
+  furigana,
   kanji,
   numberOfCards = 5,
   textFromPdf,
@@ -30,12 +32,14 @@ const generateCardsAnki = async ({
 }: generateCardsAnkiParams): Promise<
   string[][] | { error: string; status: number } | Error
 > => {
+  console.log("Generating cards with Mistral AI...", furigana);
   try {
     const response = await MistralData.parse({
       text,
       level,
       romanji,
       kanji,
+      furigana,
       numberOfCards,
       textFromPdf,
       japanese,
@@ -69,6 +73,7 @@ const generateAnswer = async (
       level,
       numberOfCards,
       romanji,
+      furigana,
       kanji,
       textFromPdf,
       japanese,
@@ -78,6 +83,7 @@ const generateAnswer = async (
       text,
       level,
       numberOfCards,
+      furigana,
       romanji,
       kanji,
       textFromPdf,

@@ -24,7 +24,9 @@ export default function TextArea({
 }: TextAreaProps) {
   return (
     <div className="w-full flex flex-col items-start justify-start">
-      <label htmlFor={id}>{label}</label>
+      <label htmlFor={id} className="font-bold">
+        {label}
+      </label>
       <textarea
         id={id}
         {...props}

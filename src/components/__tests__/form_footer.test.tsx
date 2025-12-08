@@ -69,7 +69,7 @@ describe("FooterForm", () => {
       expect(tutorialLink).toHaveClass("text-sm");
       expect(tutorialLink).toHaveClass("text-center");
       expect(tutorialLink).toHaveClass("border-2");
-      expect(tutorialLink).toHaveClass("bg-blue-500");
+      expect(tutorialLink).toHaveClass("bg-blue-700");
       expect(tutorialLink).toHaveClass("text-white");
       expect(tutorialLink).toHaveClass("rounded-md");
       expect(tutorialLink).toHaveClass("p-2");
@@ -108,7 +108,7 @@ describe("FooterForm", () => {
       expect(downloadLink).toHaveClass("text-sm");
       expect(downloadLink).toHaveClass("text-center");
       expect(downloadLink).toHaveClass("border-2");
-      expect(downloadLink).toHaveClass("bg-blue-500");
+      expect(downloadLink).toHaveClass("bg-blue-700");
       expect(downloadLink).toHaveClass("text-white");
       expect(downloadLink).toHaveClass("rounded-md");
       expect(downloadLink).toHaveClass("p-2");
