@@ -48,7 +48,7 @@ describe("FormButtonSubmit", () => {
       render(<FormButtonSubmit isPending={false} isSubmitDisabled={false} />);
 
       const button = screen.getByRole("button");
-      expect(button).toHaveClass("bg-blue-500");
+      expect(button).toHaveClass("bg-blue-700");
       expect(button).toHaveClass("cursor-pointer");
     });
 

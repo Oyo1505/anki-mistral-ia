@@ -16,8 +16,8 @@ const SelectTypeCard = ({
         Type de carte
       </label>
       <select
+        id="typeCard"
         className="w-full h-full p-2 rounded-md border-2 border-gray-300"
-        title="Type de carte"
         {...register("typeCard")}
       >
         <option value="basique">Basique</option>

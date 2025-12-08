@@ -244,7 +244,7 @@ const ChatBot = () => {
             <button
               disabled={isLoading || isSubmitting}
               type="submit"
-              className="w-full p-2 rounded-md text-white font-bold bg-blue-500 cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
+              className="w-full p-2 rounded-md text-white font-bold bg-blue-700 cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed hover:bg-blue-900 transition-colors"
             >
               {isLoading ? "Envoi en cours..." : "Envoyer"}
             </button>

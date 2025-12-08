@@ -3,6 +3,7 @@ export type PromptParams = {
   textFromPdf?: string;
   text?: string;
   romanji?: boolean;
+  furigana?: boolean;
   kanji?: boolean;
   japanese?: boolean;
   numberOfCards: number;

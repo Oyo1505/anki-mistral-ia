@@ -83,7 +83,7 @@ const FormChatBot = () => {
               disabled={isSubmitting}
               className="w-full p-2 rounded-md text-white font-bold bg-blue-500 cursor-pointer"
             >
-              Submit
+              Envoyer
             </button>
             {errors.name && <p className="text-red-500">Le nom est requis</p>}
             {errors.type && (
