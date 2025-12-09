@@ -4,11 +4,12 @@ import { FormDataSchema, FormDataSchemaType } from "@/schema/form-schema";
 import { levels } from "@/shared/constants/levels";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { CSVLink } from "react-csv";
 import { useForm, UseFormSetValue } from "react-hook-form";
 import ButtonUpload from "./button-upload";
 import Checkbox from "./checkbox";
+import Dictaphone from "./dictaphone";
 import ButtonDisplayCard from "./form_button_display_card";
 import FormButtonSubmit from "./form_button_submit";
 import FooterForm from "./form_footer";
@@ -53,16 +54,21 @@ export default function Form() {
   );
   const files = watch("files");
   const levelsReverse = [...levels].reverse();
-  const onSubmit = async (data: FormDataSchemaType) => {
-    await generateCards(data);
-  };
+  // ✅ useCallback pour éviter la recréation de la fonction à chaque render
+  const onSubmit = useCallback(
+    async (data: FormDataSchemaType) => {
+      await generateCards(data);
+    },
+    [generateCards]
+  );
 
-  const handleChangeCheckbox = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    typeCheckbox: typeCheckbox
-  ) => {
-    setValue(typeCheckbox, e.target.checked);
-  };
+  // ✅ useCallback pour stabiliser la référence de la fonction
+  const handleChangeCheckbox = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>, typeCheckbox: typeCheckbox) => {
+      setValue(typeCheckbox, e.target.checked);
+    },
+    [setValue]
+  );
 
   const isCardKanji = watch("typeCard");
   const allInJapanese = watch("japanese");
@@ -84,6 +90,7 @@ export default function Form() {
           <h1 className="text-xl w-full text-center font-bold">
             Générateur de cartes Anki (Basique)
           </h1>
+          <Dictaphone setValue={setValue} />
           <form
             className="w-full flex flex-col items-start justify-start gap-4"
             onSubmit={handleSubmit(onSubmit)}

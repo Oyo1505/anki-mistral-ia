@@ -32,7 +32,6 @@ const generateCardsAnki = async ({
 }: generateCardsAnkiParams): Promise<
   string[][] | { error: string; status: number } | Error
 > => {
-  console.log("Generating cards with Mistral AI...", furigana);
   try {
     const response = await MistralData.parse({
       text,
