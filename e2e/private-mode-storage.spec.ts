@@ -43,7 +43,7 @@ test.describe("Safe localStorage - Private Browsing Mode", () => {
 
     // Should show form (proof that page loaded without crashing)
     await expect(page.getByLabel("Nom*")).toBeVisible();
-    await expect(page.getByRole("button", { name: /submit/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /envoyer/i })).toBeVisible();
   });
 
   test("should display form fields even when localStorage fails", async ({
@@ -54,7 +54,7 @@ test.describe("Safe localStorage - Private Browsing Mode", () => {
     // Form should be visible despite localStorage errors
     await expect(page.getByLabel("Nom*")).toBeVisible();
     await expect(page.getByLabel("Type d'exercice*")).toBeVisible();
-    await expect(page.getByRole("button", { name: /submit/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /envoyer/i })).toBeVisible();
   });
 
   test("should allow form submission without localStorage", async ({
@@ -65,7 +65,7 @@ test.describe("Safe localStorage - Private Browsing Mode", () => {
     // Fill and submit form
     await page.getByLabel("Nom*").fill("TestUser");
     await page.getByLabel("Type d'exercice*").fill("test-exercise");
-    await page.getByRole("button", { name: /submit/i }).click();
+    await page.getByRole("button", { name: /envoyer/i }).click();
 
     // Form should submit successfully (disappear)
     await expect(page.getByLabel("Nom*")).not.toBeVisible({ timeout: 5000 });
@@ -84,7 +84,7 @@ test.describe("Safe localStorage - Private Browsing Mode", () => {
     // Submit form to trigger multiple localStorage.setItem calls
     await page.getByLabel("Nom*").fill("Alice");
     await page.getByLabel("Type d'exercice*").fill("grammar");
-    await page.getByRole("button", { name: /submit/i }).click();
+    await page.getByRole("button", { name: /envoyer/i }).click();
 
     // Wait a bit for storage operations to complete (or fail)
     await page.waitForTimeout(500);
@@ -114,7 +114,7 @@ test.describe("Safe localStorage - Private Browsing Mode", () => {
     // Submit form
     await page.getByLabel("Nom*").fill("Bob");
     await page.getByLabel("Type d'exercice*").fill("reading");
-    await page.getByRole("button", { name: /submit/i }).click();
+    await page.getByRole("button", { name: /envoyer/i }).click();
 
     // Reload page
     await page.reload();
@@ -141,7 +141,7 @@ test.describe("Safe localStorage - Normal Operation", () => {
     // Fill and submit form
     await page.getByLabel("Nom*").fill("NormalUser");
     await page.getByLabel("Type d'exercice*").fill("vocabulary");
-    await page.getByRole("button", { name: /submit/i }).click();
+    await page.getByRole("button", { name: /envoyer/i }).click();
 
     // Reload to test persistence
     await page.reload();

@@ -15,12 +15,12 @@ test.describe('Formulaire ChatBot', () => {
     // Attendre que le formulaire soit chargé
     await expect(page.getByLabel('Nom*')).toBeVisible();
     await expect(page.getByLabel("Type d'exercice*")).toBeVisible();
-    await expect(page.getByRole('button', { name: /submit/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /envoyer/i })).toBeVisible();
   });
 
   test('devrait valider les champs requis', async ({ page }) => {
     // Cliquer sur submit sans remplir
-    await page.getByRole('button', { name: /submit/i }).click();
+    await page.getByRole('button', { name: /envoyer/i }).click();
 
     // Vérifier les messages d'erreur
     await expect(page.getByText('Le nom est requis')).toBeVisible();
@@ -35,7 +35,7 @@ test.describe('Formulaire ChatBot', () => {
     await page.getByRole('combobox').selectOption('N2 Pré-avancé');
 
     // Soumettre
-    await page.getByRole('button', { name: /submit/i }).click();
+    await page.getByRole('button', { name: /envoyer/i }).click();
 
     // Vérifier que le formulaire disparaît (isSubmitted = true)
     await expect(page.getByLabel('Nom*')).not.toBeVisible({ timeout: 5000 });
@@ -46,7 +46,7 @@ test.describe('Formulaire ChatBot', () => {
 
     await page.getByLabel('Nom*').fill(longName);
     await page.getByLabel("Type d'exercice*").fill('vocabulaire');
-    await page.getByRole('button', { name: /submit/i }).click();
+    await page.getByRole('button', { name: /envoyer/i }).click();
 
     // Le formulaire ne devrait pas disparaître
     await expect(page.getByLabel('Nom*')).toBeVisible();
@@ -71,7 +71,7 @@ test.describe('Tests de persistance', () => {
     // Remplir et soumettre
     await page.getByLabel('Nom*').fill('Alice');
     await page.getByLabel("Type d'exercice*").fill('lecture');
-    await page.getByRole('button', { name: /submit/i }).click();
+    await page.getByRole('button', { name: /envoyer/i }).click();
 
     // Recharger la page
     await page.reload();
@@ -103,37 +103,70 @@ test.describe('Tests responsive', () => {
 
     await page.getByLabel('Nom*').fill('Bob');
     await page.getByLabel("Type d'exercice*").fill('conversation');
-    await page.getByRole('button', { name: /submit/i }).click();
+    await page.getByRole('button', { name: /envoyer/i }).click();
 
     // Vérifier la soumission
     await expect(page.getByLabel('Nom*')).not.toBeVisible({ timeout: 5000 });
   });
 });
 
-// test.describe('Tests d\'accessibilité', () => {
-//   test('devrait être navigable au clavier', async ({ page }) => {
-//     await page.goto('/chat');
+test.describe('Tests d\'accessibilité', () => {
+  test('devrait être navigable au clavier', async ({ page }, testInfo) => {
+    // Skip test for mobile browsers (keyboard navigation not applicable)
+    const isMobile = testInfo.project.name.includes('Mobile');
+    test.skip(isMobile, 'Navigation clavier non applicable sur mobile');
 
-//     // Naviguer avec Tab
-//     await page.keyboard.press('Tab');
-//     await expect(page.getByTestId('button-chat')).toBeFocused();
-//     await page.keyboard.press('Tab');
-//     await expect(page.getByLabel('Nom*')).toBeFocused();
+    await page.goto('/chat');
 
-//     await page.keyboard.press('Tab');
-//     await expect(page.getByLabel("Type d'exercice*")).toBeFocused();
+    // Attendre le chargement du formulaire
+    await page.waitForSelector('input[id="name"]');
 
-//     // Remplir avec le clavier
-//     await page.keyboard.type('TestUser');
-//     await page.keyboard.press('Tab');
-//     await page.keyboard.type('test-exercise');
+    // Cliquer sur le premier champ pour commencer
+    const nameField = page.getByLabel('Nom*');
+    await nameField.click();
+    await expect(nameField).toBeFocused();
 
-//     // Soumettre avec Enter
-//     await page.keyboard.press('Tab');
-//     await page.keyboard.press('Tab');
-//     await page.keyboard.press('Enter');
+    // Remplir avec le clavier
+    await page.keyboard.type('TestUser');
 
-//     // Vérifier la soumission
-//     await expect(page.getByLabel('Nom*')).not.toBeVisible({ timeout: 5000 });
-//   });
-// });
+    // Passer au champ suivant avec Tab
+    await page.keyboard.press('Tab');
+    const typeField = page.getByLabel("Type d'exercice*");
+    await expect(typeField).toBeFocused();
+    await page.keyboard.type('test-exercise');
+
+    // Naviguer vers le select niveau avec Tab
+    await page.keyboard.press('Tab');
+
+    // Naviguer vers le bouton submit avec Tab
+    await page.keyboard.press('Tab');
+    const submitButton = page.getByRole('button', { name: /envoyer/i });
+    await expect(submitButton).toBeFocused();
+
+    // Soumettre avec Enter
+    await page.keyboard.press('Enter');
+
+    // Vérifier la soumission
+    await expect(nameField).not.toBeVisible({ timeout: 5000 });
+  });
+
+  test('devrait avoir des labels ARIA appropriés', async ({ page }) => {
+    await page.goto('/chat');
+
+    // Vérifier que les champs ont des labels
+    const nameInput = page.getByLabel('Nom*');
+    const typeInput = page.getByLabel("Type d'exercice*");
+    const levelSelect = page.getByRole('combobox');
+    const submitButton = page.getByRole('button', { name: /envoyer/i });
+
+    await expect(nameInput).toBeVisible();
+    await expect(typeInput).toBeVisible();
+    await expect(levelSelect).toBeVisible();
+    await expect(submitButton).toBeVisible();
+
+    // Vérifier les attributs d'accessibilité
+    await expect(nameInput).toHaveAttribute('id', 'name');
+    await expect(typeInput).toHaveAttribute('id', 'type');
+    await expect(levelSelect).toHaveAttribute('id', 'level');
+  });
+});
