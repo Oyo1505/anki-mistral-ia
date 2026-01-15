@@ -23,6 +23,17 @@ function checkStorageAvailability(): boolean {
   }
 }
 
+// Cached storage availability to avoid repeated checks (js-cache-storage)
+let cachedAvailability: boolean | null = null;
+
+/**
+ * Reset the cached availability (for testing purposes only)
+ * @internal
+ */
+export const _resetCache = (): void => {
+  cachedAvailability = null;
+};
+
 /**
  * Safe localStorage abstraction with graceful fallback
  */
@@ -32,7 +43,10 @@ export const safeStorage = {
    * Cached result from availability check
    */
   get isAvailable(): boolean {
-    return checkStorageAvailability();
+    if (cachedAvailability === null) {
+      cachedAvailability = checkStorageAvailability();
+    }
+    return cachedAvailability;
   },
 
   /**

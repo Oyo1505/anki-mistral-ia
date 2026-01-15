@@ -1,7 +1,14 @@
 "use client";
 import { ChatMessage } from "@/interfaces/chat.interface";
 import { safeStorage } from "@/utils/safe-storage";
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 // Limite maximale de messages en mémoire et localStorage
 const MAX_MESSAGES_IN_MEMORY = 50;
@@ -123,16 +130,21 @@ const ChatBotContextProvider = ({
     }
   }, [formData, messages]);
 
-  const handleSetFormData = (formData: FormDataChatBot): void => {
-    setFormData((prev) => ({ ...prev, ...formData }));
-    safeStorage.setItem("formData", formData);
-  };
+  // Memoized handlers to prevent unnecessary re-renders (rerender-functional-setstate)
+  const handleSetFormData = useCallback(
+    (newFormData: FormDataChatBot): void => {
+      setFormData((prev) => ({ ...prev, ...newFormData }));
+      safeStorage.setItem("formData", newFormData);
+    },
+    []
+  );
 
-  const handleSetMessages = (messages: ChatMessage[]): void => {
-    const limitedMessages = limitMessages(messages);
+  const handleSetMessages = useCallback((newMessages: ChatMessage[]): void => {
+    const limitedMessages = limitMessages(newMessages);
     setAllMessages(limitedMessages);
     safeStorage.setItem("chatBotMessagesAnki", limitedMessages);
-  };
+  }, []);
+
   const contextValue = useMemo(
     () => ({
       formData,
@@ -142,14 +154,7 @@ const ChatBotContextProvider = ({
       handleSetFormData,
       handleSetMessages,
     }),
-    [
-      formData,
-      messages,
-      setFormData,
-      setAllMessages,
-      handleSetFormData,
-      handleSetMessages,
-    ]
+    [formData, messages, handleSetFormData, handleSetMessages]
   );
   return (
     <ChatBotContext.Provider value={contextValue}>

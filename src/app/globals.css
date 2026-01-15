@@ -7,3 +7,9 @@ body {
   background-repeat: repeat;
   background-attachment: fixed;
 }
+
+/* Performance optimization: defer off-screen rendering for chat messages (rendering-content-visibility) */
+.chat-message-item {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 60px;
+}

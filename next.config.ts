@@ -10,6 +10,13 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: "10mb",
     },
+    // Optimize barrel file imports (bundle-barrel-imports)
+    optimizePackageImports: [
+      "react-toastify",
+      "@hookform/resolvers",
+      "react-csv",
+      "zod",
+    ],
   },
 };
 
