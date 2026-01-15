@@ -1,8 +1,13 @@
 import ButtonsHeader from "@/components/buttons-header";
 import Container from "@/components/container";
 import { Metadata } from "next";
-import { ToastContainer } from "react-toastify";
+import dynamic from "next/dynamic";
 import "./globals.css";
+
+// Defer ToastContainer loading - non-critical for initial render (bundle-defer-third-party)
+const ToastContainer = dynamic(() =>
+  import("react-toastify").then((mod) => mod.ToastContainer)
+);
 
 export const metadata: Metadata = {
   title: "Anki Mistral AI",

@@ -1,4 +1,4 @@
-import { safeStorage } from "../safe-storage";
+import { safeStorage, _resetCache } from "../safe-storage";
 
 describe("safeStorage", () => {
   beforeEach(() => {
@@ -6,6 +6,8 @@ describe("safeStorage", () => {
     localStorage.clear();
     // Clear all mocks
     jest.clearAllMocks();
+    // Reset the cached availability for testing (js-cache-storage)
+    _resetCache();
   });
 
   describe("isAvailable", () => {
