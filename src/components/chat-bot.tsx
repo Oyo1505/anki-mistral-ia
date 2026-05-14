@@ -12,23 +12,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import TextArea from "./text-area";
 
-// Hoisted static SVG element (rendering-hoist-jsx)
-const arrowDownIcon = (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    className="size-10"
-  >
-    <path
-      fillRule="evenodd"
-      d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-.53 14.03a.75.75 0 0 0 1.06 0l3-3a.75.75 0 1 0-1.06-1.06l-1.72 1.72V8.25a.75.75 0 0 0-1.5 0v5.69l-1.72-1.72a.75.75 0 0 0-1.06 1.06l3 3Z"
-      clipRule="evenodd"
-    />
-  </svg>
-);
-
-// Lazy-loaded sanitizer for markdown (bundle-dynamic-imports)
 const sanitizeMarkdown = async (content: string): Promise<string> => {
   const [DOMPurify, { marked }] = await Promise.all([
     import("dompurify"),
@@ -43,7 +26,6 @@ const sanitizeMarkdown = async (content: string): Promise<string> => {
   );
 };
 
-// Message item component with lazy-loaded sanitization
 const MessageItem = ({
   role,
   message,
@@ -52,34 +34,36 @@ const MessageItem = ({
   message: string | unknown;
 }) => {
   const [sanitizedHtml, setSanitizedHtml] = useState<string>("");
+  const isUser = role === "user";
 
   useEffect(() => {
     let isMounted = true;
     const content = typeof message === "string" ? message : "";
     sanitizeMarkdown(content).then((html) => {
-      if (isMounted) {
-        setSanitizedHtml(html);
-      }
+      if (isMounted) setSanitizedHtml(html);
     });
-    return () => {
-      isMounted = false;
-    };
+    return () => { isMounted = false; };
   }, [message]);
 
   return (
     <div
-      className={`chat-message-item ${
-        role === "user"
-          ? "bg-slate-800 text-white self-end"
-          : "bg-slate-200 text-slate-800 text-left"
-      } p-2 h-auto rounded-md max-w-[80%]`}
+      className="chat-message-item"
+      style={{
+        alignSelf: isUser ? "flex-end" : "flex-start",
+        maxWidth: "78%",
+        background: isUser ? "var(--sumi-900)" : "var(--washi-200)",
+        color: isUser ? "var(--washi-50)" : "var(--fg-1)",
+        padding: "10px 14px",
+        borderRadius: isUser ? "12px 12px 4px 12px" : "12px 12px 12px 4px",
+        fontSize: "var(--fs-sm)",
+        lineHeight: "var(--lh-base)",
+        boxShadow: "var(--shadow-xs)",
+      }}
     >
-      <div className="text-base whitespace-pre-wrap">
-        <div
-          className="h-auto"
-          dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
-        />
-      </div>
+      <div
+        className="whitespace-pre-wrap"
+        dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
+      />
     </div>
   );
 };
@@ -97,62 +81,38 @@ const ChatBot = () => {
     handleSubmit,
     setValue,
     formState: { isSubmitting, errors },
-  } = useForm({
-    defaultValues: {
-      message: "",
-    },
-  });
+  } = useForm({ defaultValues: { message: "" } });
 
-  // Memoized scroll function (rerender-functional-setstate)
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
-  // Fixed useEffect dependencies (rerender-dependencies)
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, isLoading, scrollToBottom]);
+  useEffect(() => { scrollToBottom(); }, [messages, isLoading, scrollToBottom]);
 
-  // Cleanup timeouts on unmount
   useEffect(() => {
-    return () => {
-      timeoutRefs.current.forEach(clearTimeout);
-    };
+    return () => { timeoutRefs.current.forEach(clearTimeout); };
   }, []);
 
-  // Memoized loading message handler with cleanup (rerender-functional-setstate)
   const handleLoadingMessage = useCallback((): void => {
-    // Clear previous timeouts
     timeoutRefs.current.forEach(clearTimeout);
     timeoutRefs.current = [];
-
     timeoutRefs.current.push(
-      setTimeout(
-        () => setLoadingMessage("Connexion à l'IA..."),
-        LOADING_MESSAGE_DELAY
-      )
+      setTimeout(() => setLoadingMessage("Connexion à l'IA…"), LOADING_MESSAGE_DELAY)
     );
     timeoutRefs.current.push(
-      setTimeout(
-        () => setLoadingMessage("Génération de la réponse..."),
-        LOADING_MESSAGE_DELAY_2
-      )
+      setTimeout(() => setLoadingMessage("Génération de la réponse…"), LOADING_MESSAGE_DELAY_2)
     );
     timeoutRefs.current.push(
-      setTimeout(
-        () => setLoadingMessage("Finalisation..."),
-        LOADING_MESSAGE_DELAY_3
-      )
+      setTimeout(() => setLoadingMessage("Finalisation…"), LOADING_MESSAGE_DELAY_3)
     );
   }, []);
 
-  // Memoized send message handler (rerender-functional-setstate)
   const handleSendMessage = useCallback(
     async (data: { message: string }) => {
       if (data.message !== "" && !isLoading) {
         try {
           setIsLoading(true);
-          setLoadingMessage("Envoi du message...");
+          setLoadingMessage("Envoi du message…");
 
           const userMessage: ChatMessage = {
             role: "user",
@@ -176,52 +136,36 @@ const ChatBot = () => {
           if (response.role === "assistant") {
             handleSetMessages([...updatedMessages, response]);
           } else {
-            const errorMessage: ChatMessage = {
+            handleSetMessages([...updatedMessages, {
               role: "assistant",
-              message:
-                "Une erreur est survenue lors de la récupération de la réponse.",
+              message: "Une erreur est survenue lors de la récupération de la réponse.",
               timestamp: new Date(),
-            };
-            handleSetMessages([...updatedMessages, errorMessage]);
+            }]);
           }
         } catch (error) {
           logError(error, "handleSendMessage");
-          const errorMessage: ChatMessage = {
+          handleSetMessages([...messages, {
             role: "assistant",
-            message:
-              "Une erreur inattendue s'est produite. Veuillez réessayer.",
+            message: "Une erreur inattendue s'est produite. Veuillez réessayer.",
             timestamp: new Date(),
-          };
-          handleSetMessages([...messages, errorMessage]);
+          }]);
         } finally {
           setIsLoading(false);
           setLoadingMessage("");
-          // Clear loading timeouts
           timeoutRefs.current.forEach(clearTimeout);
           timeoutRefs.current = [];
         }
       }
     },
-    [
-      isLoading,
-      messages,
-      formData.type,
-      formData.level,
-      formData.name,
-      handleSetMessages,
-      handleLoadingMessage,
-      setValue,
-    ]
+    [isLoading, messages, formData.type, formData.level, formData.name, handleSetMessages, handleLoadingMessage, setValue]
   );
 
-  // Memoized key handler (rerender-functional-setstate)
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       if (e.key === "Enter" && e.shiftKey && !isLoading) {
         e.preventDefault();
         setValue("message", e.currentTarget.value + "\n");
       }
-
       if (e.key === "Enter" && !e.shiftKey && !isLoading) {
         e.preventDefault();
         const userMessage = e.currentTarget.value;
@@ -234,85 +178,178 @@ const ChatBot = () => {
     [isLoading, setValue, handleSendMessage]
   );
 
-  // Use explicit ternary instead of && (rendering-conditional-render)
   return formData.isSubmitted ? (
-    <div className="w-full min-h-1/2 h-4/5 flex flex-col items-start justify-start gap-4">
-      <div className="w-full flex items-center justify-between">
+    <div className="w-full flex flex-col gap-3" style={{ minHeight: "60vh" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <button
           aria-label="Retour au formulaire de configuration"
-          className="cursor-pointer text-center font-semibold text-slate-800 bg-white p-2 rounded-md border-2 border-slate-800 hover:bg-slate-800 hover:text-white transition-all duration-300 ease-in-out"
-          onClick={() =>
-            handleSetFormData({ ...formData, isSubmitted: false })
-          }
+          className="ds-btn ds-btn--secondary"
+          onClick={() => handleSetFormData({ ...formData, isSubmitted: false })}
         >
+          <BackIcon />
           Précédent
         </button>
         <button
-          aria-label="relancer la discussion"
+          aria-label="Relancer la discussion"
+          className="ds-btn ds-btn--ghost"
           onClick={() =>
-            handleSetMessages([
-              {
-                role: "assistant",
-                message: "Bonjour, comment puis-je vous aider ?",
-                timestamp: new Date(),
-                id: "welcome",
-              },
-            ])
+            handleSetMessages([{
+              role: "assistant",
+              message: "Bonjour, comment puis-je vous aider ?",
+              timestamp: new Date(),
+              id: "welcome",
+            }])
           }
           disabled={isLoading}
-          className="cursor-pointer text-center font-semibold text-slate-800 bg-white p-2 rounded-md border-2 border-slate-800 hover:bg-slate-800 hover:text-white transition-all duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Relancer la discussion
+          <ResetIcon />
+          Relancer
         </button>
       </div>
-      <div className="w-full h-full flex flex-col items-start justify-start relative">
-        <button
-          className="absolute bottom-50 right-3 text-black"
-          onClick={scrollToBottom}
-          aria-label="Défiler vers le bas"
+
+      <div
+        className="ds-card"
+        style={{
+          padding: 0,
+          overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+          flex: 1,
+          minHeight: 400,
+        }}
+      >
+        <div
+          style={{
+            flex: 1,
+            overflowY: "auto",
+            padding: "20px 20px 12px",
+            display: "flex",
+            flexDirection: "column",
+            gap: 12,
+            background: "var(--washi-50)",
+            position: "relative",
+          }}
         >
-          {arrowDownIcon}
-        </button>
-        <div className="w-full h-full flex flex-col items-start justify-start gap-4 bg-slate-100 p-4 rounded-t-md overflow-y-auto">
+          <button
+            style={{
+              position: "sticky",
+              top: 0,
+              alignSelf: "flex-end",
+              background: "var(--bg-card-elevated)",
+              border: "1px solid var(--border-1)",
+              borderRadius: "var(--r-pill)",
+              padding: "4px 8px",
+              cursor: "pointer",
+              color: "var(--fg-2)",
+              zIndex: 1,
+            }}
+            onClick={scrollToBottom}
+            aria-label="Défiler vers le bas"
+          >
+            <ArrowDownIcon />
+          </button>
+
           {messages.map(({ role, message }, index) => (
             <MessageItem key={index} role={role} message={message} />
           ))}
 
           {isLoading ? (
-            <div className="bg-slate-200 text-slate-800 p-2 rounded-md max-w-[80%]">
-              <div className="flex items-center gap-2">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-slate-600"></div>
-                <span className="text-sm">{loadingMessage}</span>
-              </div>
+            <div
+              style={{
+                alignSelf: "flex-start",
+                background: "var(--washi-200)",
+                color: "var(--fg-2)",
+                padding: "10px 14px",
+                borderRadius: "12px 12px 12px 4px",
+                fontSize: "var(--fs-xs)",
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                maxWidth: "75%",
+              }}
+            >
+              <span className="ds-spinner ds-spinner--dark" aria-hidden="true" />
+              {loadingMessage}
             </div>
           ) : null}
 
           <div ref={messagesEndRef} />
         </div>
+
         <form
           onSubmit={handleSubmit(handleSendMessage)}
-          className="w-full h-auto rounded-b-md flex flex-col items-start justify-start gap-4 bg-slate-100 p-4"
+          style={{
+            padding: 14,
+            borderTop: "1px solid var(--border-1)",
+            background: "#fff",
+            display: "flex",
+            alignItems: "flex-end",
+            gap: 10,
+          }}
         >
           <TextArea
             label=""
             errors={errors}
             id="message"
             {...register("message", { required: true })}
-            className="w-full h-auto p-2 border-slate-800 outline-none focus:border-slate-500 resize-none"
+            className="ds-textarea ds-input"
+            style={{ resize: "none", height: 48, padding: 12, fontSize: "var(--fs-sm)" } as React.CSSProperties}
             onKeyDown={handleKeyDown}
             disabled={isLoading}
           />
           <button
             disabled={isLoading || isSubmitting}
             type="submit"
-            className="w-full p-2 rounded-md text-white font-bold bg-blue-700 cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed hover:bg-blue-900 transition-colors"
+            className="ds-btn ds-btn--primary"
           >
-            {isLoading ? "Envoi en cours..." : "Envoyer"}
+            {isLoading ? (
+              <span className="ds-spinner" aria-hidden="true" />
+            ) : (
+              <SendIcon />
+            )}
+            Envoyer
           </button>
         </form>
       </div>
     </div>
   ) : null;
 };
+
+const BackIcon = () => (
+  <svg width={14} height={14} viewBox="0 0 24 24" fill="none"
+       stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round"
+       aria-hidden="true">
+    <line x1="19" y1="12" x2="5" y2="12"/>
+    <polyline points="12 19 5 12 12 5"/>
+  </svg>
+);
+
+const ResetIcon = () => (
+  <svg width={14} height={14} viewBox="0 0 24 24" fill="none"
+       stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round"
+       aria-hidden="true">
+    <path d="M3 12a9 9 0 1 0 3-6.7"/>
+    <polyline points="3 4 3 10 9 10"/>
+  </svg>
+);
+
+const SendIcon = () => (
+  <svg width={14} height={14} viewBox="0 0 24 24" fill="none"
+       stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round"
+       aria-hidden="true">
+    <line x1="22" y1="2" x2="11" y2="13"/>
+    <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+  </svg>
+);
+
+const ArrowDownIcon = () => (
+  <svg width={16} height={16} viewBox="0 0 24 24" fill="none"
+       stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round"
+       aria-hidden="true">
+    <circle cx="12" cy="12" r="9"/>
+    <polyline points="9 12 12 15 15 12"/>
+    <line x1="12" y1="8" x2="12" y2="15"/>
+  </svg>
+);
 
 export default ChatBot;

@@ -6,7 +6,15 @@ const Container = ({
   className?: string;
 }) => {
   return (
-    <div className={`w-full h-full md:w-1/2 mx-auto ${className}`}>
+    <div
+      className={className}
+      style={{
+        width: "100%",
+        maxWidth: "var(--content-narrow)",
+        marginLeft: "auto",
+        marginRight: "auto",
+      }}
+    >
       {children}
     </div>
   );

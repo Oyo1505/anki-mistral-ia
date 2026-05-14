@@ -1,6 +1,5 @@
 /**
  * Unit tests for FooterForm component
- * Tests footer links and accessibility
  */
 
 import { render, screen } from "@testing-library/react";
@@ -12,7 +11,7 @@ describe("FooterForm", () => {
       render(<FooterForm />);
 
       const tutorialLink = screen.getByRole("link", {
-        name: /tutoriel pour importer des cartes dans anki/i,
+        name: /tutoriel d'importation/i,
       });
       const downloadLink = screen.getByRole("link", {
         name: /télécharger anki/i,
@@ -20,17 +19,6 @@ describe("FooterForm", () => {
 
       expect(tutorialLink).toBeInTheDocument();
       expect(downloadLink).toBeInTheDocument();
-    });
-
-    it("should render within a flex container", () => {
-      const { container } = render(<FooterForm />);
-
-      const flexContainer = container.firstChild;
-      expect(flexContainer).toHaveClass("flex");
-      expect(flexContainer).toHaveClass("w-full");
-      expect(flexContainer).toHaveClass("items-start");
-      expect(flexContainer).toHaveClass("justify-between");
-      expect(flexContainer).toHaveClass("gap-2");
     });
   });
 
@@ -59,20 +47,15 @@ describe("FooterForm", () => {
       expect(tutorialLink).toHaveAttribute("rel", "noopener noreferrer");
     });
 
-    it("should have correct styling for tutorial link", () => {
+    it("should use design-system ghost button class", () => {
       render(<FooterForm />);
 
       const tutorialLink = screen.getByRole("link", {
         name: /tutoriel/i,
       });
 
-      expect(tutorialLink).toHaveClass("text-sm");
-      expect(tutorialLink).toHaveClass("text-center");
-      expect(tutorialLink).toHaveClass("border-2");
-      expect(tutorialLink).toHaveClass("bg-blue-700");
-      expect(tutorialLink).toHaveClass("text-white");
-      expect(tutorialLink).toHaveClass("rounded-md");
-      expect(tutorialLink).toHaveClass("p-2");
+      expect(tutorialLink).toHaveClass("ds-btn");
+      expect(tutorialLink).toHaveClass("ds-btn--ghost");
     });
   });
 
@@ -98,20 +81,15 @@ describe("FooterForm", () => {
       expect(downloadLink).toHaveAttribute("rel", "noopener noreferrer");
     });
 
-    it("should have correct styling for download link", () => {
+    it("should use design-system ghost button class", () => {
       render(<FooterForm />);
 
       const downloadLink = screen.getByRole("link", {
         name: /télécharger anki/i,
       });
 
-      expect(downloadLink).toHaveClass("text-sm");
-      expect(downloadLink).toHaveClass("text-center");
-      expect(downloadLink).toHaveClass("border-2");
-      expect(downloadLink).toHaveClass("bg-blue-700");
-      expect(downloadLink).toHaveClass("text-white");
-      expect(downloadLink).toHaveClass("rounded-md");
-      expect(downloadLink).toHaveClass("p-2");
+      expect(downloadLink).toHaveClass("ds-btn");
+      expect(downloadLink).toHaveClass("ds-btn--ghost");
     });
   });
 
@@ -120,7 +98,7 @@ describe("FooterForm", () => {
       render(<FooterForm />);
 
       const tutorialLink = screen.getByRole("link", {
-        name: /tutoriel pour importer des cartes dans anki/i,
+        name: /tutoriel/i,
       });
       const downloadLink = screen.getByRole("link", {
         name: /télécharger anki/i,
@@ -134,7 +112,6 @@ describe("FooterForm", () => {
       render(<FooterForm />);
 
       const links = screen.getAllByRole("link");
-
       links.forEach((link) => {
         expect(link).toHaveAttribute("rel", "noopener noreferrer");
       });
@@ -144,7 +121,6 @@ describe("FooterForm", () => {
       render(<FooterForm />);
 
       const links = screen.getAllByRole("link");
-
       links.forEach((link) => {
         expect(link).toHaveAttribute("target", "_blank");
       });
@@ -161,13 +137,10 @@ describe("FooterForm", () => {
   });
 
   describe("Component structure", () => {
-    it("should maintain proper HTML structure", () => {
+    it("should contain two anchor elements", () => {
       const { container } = render(<FooterForm />);
 
-      const div = container.querySelector("div");
-      expect(div).toBeInTheDocument();
-
-      const links = div?.querySelectorAll("a");
+      const links = container.querySelectorAll("a");
       expect(links).toHaveLength(2);
     });
   });

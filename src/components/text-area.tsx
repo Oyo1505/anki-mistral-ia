@@ -7,7 +7,6 @@ interface TextAreaProps {
   errors: FieldErrors<FormDataSchemaType>;
   id: string;
   className?: string;
-  // eslint-disable-next-line no-unused-vars
   onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   label?: string;
   disabled?: boolean;
@@ -22,11 +21,15 @@ export default function TextArea({
   label,
   ...props
 }: TextAreaProps) {
+  const hasError = !!errors.text;
+
   return (
-    <div className="w-full flex flex-col items-start justify-start">
-      <label htmlFor={id} className="font-bold">
-        {label}
-      </label>
+    <div className="w-full flex flex-col">
+      {label && (
+        <label htmlFor={id} className="ds-label">
+          {label}
+        </label>
+      )}
       <textarea
         id={id}
         {...props}
@@ -34,13 +37,13 @@ export default function TextArea({
         onKeyDown={onKeyDown}
         disabled={disabled}
         placeholder="Votre texte ou instructions"
-        className={clsx(
-          className,
-          "border rounded p-2 w-full h-48 focus:outline-none focus:ring-2 focus:ring-gray-300 border-gray-300"
-        )}
+        className={clsx("ds-textarea ds-input", hasError && "ds-input--error", className)}
+        style={{ resize: "vertical", minHeight: 120 }}
       />
-      {errors.text && (
-        <p className="text-red-600 text-xs">{errors.text.message}</p>
+      {hasError && (
+        <p style={{ fontSize: "var(--fs-xs)", color: "var(--fg-danger)", marginTop: 6 }}>
+          {errors.text?.message}
+        </p>
       )}
     </div>
   );

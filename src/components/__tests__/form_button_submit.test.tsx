@@ -1,6 +1,5 @@
 /**
  * Unit tests for FormButtonSubmit component
- * Tests button states and disabled logic
  */
 
 import { render, screen } from "@testing-library/react";
@@ -21,7 +20,7 @@ describe("FormButtonSubmit", () => {
       render(<FormButtonSubmit isPending={true} isSubmitDisabled={false} />);
 
       const button = screen.getByRole("button");
-      expect(button).toHaveTextContent("Génération en cours...");
+      expect(button).toHaveTextContent("Génération en cours…");
       expect(button).toBeDisabled();
     });
 
@@ -29,9 +28,7 @@ describe("FormButtonSubmit", () => {
       render(<FormButtonSubmit isPending={false} isSubmitDisabled={true} />);
 
       const button = screen.getByRole("button");
-      expect(button).toHaveTextContent(
-        "Veuillez entrer du texte ou ajouter une image"
-      );
+      expect(button).toHaveTextContent("Saisissez du texte ou un fichier");
       expect(button).toBeDisabled();
     });
 
@@ -44,39 +41,27 @@ describe("FormButtonSubmit", () => {
   });
 
   describe("Button styling", () => {
-    it("should have blue background when enabled", () => {
+    it("should have primary design-system class when enabled", () => {
       render(<FormButtonSubmit isPending={false} isSubmitDisabled={false} />);
 
       const button = screen.getByRole("button");
-      expect(button).toHaveClass("bg-blue-700");
-      expect(button).toHaveClass("cursor-pointer");
+      expect(button).toHaveClass("ds-btn");
+      expect(button).toHaveClass("ds-btn--primary");
     });
 
-    it("should have gray background when pending", () => {
+    it("should be disabled (and appear disabled) when pending", () => {
       render(<FormButtonSubmit isPending={true} isSubmitDisabled={false} />);
 
       const button = screen.getByRole("button");
-      expect(button).toHaveClass("bg-gray-400");
-      expect(button).toHaveClass("cursor-not-allowed");
+      expect(button).toBeDisabled();
+      expect(button).toHaveClass("ds-btn--primary");
     });
 
-    it("should have gray background when submit is disabled", () => {
+    it("should be disabled (and appear disabled) when submit is disabled", () => {
       render(<FormButtonSubmit isPending={false} isSubmitDisabled={true} />);
 
       const button = screen.getByRole("button");
-      expect(button).toHaveClass("bg-gray-400");
-      expect(button).toHaveClass("cursor-not-allowed");
-    });
-
-    it("should always have common styling classes", () => {
-      render(<FormButtonSubmit isPending={false} isSubmitDisabled={false} />);
-
-      const button = screen.getByRole("button");
-      expect(button).toHaveClass("w-full");
-      expect(button).toHaveClass("p-2");
-      expect(button).toHaveClass("rounded-md");
-      expect(button).toHaveClass("text-white");
-      expect(button).toHaveClass("font-bold");
+      expect(button).toBeDisabled();
     });
   });
 
@@ -115,20 +100,16 @@ describe("FormButtonSubmit", () => {
       render(<FormButtonSubmit isPending={true} isSubmitDisabled={true} />);
 
       const button = screen.getByRole("button");
-      expect(button).toHaveTextContent("Génération en cours...");
-      expect(button).not.toHaveTextContent(
-        "Veuillez entrer du texte ou ajouter une image"
-      );
+      expect(button).toHaveTextContent("Génération en cours…");
+      expect(button).not.toHaveTextContent("Saisissez du texte ou un fichier");
     });
 
     it("should show submit disabled text when isPending is false", () => {
       render(<FormButtonSubmit isPending={false} isSubmitDisabled={true} />);
 
       const button = screen.getByRole("button");
-      expect(button).not.toHaveTextContent("Génération en cours...");
-      expect(button).toHaveTextContent(
-        "Veuillez entrer du texte ou ajouter une image"
-      );
+      expect(button).not.toHaveTextContent("Génération en cours…");
+      expect(button).toHaveTextContent("Saisissez du texte ou un fichier");
     });
   });
 

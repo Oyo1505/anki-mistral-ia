@@ -5,25 +5,38 @@ const FormButtonSubmit = ({
   isPending: boolean;
   isSubmitDisabled: boolean;
 }) => {
+  const disabled = isPending || isSubmitDisabled;
+
   return (
     <button
       type="submit"
-      className={`w-full p-2 rounded-md text-white font-bold ${
-        isPending
-          ? "bg-gray-400 cursor-not-allowed"
-          : isSubmitDisabled
-          ? "bg-gray-400 cursor-not-allowed"
-          : "bg-blue-700 cursor-pointer"
-      }`}
-      disabled={isPending || isSubmitDisabled}
+      className="ds-btn ds-btn--primary ds-btn--lg ds-btn--block"
+      disabled={disabled}
+      style={{ width: "100%" }}
     >
-      {isPending
-        ? "Génération en cours..."
-        : isSubmitDisabled
-        ? "Veuillez entrer du texte ou ajouter une image"
-        : "Générer"}
+      {isPending ? (
+        <>
+          <span className="ds-spinner" aria-hidden="true" />
+          Génération en cours…
+        </>
+      ) : isSubmitDisabled ? (
+        "Saisissez du texte ou un fichier"
+      ) : (
+        <>
+          <SparkleIcon />
+          Générer
+        </>
+      )}
     </button>
   );
 };
+
+const SparkleIcon = () => (
+  <svg width={16} height={16} viewBox="0 0 24 24" fill="none"
+       stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round"
+       aria-hidden="true">
+    <path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>
+  </svg>
+);
 
 export default FormButtonSubmit;

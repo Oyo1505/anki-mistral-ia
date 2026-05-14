@@ -1,6 +1,5 @@
 /**
  * Unit tests for ButtonDisplayCard component
- * Tests toggle button logic and visibility
  */
 
 import { render, screen } from "@testing-library/react";
@@ -90,7 +89,7 @@ describe("ButtonDisplayCard", () => {
       expect(mockSetIsCsvVisible).toHaveBeenCalledWith(expect.any(Function));
     });
 
-    it("should call setIsCsvVisible with function that toggles based on current prop", async () => {
+    it("should call setIsCsvVisible with a toggling function", async () => {
       const user = userEvent.setup();
 
       render(
@@ -104,14 +103,9 @@ describe("ButtonDisplayCard", () => {
       const button = screen.getByRole("button");
       await user.click(button);
 
-      // Get the function passed to setIsCsvVisible
       const toggleFunction = mockSetIsCsvVisible.mock.calls[0][0];
-
-      // The function ignores its argument and uses the prop value
-      // This is because the implementation is: () => !isCsvVisible
-      // So it always returns the opposite of the current prop
-      expect(toggleFunction(false)).toBe(true); // Returns !isCsvVisible (which is !false = true)
-      expect(toggleFunction(true)).toBe(true); // Still returns !isCsvVisible (which is !false = true)
+      expect(toggleFunction(false)).toBe(true);
+      expect(toggleFunction(true)).toBe(false);
     });
 
     it("should handle multiple clicks", async () => {
@@ -136,7 +130,7 @@ describe("ButtonDisplayCard", () => {
   });
 
   describe("Button styling", () => {
-    it("should have correct CSS classes", () => {
+    it("should use design-system secondary button class", () => {
       render(
         <ButtonDisplayCard
           csvDataSuccess={true}
@@ -146,14 +140,8 @@ describe("ButtonDisplayCard", () => {
       );
 
       const button = screen.getByRole("button");
-      expect(button).toHaveClass("w-full");
-      expect(button).toHaveClass("p-2");
-      expect(button).toHaveClass("rounded-md");
-      expect(button).toHaveClass("border-2");
-      expect(button).toHaveClass("border-gray-300");
-      expect(button).toHaveClass("text-center");
-      expect(button).toHaveClass("cursor-pointer");
-      expect(button).toHaveClass("font-bold");
+      expect(button).toHaveClass("ds-btn");
+      expect(button).toHaveClass("ds-btn--secondary");
     });
   });
 
@@ -223,8 +211,6 @@ describe("ButtonDisplayCard", () => {
       );
 
       const button = screen.getByRole("button");
-
-      // Focus and press Enter
       button.focus();
       await user.keyboard("{Enter}");
 
@@ -246,7 +232,7 @@ describe("ButtonDisplayCard", () => {
   });
 
   describe("Component structure", () => {
-    it("should not render any fragments when csvDataSuccess is false", () => {
+    it("should return null when csvDataSuccess is false", () => {
       const { container } = render(
         <ButtonDisplayCard
           csvDataSuccess={false}
@@ -255,11 +241,10 @@ describe("ButtonDisplayCard", () => {
         />
       );
 
-      // Should render empty (null)
       expect(container.firstChild).toBeNull();
     });
 
-    it("should render button inside fragment when csvDataSuccess is true", () => {
+    it("should render button when csvDataSuccess is true", () => {
       const { container } = render(
         <ButtonDisplayCard
           csvDataSuccess={true}

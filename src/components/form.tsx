@@ -17,12 +17,18 @@ import Input from "./input";
 import SelectLevel from "./select-level";
 import SelectTypeCard from "./select-type-card";
 import TextArea from "./text-area";
+
 const CsvViewer = dynamic(() => import("@/components/csv-viewer"), {
-  loading: () => <div>Chargement du visualiseur...</div>,
+  loading: () => (
+    <div style={{ padding: 16, color: "var(--fg-3)", fontSize: "var(--fs-sm)" }}>
+      Chargement du visualiseur…
+    </div>
+  ),
   ssr: false,
 });
 
 type typeCheckbox = "romanji" | "kanji" | "japanese" | "furigana";
+
 export default function Form() {
   const [isCsvVisible, setIsCsvVisible] = useState(false);
   const {
@@ -48,13 +54,14 @@ export default function Form() {
     },
     resolver: zodResolver(FormDataSchema),
   });
+
   const { csvData, isPending, generateCards } = useAnkiCardGeneration(
     setValue,
     reset
   );
   const files = watch("files");
   const levelsReverse = [...levels].reverse();
-  // ✅ useCallback pour éviter la recréation de la fonction à chaque render
+
   const onSubmit = useCallback(
     async (data: FormDataSchemaType) => {
       await generateCards(data);
@@ -62,7 +69,6 @@ export default function Form() {
     [generateCards]
   );
 
-  // ✅ useCallback pour stabiliser la référence de la fonction
   const handleChangeCheckbox = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>, typeCheckbox: typeCheckbox) => {
       setValue(typeCheckbox, e.target.checked);
@@ -83,14 +89,31 @@ export default function Form() {
     <>
       <div className="w-full flex flex-col md:flex-row items-start justify-center gap-4 transition-all duration-300 ease-in-out">
         <div
-          className={`w-full ${
-            isCsvVisible && "hidden"
-          } border-2 p-4 border-white shadow-zinc-600 shadow-2xl rounded-md flex flex-col items-start justify-start gap-4 bg-white`}
+          className={`w-full ${isCsvVisible ? "hidden" : ""} ds-card`}
+          style={{ display: isCsvVisible ? "none" : "flex", flexDirection: "column", gap: 16 }}
         >
-          <h1 className="text-xl w-full text-center font-bold">
-            Générateur de cartes Anki (Basique)
-          </h1>
+          <div>
+            <div className="ds-eyebrow" style={{ marginBottom: 4 }}>Générateur · 暗記</div>
+            <h1
+              style={{
+                fontFamily: "var(--font-serif)",
+                fontSize: 26,
+                fontWeight: 700,
+                margin: 0,
+                lineHeight: "var(--lh-tight)",
+                color: "var(--fg-1)",
+              }}
+            >
+              Créez vos cartes Anki
+            </h1>
+            <p style={{ fontSize: "var(--fs-sm)", color: "var(--fg-2)", margin: "6px 0 0 0", lineHeight: "var(--lh-base)" }}>
+              Décrivez le thème ou téléversez un document — Mistral générera des cartes
+              prêtes pour Anki Desktop.
+            </p>
+          </div>
+
           <Dictaphone setValue={setValue} />
+
           <form
             className="w-full flex flex-col items-start justify-start gap-4"
             onSubmit={handleSubmit(onSubmit)}
@@ -101,7 +124,7 @@ export default function Form() {
               id="text"
               label="Instruction"
             />
-            <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-2">
+            <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-3">
               {isCardKanji === "basique" && (
                 <SelectLevel
                   className="w-full"
@@ -113,8 +136,8 @@ export default function Form() {
               <Input
                 className="w-full"
                 type="number"
-                label="cards"
-                title="Nombre de cartes (max 15)"
+                label="numberOfCards"
+                title="Nombre de cartes"
                 max={15}
                 min={1}
                 defaultValue={5}
@@ -140,11 +163,11 @@ export default function Form() {
               })}
             />
             {isCardKanji === "basique" && (
-              <div className="w-full flex flex-col items-start justify-start">
+              <div className="w-full flex flex-col gap-2">
                 {allInJapanese ? null : (
                   <Checkbox
                     label="romanji"
-                    title="Voulez-vous inclure les romanji ?"
+                    title="Inclure les romanji"
                     handleChangeCheckboxAction={(e) =>
                       handleChangeCheckbox(e, "romanji")
                     }
@@ -152,7 +175,7 @@ export default function Form() {
                 )}
                 <Checkbox
                   label="kanji"
-                  title="Voulez-vous inclure les kanji ?"
+                  title="Inclure les kanji"
                   handleChangeCheckboxAction={(e) =>
                     handleChangeCheckbox(e, "kanji")
                   }
@@ -160,16 +183,15 @@ export default function Form() {
                 {kanji && (
                   <Checkbox
                     label="furigana"
-                    title="Voulez-vous inclure les furigana ?"
+                    title="Inclure les furigana"
                     handleChangeCheckboxAction={(e) =>
                       handleChangeCheckbox(e, "furigana")
                     }
                   />
                 )}
-
                 <Checkbox
                   label="japonais"
-                  title="Tout en japonais (énoncés/questions/réponses) ?"
+                  title="Tout en japonais (énoncés, questions, réponses)"
                   handleChangeCheckboxAction={(e) =>
                     handleChangeCheckbox(e, "japanese")
                   }
@@ -181,6 +203,7 @@ export default function Form() {
               isSubmitDisabled={isSubmitDisabled}
             />
           </form>
+
           <ButtonDisplayCard
             isCsvVisible={isCsvVisible}
             setIsCsvVisible={setIsCsvVisible}
@@ -190,26 +213,41 @@ export default function Form() {
         </div>
 
         {isCsvVisible && csvDataSuccess && (
-          <>
-            <CsvViewer
-              setIsCsvVisible={setIsCsvVisible}
-              csvFile={csvData}
-              isCardKanji={isCardKanji}
-            />
-          </>
+          <CsvViewer
+            setIsCsvVisible={setIsCsvVisible}
+            csvFile={csvData}
+            isCardKanji={isCardKanji}
+          />
         )}
       </div>
+
       {csvDataSuccess && (
-        <>
-          <CSVLink
-            separator={","}
-            className="fixed bottom-2 right-2 w-auto z-50  p-3 bg-green-500 text-white font-semibold rounded-md text-center cursor-pointer"
-            data={csvData}
-          >
-            Télécharger le fichier CSV
-          </CSVLink>
-        </>
+        <CSVLink
+          separator=","
+          className="ds-btn ds-btn--success"
+          data={csvData}
+          style={{
+            position: "fixed",
+            bottom: 24,
+            right: 24,
+            zIndex: 50,
+            boxShadow: "var(--shadow-md)",
+          }}
+        >
+          <DownloadIcon />
+          Télécharger le CSV
+        </CSVLink>
       )}
     </>
   );
 }
+
+const DownloadIcon = () => (
+  <svg width={16} height={16} viewBox="0 0 24 24" fill="none"
+       stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round"
+       aria-hidden="true">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+    <polyline points="7 10 12 15 17 10"/>
+    <line x1="12" y1="15" x2="12" y2="3"/>
+  </svg>
+);

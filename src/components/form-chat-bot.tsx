@@ -37,7 +37,6 @@ const FormChatBot = () => {
       level: formData.level,
       isSubmitted: formData.isSubmitted,
     },
-
     resolver: zodResolver(FormDataSchemaChatBot),
   });
 
@@ -50,53 +49,100 @@ const FormChatBot = () => {
     });
   };
 
+  if (formData.isSubmitted) return null;
+
   return (
-    <>
-      {!formData.isSubmitted && (
-        <div className="w-full h-full md:h-auto border-white shadow-zinc-600 shadow-2xl rounded-md p-4 bg-white border-2">
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col gap-4 w-full"
-          >
-            <Input
-              className="w-full"
-              type="text"
-              label="name"
-              title="Nom*"
-              {...register("name", { required: true })}
-            />
-            <Input
-              className="w-full"
-              type="text"
-              label="type"
-              title="Type d'exercice*"
-              {...register("type", { required: true })}
-            />
-            <SelectLevel
-              className="w-full"
-              register={register}
-              levels={levels}
-              defaultValue={formData.level}
-            />
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full p-2 rounded-md text-white font-bold bg-blue-500 cursor-pointer"
-            >
-              Envoyer
-            </button>
-            {errors.name && <p className="text-red-500">Le nom est requis</p>}
-            {errors.type && (
-              <p className="text-red-500">Le type d&apos;exercice est requis</p>
-            )}
-            {errors.level && (
-              <p className="text-red-500">Le niveau est requis</p>
-            )}
-          </form>
-        </div>
-      )}
-    </>
+    <div
+      className="ds-card"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 16,
+        maxWidth: 560,
+        margin: "0 auto",
+      }}
+    >
+      <div>
+        <div className="ds-eyebrow" style={{ marginBottom: 4 }}>Chat tuteur · 先生</div>
+        <h1
+          style={{
+            fontFamily: "var(--font-serif)",
+            fontSize: 26,
+            fontWeight: 700,
+            margin: 0,
+            lineHeight: "var(--lh-tight)",
+            color: "var(--fg-1)",
+          }}
+        >
+          Préparez votre séance
+        </h1>
+        <p style={{ fontSize: "var(--fs-sm)", color: "var(--fg-2)", margin: "6px 0 0 0", lineHeight: "var(--lh-base)" }}>
+          Mistral jouera le rôle d&apos;un tuteur de japonais adapté à votre niveau.
+        </p>
+      </div>
+
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-4 w-full"
+      >
+        <Input
+          className="w-full"
+          type="text"
+          label="name"
+          title="Votre nom"
+          {...register("name", { required: true })}
+        />
+        <Input
+          className="w-full"
+          type="text"
+          label="type"
+          title="Type d'exercice"
+          {...register("type", { required: true })}
+        />
+        <SelectLevel
+          className="w-full"
+          register={register}
+          levels={levels}
+          defaultValue={formData.level}
+        />
+
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="ds-btn ds-btn--primary ds-btn--lg"
+          style={{ width: "100%" }}
+        >
+          <ArrowIcon />
+          Démarrer la conversation
+        </button>
+
+        {errors.name && (
+          <p style={{ fontSize: "var(--fs-xs)", color: "var(--fg-danger)" }}>
+            Le nom est requis
+          </p>
+        )}
+        {errors.type && (
+          <p style={{ fontSize: "var(--fs-xs)", color: "var(--fg-danger)" }}>
+            Le type d&apos;exercice est requis
+          </p>
+        )}
+        {errors.level && (
+          <p style={{ fontSize: "var(--fs-xs)", color: "var(--fg-danger)" }}>
+            Le niveau est requis
+          </p>
+        )}
+      </form>
+    </div>
   );
 };
+
+const ArrowIcon = () => (
+  <svg width={16} height={16} viewBox="0 0 24 24" fill="none"
+       stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round"
+       aria-hidden="true">
+    <line x1="5" y1="12" x2="19" y2="12"/>
+    <polyline points="12 5 19 12 12 19"/>
+  </svg>
+);
 
 export default FormChatBot;
