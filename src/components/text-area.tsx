@@ -7,6 +7,7 @@ interface TextAreaProps {
   errors: FieldErrors<FormDataSchemaType>;
   id: string;
   className?: string;
+  style?: React.CSSProperties;
   onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   label?: string;
   disabled?: boolean;
@@ -16,6 +17,7 @@ export default function TextArea({
   errors,
   id,
   className,
+  style,
   onKeyDown,
   disabled,
   label,
@@ -38,7 +40,7 @@ export default function TextArea({
         disabled={disabled}
         placeholder="Votre texte ou instructions"
         className={clsx("ds-textarea ds-input", hasError && "ds-input--error", className)}
-        style={{ resize: "vertical", minHeight: 120 }}
+        style={{ resize: "vertical", minHeight: 120, ...style }}
       />
       {hasError && (
         <p style={{ fontSize: "var(--fs-xs)", color: "var(--fg-danger)", marginTop: 6 }}>

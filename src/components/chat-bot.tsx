@@ -293,7 +293,7 @@ const ChatBot = () => {
             id="message"
             {...register("message", { required: true })}
             className="ds-textarea ds-input"
-            style={{ resize: "none", height: 48, padding: 12, fontSize: "var(--fs-sm)" } as React.CSSProperties}
+            style={{ resize: "none", height: 48, padding: 12, fontSize: "var(--fs-sm)" }}
             onKeyDown={handleKeyDown}
             disabled={isLoading}
           />
