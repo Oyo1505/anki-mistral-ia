@@ -17,13 +17,22 @@ export default function SelectLevel({
   defaultValue,
 }: SelectLevelProps) {
   return (
-    <div className={clsx("flex flex-col items-start justify-start", className)}>
-      <label className="font-semibold" htmlFor="level">
-        Niveau*
+    <div className={clsx("flex flex-col", className)}>
+      <label className="ds-label" htmlFor="level">
+        Niveau
+        <span style={{ color: "var(--hinomaru-500)" }}> *</span>
       </label>
       <select
         id="level"
-        className="w-full h-full p-2 rounded-md border-2 border-gray-300"
+        className="ds-select"
+        style={{
+          appearance: "none",
+          backgroundImage:
+            "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231a1d24' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>\")",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "right 12px center",
+          paddingRight: 36,
+        }}
         defaultValue={defaultValue}
         {...register("level")}
       >

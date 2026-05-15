@@ -13,14 +13,14 @@ test.describe('Formulaire ChatBot', () => {
 
   test('devrait afficher le formulaire initial', async ({ page }) => {
     // Attendre que le formulaire soit chargé
-    await expect(page.getByLabel('Nom*')).toBeVisible();
-    await expect(page.getByLabel("Type d'exercice*")).toBeVisible();
-    await expect(page.getByRole('button', { name: /envoyer/i })).toBeVisible();
+    await expect(page.getByLabel('Votre nom')).toBeVisible();
+    await expect(page.getByLabel("Type d'exercice")).toBeVisible();
+    await expect(page.getByRole('button', { name: /démarrer/i })).toBeVisible();
   });
 
   test('devrait valider les champs requis', async ({ page }) => {
     // Cliquer sur submit sans remplir
-    await page.getByRole('button', { name: /envoyer/i }).click();
+    await page.getByRole('button', { name: /démarrer/i }).click();
 
     // Vérifier les messages d'erreur
     await expect(page.getByText('Le nom est requis')).toBeVisible();
@@ -28,28 +28,28 @@ test.describe('Formulaire ChatBot', () => {
 
   test('devrait soumettre le formulaire avec des données valides', async ({ page }) => {
     // Remplir le formulaire
-    await page.getByLabel('Nom*').fill('John');
-    await page.getByLabel("Type d'exercice*").fill('grammaire');
+    await page.getByLabel('Votre nom').fill('John');
+    await page.getByLabel("Type d'exercice").fill('grammaire');
 
     // Sélectionner le niveau
     await page.getByRole('combobox').selectOption('N2 Pré-avancé');
 
     // Soumettre
-    await page.getByRole('button', { name: /envoyer/i }).click();
+    await page.getByRole('button', { name: /démarrer/i }).click();
 
     // Vérifier que le formulaire disparaît (isSubmitted = true)
-    await expect(page.getByLabel('Nom*')).not.toBeVisible({ timeout: 5000 });
+    await expect(page.getByLabel('Votre nom')).not.toBeVisible({ timeout: 5000 });
   });
 
   test('devrait rejeter un nom trop long', async ({ page }) => {
     const longName = 'a'.repeat(21); // Plus de 20 caractères
 
-    await page.getByLabel('Nom*').fill(longName);
-    await page.getByLabel("Type d'exercice*").fill('vocabulaire');
-    await page.getByRole('button', { name: /envoyer/i }).click();
+    await page.getByLabel('Votre nom').fill(longName);
+    await page.getByLabel("Type d'exercice").fill('vocabulaire');
+    await page.getByRole('button', { name: /démarrer/i }).click();
 
     // Le formulaire ne devrait pas disparaître
-    await expect(page.getByLabel('Nom*')).toBeVisible();
+    await expect(page.getByLabel('Votre nom')).toBeVisible();
   });
 
   test('devrait permettre de changer le niveau', async ({ page }) => {
@@ -69,9 +69,12 @@ test.describe('Tests de persistance', () => {
     await page.goto('/chat');
 
     // Remplir et soumettre
-    await page.getByLabel('Nom*').fill('Alice');
-    await page.getByLabel("Type d'exercice*").fill('lecture');
-    await page.getByRole('button', { name: /envoyer/i }).click();
+    await page.getByLabel('Votre nom').fill('Alice');
+    await page.getByLabel("Type d'exercice").fill('lecture');
+    await page.getByRole('button', { name: /démarrer/i }).click();
+
+    // Wait for chatbot view to confirm localStorage was written
+    await expect(page.getByText(/Bonjour, comment puis-je vous aider/i)).toBeVisible();
 
     // Recharger la page
     await page.reload();
@@ -99,14 +102,14 @@ test.describe('Tests responsive', () => {
     await page.goto('/chat');
 
     // Le formulaire devrait être visible et utilisable
-    await expect(page.getByLabel('Nom*')).toBeVisible();
+    await expect(page.getByLabel('Votre nom')).toBeVisible();
 
-    await page.getByLabel('Nom*').fill('Bob');
-    await page.getByLabel("Type d'exercice*").fill('conversation');
-    await page.getByRole('button', { name: /envoyer/i }).click();
+    await page.getByLabel('Votre nom').fill('Bob');
+    await page.getByLabel("Type d'exercice").fill('conversation');
+    await page.getByRole('button', { name: /démarrer/i }).click();
 
     // Vérifier la soumission
-    await expect(page.getByLabel('Nom*')).not.toBeVisible({ timeout: 5000 });
+    await expect(page.getByLabel('Votre nom')).not.toBeVisible({ timeout: 5000 });
   });
 });
 
@@ -122,7 +125,7 @@ test.describe('Tests d\'accessibilité', () => {
     await page.waitForSelector('input[id="name"]');
 
     // Cliquer sur le premier champ pour commencer
-    const nameField = page.getByLabel('Nom*');
+    const nameField = page.getByLabel('Votre nom');
     await nameField.click();
     await expect(nameField).toBeFocused();
 
@@ -131,7 +134,7 @@ test.describe('Tests d\'accessibilité', () => {
 
     // Passer au champ suivant avec Tab
     await page.keyboard.press('Tab');
-    const typeField = page.getByLabel("Type d'exercice*");
+    const typeField = page.getByLabel("Type d'exercice");
     await expect(typeField).toBeFocused();
     await page.keyboard.type('test-exercise');
 
@@ -140,7 +143,7 @@ test.describe('Tests d\'accessibilité', () => {
 
     // Naviguer vers le bouton submit avec Tab
     await page.keyboard.press('Tab');
-    const submitButton = page.getByRole('button', { name: /envoyer/i });
+    const submitButton = page.getByRole('button', { name: /démarrer/i });
     await expect(submitButton).toBeFocused();
 
     // Soumettre avec Enter
@@ -154,10 +157,10 @@ test.describe('Tests d\'accessibilité', () => {
     await page.goto('/chat');
 
     // Vérifier que les champs ont des labels
-    const nameInput = page.getByLabel('Nom*');
-    const typeInput = page.getByLabel("Type d'exercice*");
+    const nameInput = page.getByLabel('Votre nom');
+    const typeInput = page.getByLabel("Type d'exercice");
     const levelSelect = page.getByRole('combobox');
-    const submitButton = page.getByRole('button', { name: /envoyer/i });
+    const submitButton = page.getByRole('button', { name: /démarrer/i });
 
     await expect(nameInput).toBeVisible();
     await expect(typeInput).toBeVisible();

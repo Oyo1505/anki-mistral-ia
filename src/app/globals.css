@@ -1,15 +1,336 @@
 @import "tailwindcss";
 
-body {
-  background-image: url("../../public/images/7453371.webp");
-  background-size: cover;
-  background-position: center;
-  background-repeat: repeat;
-  background-attachment: fixed;
+/* =============================================================
+   Anki Mistral — Design System Tokens
+   ============================================================= */
+
+:root {
+  /* Indigo — brand, drawn from the seigaiha pattern */
+  --indigo-950: #0e2a3d;
+  --indigo-900: #143d57;
+  --indigo-800: #1b4a6b;
+  --indigo-700: #2b6080;
+  --indigo-500: #5a8aa6;
+  --indigo-300: #a9c4d3;
+  --indigo-100: #e3edf3;
+
+  /* Sumi (墨) — ink black for text & primary actions */
+  --sumi-900: #1a1d24;
+  --sumi-700: #2e333d;
+  --sumi-500: #5a606b;
+
+  /* Hinomaru — accent red (errors, kanji highlight) */
+  --hinomaru-700: #a3322c;
+  --hinomaru-500: #c8443c;
+  --hinomaru-100: #f5dcd9;
+
+  /* Sakura — soft pink for romanji highlight */
+  --sakura-500: #e8b4b8;
+  --sakura-200: #f5dee0;
+
+  /* Matcha — success / positive actions */
+  --matcha-700: #5a6b3f;
+  --matcha-500: #7a8c5c;
+  --matcha-200: #d4ddc1;
+
+  /* Washi (和紙) — warm paper neutrals */
+  --washi-50: #fbf8f1;
+  --washi-100: #f5f0e6;
+  --washi-200: #ece5d3;
+  --washi-300: #d9d0b8;
+
+  /* Stone — cool gray for borders, disabled */
+  --stone-50: #f7f7f6;
+  --stone-100: #ececeb;
+  --stone-200: #d6d6d4;
+  --stone-300: #b8b8b5;
+  --stone-500: #7a7a76;
+  --stone-700: #4a4a47;
+  --stone-900: #1f1f1d;
+
+  /* Semantic tokens */
+  --fg-1: var(--sumi-900);
+  --fg-2: var(--sumi-700);
+  --fg-3: var(--stone-500);
+  --fg-on-dark: var(--washi-50);
+  --fg-link: var(--indigo-800);
+  --fg-danger: var(--hinomaru-700);
+  --fg-success: var(--matcha-700);
+
+  --bg-page: var(--washi-50);
+  --bg-card: var(--washi-100);
+  --bg-card-elevated: #ffffff;
+  --bg-input: #ffffff;
+  --bg-input-disabled: var(--stone-100);
+  --bg-hover: var(--washi-200);
+  --bg-selection: var(--sakura-200);
+
+  --border-1: var(--washi-300);
+  --border-2: var(--stone-200);
+  --border-strong: var(--sumi-900);
+
+  --accent-primary: var(--sumi-900);
+  --accent-primary-hover: var(--indigo-900);
+  --accent-secondary: var(--washi-100);
+  --accent-danger: var(--hinomaru-500);
+  --accent-success: var(--matcha-500);
+
+  /* Typography */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-serif: "Noto Serif JP", "Hiragino Mincho ProN", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  --fs-xs: 12px;
+  --fs-sm: 14px;
+  --fs-base: 15px;
+  --fs-md: 17px;
+  --fs-lg: 20px;
+  --fs-xl: 24px;
+  --fs-2xl: 32px;
+  --fs-jp: 28px;
+
+  --lh-tight: 1.15;
+  --lh-snug: 1.35;
+  --lh-base: 1.55;
+
+  --tracking-tight: -0.01em;
+  --tracking-caps: 0.12em;
+
+  /* Spacing */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+
+  /* Radii */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-pill: 999px;
+
+  /* Shadows — soft layered, replacing harsh shadow-zinc-600 shadow-2xl */
+  --shadow-xs: 0 1px 2px rgba(26, 29, 36, 0.06);
+  --shadow-sm:
+    0 1px 2px rgba(26, 29, 36, 0.06), 0 2px 4px rgba(26, 29, 36, 0.04);
+  --shadow-md:
+    0 2px 4px rgba(26, 29, 36, 0.06), 0 6px 16px rgba(26, 29, 36, 0.08);
+  --shadow-ink:
+    0 0 0 1px rgba(26, 29, 36, 0.06), 0 8px 24px rgba(26, 29, 36, 0.08);
+  --shadow-focus: 0 0 0 3px rgba(27, 74, 107, 0.25);
+  --shadow-focus-danger: 0 0 0 3px rgba(200, 68, 60, 0.25);
+
+  /* Motion */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+
+  /* Layout */
+  --content-narrow: 720px;
 }
 
-/* Performance optimization: defer off-screen rendering for chat messages (rendering-content-visibility) */
+/* =============================================================
+   Base
+   ============================================================= */
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  line-height: var(--lh-base);
+  color: var(--fg-1);
+  background-color: var(--bg-page);
+  background-image:
+    linear-gradient(rgba(251, 248, 241, 0.55), rgba(251, 248, 241, 0.75)),
+    url("../../public/images/7453371.webp");
+  background-size: 100% 100%, cover;
+  background-repeat: no-repeat, no-repeat;
+  background-attachment: fixed, fixed;
+  min-height: 100vh;
+}
+
+/* =============================================================
+   Design System Utility Classes
+   ============================================================= */
+
+.ds-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-1);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-ink);
+  padding: var(--sp-6);
+}
+
+.ds-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  font-family: var(--font-sans);
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-sm);
+  padding: 10px 16px;
+  border-radius: var(--r-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease-standard),
+    color var(--dur-fast) var(--ease-standard),
+    box-shadow var(--dur-fast) var(--ease-standard),
+    transform var(--dur-fast) var(--ease-standard);
+  text-decoration: none;
+}
+.ds-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.ds-btn:active {
+  transform: translateY(1px);
+}
+.ds-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ds-btn--primary {
+  background: var(--accent-primary);
+  color: var(--fg-on-dark);
+}
+.ds-btn--primary:hover:not(:disabled) {
+  background: var(--accent-primary-hover);
+}
+
+.ds-btn--secondary {
+  background: var(--bg-card-elevated);
+  color: var(--fg-1);
+  border-color: var(--border-2);
+  box-shadow: var(--shadow-xs);
+}
+.ds-btn--secondary:hover:not(:disabled) {
+  background: var(--bg-hover);
+}
+
+.ds-btn--ghost {
+  background: transparent;
+  color: var(--fg-2);
+}
+.ds-btn--ghost:hover:not(:disabled) {
+  background: var(--bg-hover);
+}
+
+.ds-btn--success {
+  background: var(--accent-success);
+  color: #fff;
+}
+.ds-btn--success:hover:not(:disabled) {
+  background: var(--matcha-700);
+}
+
+.ds-btn--block {
+  width: 100%;
+}
+.ds-btn--lg {
+  font-size: 16px;
+  padding: 12px 20px;
+}
+
+.ds-input,
+.ds-select,
+.ds-textarea {
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  color: var(--fg-1);
+  background: var(--bg-input);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-md);
+  padding: 10px 12px;
+  width: 100%;
+  transition:
+    border-color var(--dur-fast) var(--ease-standard),
+    box-shadow var(--dur-fast) var(--ease-standard);
+}
+.ds-input:focus,
+.ds-select:focus,
+.ds-textarea:focus {
+  outline: none;
+  border-color: var(--indigo-800);
+  box-shadow: var(--shadow-focus);
+}
+.ds-input--error {
+  border-color: var(--hinomaru-500);
+}
+.ds-input--error:focus {
+  box-shadow: var(--shadow-focus-danger);
+}
+
+.ds-label {
+  display: block;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--fg-1);
+  margin-bottom: var(--sp-2);
+}
+
+.ds-eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+.ds-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.02em;
+}
+.ds-badge--level {
+  background: var(--indigo-100);
+  color: var(--indigo-900);
+}
+.ds-badge--neutral {
+  background: var(--stone-100);
+  color: var(--stone-700);
+}
+
+/* Performance optimization: defer off-screen rendering for chat messages */
 .chat-message-item {
   content-visibility: auto;
   contain-intrinsic-size: 0 60px;
+}
+
+@keyframes ds-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.ds-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: ds-spin 800ms linear infinite;
+}
+.ds-spinner--dark {
+  border-color: var(--stone-200);
+  border-top-color: var(--sumi-900);
 }
