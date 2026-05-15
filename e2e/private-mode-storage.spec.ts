@@ -42,8 +42,8 @@ test.describe("Safe localStorage - Private Browsing Mode", () => {
     await expect(page).toHaveURL(/\/chat/);
 
     // Should show form (proof that page loaded without crashing)
-    await expect(page.getByLabel("Nom*")).toBeVisible();
-    await expect(page.getByRole("button", { name: /envoyer/i })).toBeVisible();
+    await expect(page.getByLabel("Votre nom")).toBeVisible();
+    await expect(page.getByRole("button", { name: /démarrer/i })).toBeVisible();
   });
 
   test("should display form fields even when localStorage fails", async ({
@@ -52,9 +52,9 @@ test.describe("Safe localStorage - Private Browsing Mode", () => {
     await page.goto("/chat");
 
     // Form should be visible despite localStorage errors
-    await expect(page.getByLabel("Nom*")).toBeVisible();
-    await expect(page.getByLabel("Type d'exercice*")).toBeVisible();
-    await expect(page.getByRole("button", { name: /envoyer/i })).toBeVisible();
+    await expect(page.getByLabel("Votre nom")).toBeVisible();
+    await expect(page.getByLabel("Type d'exercice")).toBeVisible();
+    await expect(page.getByRole("button", { name: /démarrer/i })).toBeVisible();
   });
 
   test("should allow form submission without localStorage", async ({
@@ -63,12 +63,12 @@ test.describe("Safe localStorage - Private Browsing Mode", () => {
     await page.goto("/chat");
 
     // Fill and submit form
-    await page.getByLabel("Nom*").fill("TestUser");
-    await page.getByLabel("Type d'exercice*").fill("test-exercise");
-    await page.getByRole("button", { name: /envoyer/i }).click();
+    await page.getByLabel("Votre nom").fill("TestUser");
+    await page.getByLabel("Type d'exercice").fill("test-exercise");
+    await page.getByRole("button", { name: /démarrer/i }).click();
 
     // Form should submit successfully (disappear)
-    await expect(page.getByLabel("Nom*")).not.toBeVisible({ timeout: 5000 });
+    await expect(page.getByLabel("Votre nom")).not.toBeVisible({ timeout: 5000 });
 
     // App should continue working
     await expect(
@@ -82,9 +82,9 @@ test.describe("Safe localStorage - Private Browsing Mode", () => {
     await page.goto("/chat");
 
     // Submit form to trigger multiple localStorage.setItem calls
-    await page.getByLabel("Nom*").fill("Alice");
-    await page.getByLabel("Type d'exercice*").fill("grammar");
-    await page.getByRole("button", { name: /envoyer/i }).click();
+    await page.getByLabel("Votre nom").fill("Alice");
+    await page.getByLabel("Type d'exercice").fill("grammar");
+    await page.getByRole("button", { name: /démarrer/i }).click();
 
     // Wait a bit for storage operations to complete (or fail)
     await page.waitForTimeout(500);
@@ -112,18 +112,18 @@ test.describe("Safe localStorage - Private Browsing Mode", () => {
     await page.goto("/chat");
 
     // Submit form
-    await page.getByLabel("Nom*").fill("Bob");
-    await page.getByLabel("Type d'exercice*").fill("reading");
-    await page.getByRole("button", { name: /envoyer/i }).click();
+    await page.getByLabel("Votre nom").fill("Bob");
+    await page.getByLabel("Type d'exercice").fill("reading");
+    await page.getByRole("button", { name: /démarrer/i }).click();
 
     // Reload page
     await page.reload();
 
     // Form should reset to initial state (not persisted)
-    await expect(page.getByLabel("Nom*")).toBeVisible();
+    await expect(page.getByLabel("Votre nom")).toBeVisible();
 
     // Check that form is empty (default state)
-    const nameValue = await page.getByLabel("Nom*").inputValue();
+    const nameValue = await page.getByLabel("Votre nom").inputValue();
     expect(nameValue).toBe("");
   });
 });
@@ -139,9 +139,9 @@ test.describe("Safe localStorage - Normal Operation", () => {
     await page.goto("/chat");
 
     // Fill and submit form
-    await page.getByLabel("Nom*").fill("NormalUser");
-    await page.getByLabel("Type d'exercice*").fill("vocabulary");
-    await page.getByRole("button", { name: /envoyer/i }).click();
+    await page.getByLabel("Votre nom").fill("NormalUser");
+    await page.getByLabel("Type d'exercice").fill("vocabulary");
+    await page.getByRole("button", { name: /démarrer/i }).click();
 
     // Reload to test persistence
     await page.reload();
