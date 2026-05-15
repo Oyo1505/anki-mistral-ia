@@ -143,6 +143,9 @@ test.describe("Safe localStorage - Normal Operation", () => {
     await page.getByLabel("Type d'exercice").fill("vocabulary");
     await page.getByRole("button", { name: /démarrer/i }).click();
 
+    // Wait for chatbot view to confirm localStorage was written
+    await expect(page.getByText(/Bonjour, comment puis-je vous aider/i)).toBeVisible();
+
     // Reload to test persistence
     await page.reload();
 

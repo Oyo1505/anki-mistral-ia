@@ -73,6 +73,9 @@ test.describe('Tests de persistance', () => {
     await page.getByLabel("Type d'exercice").fill('lecture');
     await page.getByRole('button', { name: /démarrer/i }).click();
 
+    // Wait for chatbot view to confirm localStorage was written
+    await expect(page.getByText(/Bonjour, comment puis-je vous aider/i)).toBeVisible();
+
     // Recharger la page
     await page.reload();
 
