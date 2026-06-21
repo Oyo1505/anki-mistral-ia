@@ -5,11 +5,11 @@
 
 export const mockSuccessResponse = {
   data: [
-    ['日本語', 'Japanese'],
-    ['テスト', 'Test'],
-    ['こんにちは', 'Hello'],
-    ['ありがとう', 'Thank you'],
-    ['さようなら', 'Goodbye'],
+    { recto: '日本語とは何ですか？', verso: 'Qu\'est-ce que le japonais ?' },
+    { recto: 'テスト (てすと)', verso: 'Test / Examen' },
+    { recto: 'こんにちは', verso: 'Bonjour (en journée)' },
+    { recto: 'ありがとう', verso: 'Merci' },
+    { recto: 'さようなら', verso: 'Au revoir' },
   ],
   status: 200,
   error: null,
@@ -18,9 +18,33 @@ export const mockSuccessResponse = {
 
 export const mockKanjiResponse = {
   data: [
-    ['日', 'Sun/Day', 'にち、ひ'],
-    ['本', 'Book/Origin', 'ホン、もと'],
-    ['語', 'Language', 'ご'],
+    {
+      kanji: '日',
+      traduction: 'Soleil / Jour',
+      kunyomi: 'ひ、か',
+      onyomi: 'ニチ、ジツ',
+      radical: '日 (にち) = soleil',
+      keyKanji: 'Le soleil se lève chaque jour',
+      exemples: '日本 (にほん) - Japon, 毎日 (まいにち) - chaque jour',
+    },
+    {
+      kanji: '本',
+      traduction: 'Livre / Origine',
+      kunyomi: 'もと',
+      onyomi: 'ホン',
+      radical: '木 (き) = arbre',
+      keyKanji: 'Un arbre avec ses racines = l\'origine',
+      exemples: '日本 (にほん) - Japon, 本当 (ほんとう) - vraiment',
+    },
+    {
+      kanji: '語',
+      traduction: 'Langue / Parole',
+      kunyomi: 'かた・る、かた・らう',
+      onyomi: 'ゴ',
+      radical: '言 (ごんべん) = parole',
+      keyKanji: 'Bouche qui parle = langage',
+      exemples: '日本語 (にほんご) - japonais, 英語 (えいご) - anglais',
+    },
   ],
   status: 200,
   error: null,
