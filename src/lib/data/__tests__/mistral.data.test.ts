@@ -2,7 +2,11 @@ import { MistralData } from "../mistral.data";
 import { mistral } from "@/lib/mistral";
 import { retryWithBackoff } from "@/utils/time/delay";
 import { logError } from "@/lib/logError";
-import { CardSchemaBase, CardSchemaKanji } from "@/schema/card.schema";
+import {
+  CardSchemaBase,
+  CardSchemaKanji,
+  CardSchemaKanjiCompose,
+} from "@/schema/card.schema";
 
 // Mock dependencies
 jest.mock("@/lib/mistral");
@@ -85,6 +89,24 @@ describe("MistralData", () => {
 
       const chatParseCall = mockChatParse.mock.calls[0][0];
       expect(chatParseCall.responseFormat).toBe(CardSchemaKanji);
+    });
+
+    it("devrait utiliser CardSchemaKanjiCompose pour type kanji-compose", async () => {
+      const mockResponse = {
+        choices: [{ message: { parsed: [["電車", "でんしゃ", "train"]] } }],
+      };
+
+      (retryWithBackoff as jest.Mock).mockImplementation(
+        async (fn) => await fn()
+      );
+
+      const mockChatParse = jest.fn().mockResolvedValue(mockResponse);
+      (mistral.chat as any) = { parse: mockChatParse };
+
+      await MistralData.parse({ ...mockParams, typeCard: "kanji-compose" });
+
+      const chatParseCall = mockChatParse.mock.calls[0][0];
+      expect(chatParseCall.responseFormat).toBe(CardSchemaKanjiCompose);
     });
 
     it("devrait configurer correctement les paramètres du modèle", async () => {

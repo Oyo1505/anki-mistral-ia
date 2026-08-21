@@ -26,6 +26,7 @@ const SelectTypeCard = ({ register }: SelectTypeCardProps) => {
       >
         <option value="basique">Basique</option>
         <option value="kanji">Kanji</option>
+        <option value="kanji-compose">Kanji composés (熟語)</option>
       </select>
     </div>
   );

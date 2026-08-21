@@ -8,7 +8,7 @@ const CsvViewer = ({
   isCardKanji: string;
 }) => {
   const columnKeys = Object.keys(csvFile[0] || {});
-  const isKanji = isCardKanji === "kanji";
+  const isKanji = isCardKanji === "kanji" || isCardKanji === "kanji-compose";
 
   return (
     <div

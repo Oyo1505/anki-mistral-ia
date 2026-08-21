@@ -1,6 +1,10 @@
 import { generateCardsAnkiParams } from "@/actions/mistral.action";
 import { mistral } from "@/lib/mistral";
-import { CardSchemaBase, CardSchemaKanji } from "@/schema/card.schema";
+import {
+  CardSchemaBase,
+  CardSchemaKanji,
+  CardSchemaKanjiCompose,
+} from "@/schema/card.schema";
 import { MAX_RETRIES } from "@/shared/constants/numbers";
 import { contentMistralRequest } from "@/utils/string/content-mistral-request";
 import prompt from "@/utils/string/prompt";
@@ -62,7 +66,11 @@ export class MistralData {
               },
             ],
             responseFormat:
-              typeCard === "basique" ? CardSchemaBase : CardSchemaKanji,
+              typeCard === "basique"
+                ? CardSchemaBase
+                : typeCard === "kanji-compose"
+                  ? CardSchemaKanjiCompose
+                  : CardSchemaKanji,
             maxTokens: 10000,
           });
         },
