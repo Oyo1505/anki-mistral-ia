@@ -99,4 +99,30 @@ describe("prompt", () => {
       "Fais des cartes avec des mots en KANJI, HIRAGANA pour apprendre les kanjis. les KATATANA sont interdits."
     );
   });
+
+  it('returns kanji-compose prompt when typeCard is "kanji-compose" and both texts are provided', () => {
+    const params: PromptParams = {
+      typeCard: "kanji-compose",
+      textFromPdf: "Texte PDF",
+      text: "Texte Formulaire",
+      numberOfCards: 1,
+      level: "N4",
+    };
+    expect(prompt(params)).toBe(
+      "Fais des cartes de mots composés de kanji (熟語, jukugo) de 2 ou 3 kanji, avec la décomposition kanji par kanji, des exemples de phrases avec furigana, et des mots composés proches. les KATAKANA sont interdits sauf dans les traductions.\n" +
+        "Voici le texte des fichiers PDF ou d'une image à partir duquel tu dois générer les cartes anki : Texte PDF.\n" +
+        "Voici le texte venant du formulaire à partir duquel tu dois générer les cartes anki voici les instructions : Texte Formulaire."
+    );
+  });
+
+  it('returns kanji-compose prompt when typeCard is "kanji-compose" and no text is provided', () => {
+    const params: PromptParams = {
+      typeCard: "kanji-compose",
+      numberOfCards: 1,
+      level: "N4",
+    };
+    expect(prompt(params)).toBe(
+      "Fais des cartes de mots composés de kanji (熟語, jukugo) de 2 ou 3 kanji, avec la décomposition kanji par kanji, des exemples de phrases avec furigana, et des mots composés proches. les KATAKANA sont interdits sauf dans les traductions."
+    );
+  });
 });

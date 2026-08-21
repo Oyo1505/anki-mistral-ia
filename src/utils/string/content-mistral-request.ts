@@ -17,6 +17,17 @@ export const contentMistralRequest = ({
   kanji,
   romanji,
 }: ContentMistralRequestParams) => {
+  if (typeCard === "kanji-compose") {
+    return `-> Tu es fais pour faire des cartes anki au format "Composé kanji (jukugo)" pour apprendre des mots composés de 2 ou 3 kanji (熟語).
+          -> Tu dois générer ${numberOfCards} mots composés, chacun avec 2 ou 3 kanji maximum, jamais plus.
+          -> Les KATAKANA sont INTERDITS, sauf dans les traductions françaises.
+          -> Chaque kanji du mot doit avoir son sens et ses lectures (ON en katakana, kun en hiragana) correctement renseignés.
+          -> Le champ "autresComposes" doit réutiliser des mots déjà connus au niveau JLPT ${level} plutôt que d'introduire du vocabulaire hors-sujet.
+          -> Le champ "exemple" doit contenir une phrase avec furigana au format 漢字[かな], en respectant IMPÉRATIVEMENT un espace avant chaque segment annoté, sinon le rendu Anki casse.
+          -> Le champ "indice" ne doit jamais donner la réponse (ne pas répéter le mot).
+          -> Pour un niveau de japonais de JLPT ${level}.`;
+  }
+
   return typeCard === "basique"
     ? `-> Tu es fais pour faire des carte anki basique de japonais.
           -> Tu dois intergrer IMPERATIVEMENT les mots en KATAKANA et en HIRAGANA si tu en detectes ou ne traduit pas les mots en KATAKANA quand cela est possible.

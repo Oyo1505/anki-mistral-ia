@@ -50,3 +50,78 @@ export const CardSchemaKanji = z.array(
 );
 
 export type CardSchemaKanjiType = z.infer<typeof CardSchemaKanji>;
+
+export const CardSchemaKanjiCompose = z.array(
+  z.object({
+    mot: z
+      .string()
+      .describe(
+        "le mot composé (熟語) en KANJI OBLIGATOIREMENT, 2 ou 3 kanji maximum, katakana interdit",
+      ),
+    lecture: z
+      .string()
+      .describe("la lecture du mot ENTIER en kana uniquement (hiragana)"),
+    sens: z.string().describe("la traduction française courte du mot"),
+    kanji1: z
+      .string()
+      .describe("le premier kanji du mot, doit apparaître dans le champ mot"),
+    kanji1Sens: z.string().describe("le sens du premier kanji, en français"),
+    kanji1Lectures: z
+      .string()
+      .describe(
+        "les lectures du premier kanji au format 'ON デン' ou 'ON シャ / kun くるま', okurigana entre parenthèses comme か（く）",
+      ),
+    kanji2: z
+      .string()
+      .describe("le deuxième kanji du mot, doit apparaître dans le champ mot"),
+    kanji2Sens: z.string().describe("le sens du deuxième kanji, en français"),
+    kanji2Lectures: z
+      .string()
+      .describe(
+        "les lectures du deuxième kanji au format 'ON デン' ou 'ON シャ / kun くるま'",
+      ),
+    kanji3: z
+      .string()
+      .describe(
+        "le troisième kanji du mot si le mot en compte 3, sinon une chaîne vide. Ne jamais remplir si kanji2 est vide",
+      ),
+    kanji3Sens: z
+      .string()
+      .describe("le sens du troisième kanji, chaîne vide si kanji3 est vide"),
+    kanji3Lectures: z
+      .string()
+      .describe(
+        "les lectures du troisième kanji, chaîne vide si kanji3 est vide",
+      ),
+    autresComposes: z
+      .string()
+      .describe(
+        "3 à 4 autres mots composés réutilisant un des kanji du mot, déjà connus si possible, au format '漢字（かな）traduction' séparés par ' · '",
+      ),
+    exemple: z
+      .string()
+      .describe(
+        "une phrase d'exemple en japonais utilisant le mot, avec furigana au format 漢字[かな]. IMPÉRATIF : un espace (ou le début du champ) doit précéder chaque segment annoté, sinon le rendu Anki casse, exemple correct : '毎朝 電車[でんしゃ]で 会社[かいしゃ]に 行[い]きます。'",
+      ),
+    exempleTraduction: z
+      .string()
+      .describe("la traduction française de la phrase d'exemple"),
+    indice: z
+      .string()
+      .describe(
+        "un indice affiché au recto de la carte, au format 'N kanji · thème' (exemple '2 kanji · transport'). Ne doit JAMAIS contenir le mot ni donner la réponse",
+      ),
+    notes: z
+      .string()
+      .describe(
+        "une note courte expliquant une irrégularité de lecture, un suffixe productif ou ce que la carte apporte. Ne doit pas être vide",
+      ),
+    production: z
+      .string()
+      .describe(
+        "'y' pour générer une carte de production (saisie du mot), sinon une chaîne vide. Mettre 'y' par défaut sauf indication contraire",
+      ),
+  }),
+);
+
+export type CardSchemaKanjiComposeType = z.infer<typeof CardSchemaKanjiCompose>;
