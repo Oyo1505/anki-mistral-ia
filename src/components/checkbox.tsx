@@ -3,7 +3,7 @@
 interface CheckboxProps {
   label: string;
   title: string;
-  handleChangeCheckboxAction: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleChangeCheckboxAction: (_e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export default function Checkbox({

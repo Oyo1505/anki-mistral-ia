@@ -1,4 +1,4 @@
-import { FormDataSchemaType } from "@/schema/form-schema";
+import { FormDataSchemaInputType } from "@/schema/form-schema";
 import { useEffect, useRef } from "react";
 import { UseFormSetValue } from "react-hook-form";
 import SpeechRecognition, {
@@ -6,7 +6,7 @@ import SpeechRecognition, {
 } from "react-speech-recognition";
 
 export const useSpeechToText = (
-  setValue: UseFormSetValue<FormDataSchemaType>
+  setValue: UseFormSetValue<FormDataSchemaInputType>
 ) => {
   const {
     transcript,

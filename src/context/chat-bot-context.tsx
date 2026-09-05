@@ -38,11 +38,9 @@ export type FormDataChatBot = {
 };
 
 type ChatBotContextType = {
-  // eslint-disable-next-line no-unused-vars
   messages: ChatMessage[];
   // eslint-disable-next-line no-unused-vars
   setAllMessages: (messages: ChatMessage[]) => void;
-  // eslint-disable-next-line no-unused-vars
   formData: FormDataChatBot;
   // eslint-disable-next-line no-unused-vars
   setFormData: (formData: FormDataChatBot) => void;
@@ -50,7 +48,6 @@ type ChatBotContextType = {
   handleSetFormData: (formData: FormDataChatBot) => void;
   // eslint-disable-next-line no-unused-vars
   handleSetMessages: (messages: ChatMessage[]) => void;
-  // eslint-disable-next-line no-unused-vars
 };
 
 const ChatBotContext = createContext<ChatBotContextType>({
@@ -113,15 +110,9 @@ const ChatBotContextProvider = ({
     []
   );
 
-  const [formData, setFormData] = useState<FormDataChatBot>(defaultFormData);
-
-  useEffect(() => {
-    const savedFormData = safeStorage.getItem<FormDataChatBot>(
-      "formData",
-      defaultFormData
-    );
-    setFormData(savedFormData);
-  }, [defaultFormData]);
+  const [formData, setFormData] = useState<FormDataChatBot>(() =>
+    safeStorage.getItem<FormDataChatBot>("formData", defaultFormData)
+  );
 
   useEffect(() => {
     if (formData.isSubmitted) {

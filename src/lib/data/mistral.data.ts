@@ -84,7 +84,7 @@ export class MistralData {
           "La réponse du modèle est vide ou n'a pas pu être parsée correctement."
         );
       }
-      return parsedResult;
+      return parsedResult as string[][];
     } catch (error) {
       logError(error, "generateCardsAnki");
       return {

@@ -5,7 +5,7 @@
 
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { UseFormSetValue } from "react-hook-form";
-import { FormDataSchemaType } from "@/schema/form-schema";
+import { FormDataSchemaInputType } from "@/schema/form-schema";
 
 // Mock react-speech-recognition
 const mockStartListening = jest.fn();
@@ -33,7 +33,7 @@ import { useSpeechToText } from "../useSpeechToText";
 
 describe("useSpeechToText", () => {
   const mockSetValue = jest.fn() as jest.MockedFunction<
-    UseFormSetValue<FormDataSchemaType>
+    UseFormSetValue<FormDataSchemaInputType>
   >;
 
   beforeEach(() => {

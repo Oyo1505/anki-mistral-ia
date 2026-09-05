@@ -22,7 +22,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import Dictaphone from "../dictaphone";
 import { useSpeechToText } from "@/hooks/useSpeechToText";
 import { UseFormSetValue } from "react-hook-form";
-import { FormDataSchemaType } from "@/schema/form-schema";
+import { FormDataSchemaInputType } from "@/schema/form-schema";
 
 const mockUseSpeechToText = useSpeechToText as jest.MockedFunction<
   typeof useSpeechToText
@@ -30,7 +30,7 @@ const mockUseSpeechToText = useSpeechToText as jest.MockedFunction<
 
 describe("Dictaphone Component", () => {
   const mockSetValue = jest.fn() as jest.MockedFunction<
-    UseFormSetValue<FormDataSchemaType>
+    UseFormSetValue<FormDataSchemaInputType>
   >;
 
   beforeEach(() => {
