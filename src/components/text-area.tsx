@@ -1,14 +1,14 @@
 "use client";
-import { FormDataSchemaType } from "@/schema/form-schema";
+import { FormDataSchemaInputType } from "@/schema/form-schema";
 import clsx from "clsx";
 import { FieldErrors } from "react-hook-form";
 
 interface TextAreaProps {
-  errors: FieldErrors<FormDataSchemaType>;
+  errors: FieldErrors<FormDataSchemaInputType>;
   id: string;
   className?: string;
   style?: React.CSSProperties;
-  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+  onKeyDown?: (_e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   label?: string;
   disabled?: boolean;
 }

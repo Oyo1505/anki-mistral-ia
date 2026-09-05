@@ -1,8 +1,8 @@
-import { FormDataSchemaType } from "@/schema/form-schema";
+import { FormDataSchemaInputType } from "@/schema/form-schema";
 import { UseFormRegister } from "react-hook-form";
 
 interface SelectTypeCardProps {
-  register: UseFormRegister<FormDataSchemaType>;
+  register: UseFormRegister<FormDataSchemaInputType>;
 }
 
 const SelectTypeCard = ({ register }: SelectTypeCardProps) => {

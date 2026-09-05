@@ -1,10 +1,10 @@
-import { FormDataSchemaType } from "@/schema/form-schema";
+import { FormDataSchemaInputType } from "@/schema/form-schema";
 import { UseFormReset } from "react-hook-form";
 import { Id, toast } from "react-toastify";
 
 export const useDisplayToast = (
   setCsvData: (_data: string[][]) => void,
-  reset: UseFormReset<FormDataSchemaType>
+  reset: UseFormReset<FormDataSchemaInputType>
 ) => {
   const displayToast = ({
     dataRes,

@@ -1,6 +1,10 @@
 "use client";
 import { useAnkiCardGeneration } from "@/hooks/useAnkiCardGeneration";
-import { FormDataSchema, FormDataSchemaType } from "@/schema/form-schema";
+import {
+  FormDataSchema,
+  FormDataSchemaInputType,
+  FormDataSchemaType,
+} from "@/schema/form-schema";
 import { levels } from "@/shared/constants/levels";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dynamic from "next/dynamic";
@@ -146,7 +150,7 @@ export default function Form() {
               <SelectTypeCard register={register} />
             </div>
             <ButtonUpload
-              setValueAction={setValue as UseFormSetValue<FormDataSchemaType>}
+              setValueAction={setValue as UseFormSetValue<FormDataSchemaInputType>}
               errors={errors}
               files={files}
               {...register("files", {
@@ -216,7 +220,7 @@ export default function Form() {
           <CsvViewer
             setIsCsvVisible={setIsCsvVisible}
             csvFile={csvData}
-            isCardKanji={isCardKanji}
+            isCardKanji={isCardKanji ?? "basique"}
           />
         )}
       </div>

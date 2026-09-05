@@ -86,7 +86,7 @@ const CsvViewer = ({
                 key={rowIndex}
                 style={{ borderBottom: "1px solid var(--border-1)" }}
               >
-                {Object.entries(row).map(([key, cell], cellIndex) => {
+                {Object.entries(row).map(([_key, cell], cellIndex) => {
                   const isKanjiCol = isKanji && cellIndex === 0;
                   return (
                     <td

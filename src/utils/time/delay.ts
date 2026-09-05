@@ -23,7 +23,7 @@ export async function retryWithBackoff<T>(
         attempt < maxRetries
       ) {
         const retryAfterHeader = (
-          error as { headers?: { get?: (name: string) => string | null } }
+          error as { headers?: { get?: (_name: string) => string | null } }
         ).headers?.get?.("retry-after");
         const retryAfterMs = retryAfterHeader
           ? Number(retryAfterHeader) * 1000

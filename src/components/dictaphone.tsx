@@ -1,9 +1,9 @@
 import { useSpeechToText } from "@/hooks/useSpeechToText";
-import { FormDataSchemaType } from "@/schema/form-schema";
+import { FormDataSchemaInputType } from "@/schema/form-schema";
 import { UseFormSetValue } from "react-hook-form";
 
 type DictaphoneProps = {
-  setValue: UseFormSetValue<FormDataSchemaType>;
+  setValue: UseFormSetValue<FormDataSchemaInputType>;
 };
 
 const Dictaphone = ({ setValue }: DictaphoneProps) => {

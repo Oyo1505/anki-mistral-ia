@@ -1,14 +1,14 @@
 "use client";
-import { FormDataSchemaType } from "@/schema/form-schema";
+import { FormDataSchemaInputType } from "@/schema/form-schema";
 import { FieldErrors, UseFormSetValue } from "react-hook-form";
 
 interface ButtonUploadProps {
   accept?: string;
   multiple?: boolean;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (_e: React.ChangeEvent<HTMLInputElement>) => void;
   files: File[] | undefined;
-  errors: FieldErrors<FormDataSchemaType>;
-  setValueAction: UseFormSetValue<FormDataSchemaType>;
+  errors: FieldErrors<FormDataSchemaInputType>;
+  setValueAction: UseFormSetValue<FormDataSchemaInputType>;
 }
 
 export default function ButtonUpload({

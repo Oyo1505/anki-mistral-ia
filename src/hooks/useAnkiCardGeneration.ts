@@ -1,7 +1,7 @@
 "use client";
 import { generateAnswer } from "@/actions/mistral.action";
 import { logError } from "@/lib/logError";
-import { FormDataSchemaType } from "@/schema/form-schema";
+import { FormDataSchemaInputType, FormDataSchemaType } from "@/schema/form-schema";
 import { fileProcessor } from "@/services/File-processor-service";
 import { useState, useTransition } from "react";
 import { UseFormReset, UseFormSetValue } from "react-hook-form";
@@ -9,8 +9,8 @@ import { toast } from "react-toastify";
 import { useDisplayToast } from "./useDisplayToast";
 
 export const useAnkiCardGeneration = (
-  setValue: UseFormSetValue<FormDataSchemaType>,
-  reset: UseFormReset<FormDataSchemaType>
+  setValue: UseFormSetValue<FormDataSchemaInputType>,
+  reset: UseFormReset<FormDataSchemaInputType>
 ) => {
   const [csvData, setCsvData] = useState<string[][]>([]);
   const [isPending, startTransition] = useTransition();

@@ -8,7 +8,7 @@ import {
   LOADING_MESSAGE_DELAY_2,
   LOADING_MESSAGE_DELAY_3,
 } from "@/shared/constants/numbers";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import TextArea from "./text-area";
 
@@ -277,6 +277,7 @@ const ChatBot = () => {
         </div>
 
         <form
+          // eslint-disable-next-line react-hooks/refs -- react-hook-form's documented handleSubmit(fn) factory pattern
           onSubmit={handleSubmit(handleSendMessage)}
           style={{
             padding: 14,

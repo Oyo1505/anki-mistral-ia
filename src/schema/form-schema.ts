@@ -30,6 +30,7 @@ export const FormDataSchema = z.object({
 });
 
 export type FormDataSchemaType = z.infer<typeof FormDataSchema>;
+export type FormDataSchemaInputType = z.input<typeof FormDataSchema>;
 
 export const FormDataSchemaChatBot = z.object({
   name: z

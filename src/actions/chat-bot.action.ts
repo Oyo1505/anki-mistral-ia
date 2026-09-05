@@ -72,7 +72,7 @@ export const threadChatBot = async ({
     revalidatePath("/chat");
     return {
       role: "assistant",
-      message: response.choices[0].message.content,
+      message: response.choices[0].message?.content,
       timestamp: new Date(),
     };
   } catch (error) {
