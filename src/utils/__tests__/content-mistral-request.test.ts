@@ -89,6 +89,24 @@ describe("content mistral request", () => {
     expect(result).toContain("Pour un niveau de japonais de JLPT N2");
   });
 
+  it("returns kanji-compose content for kanji-compose typeCard", () => {
+    const result = contentMistralRequest({
+      typeCard: "kanji-compose",
+      japanese: false,
+      numberOfCards: 5,
+      level: "N4",
+      kanji: true,
+      furigana: false,
+      romanji: false,
+    });
+    expect(result).toContain(
+      'Composé kanji (jukugo)" pour apprendre des mots composés'
+    );
+    expect(result).toContain("Tu dois générer 5 mots composés");
+    expect(result).toContain("2 ou 3 kanji maximum");
+    expect(result).toContain("Pour un niveau de japonais de JLPT N4");
+  });
+
   it("returns correct content for kanji typeCard with kanji=false", () => {
     const result = contentMistralRequest({
       typeCard: "kanji",
