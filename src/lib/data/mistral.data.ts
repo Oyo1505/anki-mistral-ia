@@ -35,7 +35,7 @@ export class MistralData {
       const response = await retryWithBackoff(
         async () => {
           return await mistral.chat.parse({
-            model: "mistral-large-latest",
+            model: "mistral-small-latest",
             temperature: 0.2,
             messages: [
               {

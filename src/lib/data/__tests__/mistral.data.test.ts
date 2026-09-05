@@ -125,7 +125,7 @@ describe("MistralData", () => {
 
       expect(mockChatParse).toHaveBeenCalledWith(
         expect.objectContaining({
-          model: "mistral-large-latest",
+          model: "mistral-small-latest",
           temperature: 0.2,
           maxTokens: 10000,
         })

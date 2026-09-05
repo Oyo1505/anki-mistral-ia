@@ -12,7 +12,7 @@ describe("content mistral request", () => {
     });
     expect(result).toContain("Tu dois générer 5 cartes anki avec les romanji");
     expect(result).toContain("tu peux intégrer les kanji si il y en a");
-    expect(result).toContain("Pour un niveau de japonais de JLPT N5");
+    expect(result).toContain("pour un niveau JLPT N5");
     expect(result).toContain(
       "Tu dois écrire les énoncés, questions, réponses en japonais. PAS DE FRANCAIS."
     );
@@ -28,10 +28,10 @@ describe("content mistral request", () => {
       romanji: false,
     });
     expect(result).toContain(
-      "Tu dois générer 3 cartes anki ne pas utiliser les romanji"
+      "Tu dois générer 3 cartes anki sans utiliser les romanji"
     );
     expect(result).toContain("ne pas utiliser les kanji");
-    expect(result).toContain("Pour un niveau de japonais de JLPT N4");
+    expect(result).toContain("pour un niveau JLPT N4");
     expect(result).not.toContain(
       "Tu dois écrire les énoncés, questions, réponses en japonais. PAS DE FRANCAIS."
     );
@@ -47,10 +47,10 @@ describe("content mistral request", () => {
       romanji: false,
     });
     expect(result).toContain(
-      "Tu es fais pour faire des cartes anki pour apprendre les kanjis japonais"
+      "Tu es fait pour faire des cartes anki pour apprendre les kanjis japonais"
     );
-    expect(result).toContain("Tu dois générer 2 cartes anki.");
-    expect(result).toContain("les mots en KATAKANA sont INTERDIT");
+    expect(result).toContain("Tu dois générer 2 cartes anki");
+    expect(result).toContain("Les mots en KATAKANA sont INTERDITS");
   });
 
   it("returns correct content for basique typeCard with japanese=false", () => {
@@ -63,13 +63,13 @@ describe("content mistral request", () => {
       romanji: false,
     });
     expect(result).toContain(
-      "Tu dois générer 4 cartes anki ne pas utiliser les romanji"
+      "Tu dois générer 4 cartes anki sans utiliser les romanji"
     );
     expect(result).toContain("tu peux intégrer les kanji si il y en a");
     expect(result).not.toContain(
       "Tu dois écrire les énoncés, questions, réponses en japonais. PAS DE FRANCAIS."
     );
-    expect(result).toContain("Pour un niveau de japonais de JLPT N1");
+    expect(result).toContain("pour un niveau JLPT N1");
   });
 
   it("returns correct content for basique typeCard with japanese=true", () => {
@@ -86,7 +86,7 @@ describe("content mistral request", () => {
     expect(result).toContain(
       "Tu dois écrire les énoncés, questions, réponses en japonais. PAS DE FRANCAIS."
     );
-    expect(result).toContain("Pour un niveau de japonais de JLPT N2");
+    expect(result).toContain("pour un niveau JLPT N2");
   });
 
   it("returns kanji-compose content for kanji-compose typeCard", () => {
@@ -117,9 +117,9 @@ describe("content mistral request", () => {
       romanji: true,
     });
     expect(result).toContain(
-      "Tu es fais pour faire des cartes anki pour apprendre les kanjis japonais"
+      "Tu es fait pour faire des cartes anki pour apprendre les kanjis japonais"
     );
-    expect(result).toContain("Tu dois générer 7 cartes anki.");
-    expect(result).toContain("les mots en KATAKANA sont INTERDIT");
+    expect(result).toContain("Tu dois générer 7 cartes anki");
+    expect(result).toContain("Les mots en KATAKANA sont INTERDITS");
   });
 });

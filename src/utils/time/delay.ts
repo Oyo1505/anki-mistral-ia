@@ -22,7 +22,15 @@ export async function retryWithBackoff<T>(
         error.statusCode === 429 &&
         attempt < maxRetries
       ) {
-        const delayMs = baseDelay * Math.pow(2, attempt); // Backoff exponentiel
+        const retryAfterHeader = (
+          error as { headers?: { get?: (name: string) => string | null } }
+        ).headers?.get?.("retry-after");
+        const retryAfterMs = retryAfterHeader
+          ? Number(retryAfterHeader) * 1000
+          : NaN;
+        const delayMs = Number.isFinite(retryAfterMs)
+          ? retryAfterMs
+          : baseDelay * Math.pow(2, attempt); // Backoff exponentiel
         console.log(
           `Rate limit atteint, retry dans ${delayMs}ms (tentative ${
             attempt + 1
