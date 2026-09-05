@@ -41,6 +41,7 @@ export default function TextArea({
         placeholder="Votre texte ou instructions"
         className={clsx("ds-textarea ds-input", hasError && "ds-input--error", className)}
         style={{ resize: "vertical", minHeight: 120, ...style }}
+        suppressHydrationWarning
       />
       {hasError && (
         <p style={{ fontSize: "var(--fs-xs)", color: "var(--fg-danger)", marginTop: 6 }}>
